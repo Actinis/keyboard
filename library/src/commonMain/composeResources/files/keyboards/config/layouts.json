@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "defaultLayout": "en_US",
+  "availableLayouts": {
+    "en_US": {
+      "name": "English (US)",
+      "variants": ["default", "email", "url"],
+      "requires": ["symbol/primary", "numeric/default"]
+    },
+    "ru_RU": {
+      "name": "Русский",
+      "variants": ["default", "email"],
+      "requires": ["symbol/primary", "numeric/default"]
+    }
+  },
+  "contextRules": {
+    "email": {
+      "trigger": "email",
+      "extraKeys": ["@", "."]
+    }
+  }
+}

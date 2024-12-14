@@ -1,0 +1,58 @@
+[versions]
+agp = "8.5.2"
+kotlin = "2.0.21"
+ksp = "2.0.21-1.0.26"
+
+android-minSdk = "31"
+android-compileSdk = "35"
+android-targetSdk = "35"
+
+kotlinx-coroutines = "1.9.0"
+kotlinx-serialization = "1.7.3"
+
+androidx-activity-compose = "1.9.3"
+androidx-startup-runtime = "1.2.0"
+
+androidx-lifecycle-jb = "2.8.4"
+
+kermit = "2.0.4"
+koin = "4.0.0"
+
+settings = "1.2.0"
+
+compose-plugin = "1.7.0"
+
+[libraries]
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
+androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup-runtime" }
+
+androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle-jb" }
+androidx-lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle-jb" }
+androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle-jb" }
+
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-core-coroutines = { module = "io.insert-koin:koin-core-coroutines", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+
+settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "settings" }
+settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "settings" }
+
+[plugins]
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+vanniktech-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.30.0" }

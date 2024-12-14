@@ -1,0 +1,670 @@
+{
+  "metadata": {
+    "id": "en_US.default",
+    "name": "English (US)",
+    "version": "1.0",
+    "type": "alphabetic",
+    "inheritsFrom": null
+  },
+  "dimensions": {
+    "rowCount": 4,
+    "defaultKeyWidth": 1.0,
+    "defaultKeyHeight": 1.0,
+    "baseKeyWidthMultiplier": 0.09,
+    "baseKeyHeightToWidthMultiplier": 1.2,
+    "columnsSpacingMultiplier": 0.01,
+    "rowsSpacingToHeightMultiplier": 0.1
+  },
+  "rows": [
+    {
+      "id": "row1",
+      "keys": [
+        {
+          "key": "q",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "q"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "1",
+                "q",
+                "ç"
+              ]
+            }
+          }
+        },
+        {
+          "key": "w",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "w"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "2",
+                "w",
+                "ŵ"
+              ]
+            }
+          }
+        },
+        {
+          "key": "e",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "e"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "3",
+                "e",
+                "è",
+                "é",
+                "ê",
+                "ë",
+                "ē",
+                "ė",
+                "ę",
+                "ě",
+                "ẽ"
+              ]
+            }
+          }
+        },
+        {
+          "key": "r",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "r"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "4",
+                "r",
+                "ř"
+              ]
+            }
+          }
+        },
+        {
+          "key": "t",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "t"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "5",
+                "t",
+                "ț",
+                "ť",
+                "þ"
+              ]
+            }
+          }
+        },
+        {
+          "key": "y",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "y"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "6",
+                "y",
+                "ÿ",
+                "ŷ",
+                "ý"
+              ]
+            }
+          }
+        },
+        {
+          "key": "u",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "u"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "7",
+                "u",
+                "ū",
+                "ú",
+                "ù",
+                "ü",
+                "û",
+                "ų",
+                "ů",
+                "ű",
+                "ũ",
+                "ǔ"
+              ]
+            }
+          }
+        },
+        {
+          "key": "i",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "i"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "8",
+                "i",
+                "ì",
+                "į",
+                "ī",
+                "í",
+                "ï",
+                "î",
+                "ı",
+                "ĩ",
+                "ǐ"
+              ]
+            }
+          }
+        },
+        {
+          "key": "o",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "o"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "9",
+                "o",
+                "õ",
+                "ō",
+                "ø",
+                "œ",
+                "ó",
+                "ò",
+                "ö",
+                "ô",
+                "ő",
+                "ǒ"
+              ]
+            }
+          }
+        },
+        {
+          "key": "p",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "p"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "0",
+                "p"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "row2",
+      "keys": [
+        {
+          "key": "a",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "a"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "a",
+                "à",
+                "á",
+                "â",
+                "ä",
+                "æ",
+                "ã",
+                "å",
+                "ā",
+                "ǎ",
+                "ă",
+                "ą"
+              ]
+            }
+          }
+        },
+        {
+          "key": "s",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "s"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "s",
+                "ß",
+                "ś",
+                "š",
+                "ş",
+                "ș"
+              ]
+            }
+          }
+        },
+        {
+          "key": "d",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "d"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "d",
+                "ď",
+                "ð"
+              ]
+            }
+          }
+        },
+        {
+          "key": "f",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "f"
+            }
+          }
+        },
+        {
+          "key": "g",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "g"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "g",
+                "ğ",
+                "ġ"
+              ]
+            }
+          }
+        },
+        {
+          "key": "h",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "h"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "h",
+                "ħ"
+              ]
+            }
+          }
+        },
+        {
+          "key": "j",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "j"
+            }
+          }
+        },
+        {
+          "key": "k",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "k"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "k",
+                "ķ"
+              ]
+            }
+          }
+        },
+        {
+          "key": "l",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "l"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "l",
+                "ł",
+                "ľ",
+                "ļ"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "row3",
+      "keys": [
+        {
+          "key": "shift",
+          "type": "modifier",
+          "width": 1.5,
+          "actions": {
+            "press": {
+              "command": "TOGGLE_SHIFT"
+            },
+            "doubleTap": {
+              "command": "CAPS_LOCK"
+            }
+          },
+          "visual": {
+            "icon": "shift",
+            "activeIcon": "shift_active",
+            "modifiers": {
+              "SHIFT": {
+                "icon": "shift",
+                "activeIcon": "shift_active"
+              },
+              "CAPS_LOCK": {
+                "icon": "caps_lock_active",
+                "activeIcon": "shift_active"
+              }
+            }
+          }
+        },
+        {
+          "key": "z",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "z"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "z",
+                "ž",
+                "ź",
+                "ż"
+              ]
+            }
+          }
+        },
+        {
+          "key": "x",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "x"
+            }
+          }
+        },
+        {
+          "key": "c",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "c"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "c",
+                "ç",
+                "ć",
+                "č",
+                "ċ"
+              ]
+            }
+          }
+        },
+        {
+          "key": "v",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "v"
+            }
+          }
+        },
+        {
+          "key": "b",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "b"
+            }
+          }
+        },
+        {
+          "key": "n",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "n"
+            },
+            "longPress": {
+              "popup": false,
+              "values": [
+                "n",
+                "ń",
+                "ñ",
+                "ň",
+                "ņ"
+              ]
+            }
+          }
+        },
+        {
+          "key": "m",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "m"
+            }
+          }
+        },
+        {
+          "key": "backspace",
+          "type": "system",
+          "width": 1.5,
+          "actions": {
+            "press": {
+              "command": "DELETE_BACKWARD"
+            },
+            "longPress": {
+              "command": "DELETE_WORD"
+            },
+            "repeat": true
+          },
+          "visual": {
+            "icon": "backspace",
+            "activeIcon": "backspace_active",
+            "label": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "row4",
+      "keys": [
+        {
+          "key": "symbols",
+          "type": "system",
+          "width": 1.5,
+          "actions": {
+            "press": {
+              "command": "SWITCH_LAYOUT",
+              "params": {
+                "layout": "symbols"
+              }
+            }
+          },
+          "visual": {
+            "label": "123"
+          }
+        },
+        {
+          "key": "layout",
+          "type": "system",
+          "width": 1.5,
+          "actions": {
+            "press": {
+              "command": "SWITCH_LAYOUT"
+            },
+            "longPress": {
+              "command": "SHOW_LAYOUTS"
+            }
+          },
+          "visual": {
+            "icon": "layout_switch",
+            "activeIcon": "layout_switch_active"
+          }
+        },
+        {
+          "key": "space",
+          "type": "character",
+          "width": 5.5,
+          "actions": {
+            "press": {
+              "output": " "
+            },
+            "longPress": {
+              "command": "SHOW_CURSOR_CONTROLS"
+            }
+          },
+          "visual": {
+            "label": "space"
+          }
+        },
+        {
+          "key": "return",
+          "type": "system",
+          "width": 2.0,
+          "actions": {
+            "press": {
+              "command": "ACTION"
+            }
+          },
+          "visual": {
+            "label": "return",
+            "adaptiveLabels": {
+              "search": "search",
+              "send": "send",
+              "go": "go",
+              "done": "done"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "type": "email",
+      "insertAt": {
+        "row": 2,
+        "position": 9,
+        "key": {
+          "key": "@",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "output": "@"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "popups": {
+    "enabled": true,
+    "delay": 200,
+    "style": "ios"
+  },
+  "behaviors": {
+    "keyRepeat": {
+      "initialDelay": 500,
+      "repeatInterval": 50
+    },
+    "longPress": {
+      "delay": 300
+    },
+    "doubleTap": {
+      "maxDelay": 500
+    }
+  },
+  "visual": {
+    "fontSize": {
+      "primary": 1.0,
+      "secondary": 0.7
+    },
+    "popupScale": 1.5
+  }
+}

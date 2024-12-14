@@ -1,0 +1,124 @@
+import com.vanniktech.maven.publish.SonatypeHost
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.vanniktech.mavenPublish)
+    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
+}
+
+group = "io.actinis.remote"
+version = "1.0.0.0"
+
+kotlin {
+    jvm()
+    androidTarget {
+        publishLibraryVariants("release")
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
+        }
+    }
+//    iosX64()
+//    iosArm64()
+//    iosSimulatorArm64()
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(libs.kermit)
+
+                implementation(libs.koin.core)
+                implementation(libs.koin.core.coroutines)
+                implementation(libs.koin.compose)
+                implementation(libs.koin.compose.viewmodel)
+
+                implementation(libs.kotlinx.serialization.json)
+
+                implementation(libs.settings)
+                implementation(libs.settings.coroutines)
+
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material3)
+                implementation(compose.ui)
+                implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
+                implementation(compose.components.resources)
+
+                implementation(libs.androidx.lifecycle.viewmodel)
+                implementation(libs.androidx.lifecycle.viewmodel.compose)
+                implementation(libs.androidx.lifecycle.runtime.compose)
+            }
+        }
+
+        val androidMain by getting {
+            dependencies {
+                implementation(compose.preview)
+
+                implementation(libs.koin.android)
+                implementation(libs.androidx.startup.runtime)
+            }
+        }
+
+        val jvmMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.kotlinx.coroutines.swing)
+            }
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(libs.kotlin.test)
+            }
+        }
+    }
+}
+
+android {
+    namespace = "io.actinis.remote.keyboard"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    defaultConfig {
+        minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+}
+
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+
+    signAllPublications()
+
+    coordinates(group.toString(), "keyboard", version.toString())
+
+    pom {
+        name = "Actinis Remote Keyboard"
+        description = "Keyboard view for Actinis Remote"
+        inceptionYear = "2024"
+        url = "https://github.com/Actinis/keyboard"
+        licenses {
+            license {
+                name = "Apache 2.0"
+                url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
+        }
+        developers {
+            developer {
+                id = "RankoR"
+                name = "Artem Smirnov"
+                url = "https://github.com/RankoR"
+            }
+            developer {
+                id = "Actinis"
+                name = "Actinis OÜ"
+                url = "https://github.com/Actinis"
+            }
+        }
+    }
+}
