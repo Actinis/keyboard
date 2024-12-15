@@ -2,14 +2,17 @@ package io.actinis.remote.keyboard.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -18,6 +21,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -60,6 +64,25 @@ data class KeyboardColors(
     val activeBackground: Color,
 )
 
+data class KeyBubbleState(
+    val key: Key,
+    val keyPosition: Rect,
+    val isLongPressed: Boolean,
+)
+
+class KeyBubbleManager {
+    private val _activeBubbles = mutableStateOf<Set<KeyBubbleState>>(emptySet())
+    val activeBubbles: State<Set<KeyBubbleState>> = _activeBubbles
+
+    fun showBubble(state: KeyBubbleState) {
+
+    }
+
+    fun hideBubble(keyId: String) {
+
+    }
+}
+
 @Composable
 fun rememberKeyboardColors(
     background: Color = Color.LightGray,
@@ -101,16 +124,61 @@ fun KeyboardView(
     }
 
     currentLayout?.let { layout ->
-        KeyboardLayout(
-            layout = layout,
-            keyboardState = keyboardState,
-            viewState = viewState,
-            onViewStateChange = { viewState = it },
-            onHandleActiveKey = viewModel::handleActiveKey,
-            onHandleKeysReleased = viewModel::handleKeysReleased,
-            density = density,
+        Box(modifier = modifier) {
+            KeyboardLayout(
+                layout = layout,
+                keyboardState = keyboardState,
+                viewState = viewState,
+                onViewStateChange = { viewState = it },
+                onHandleActiveKey = viewModel::handleActiveKey,
+                onHandleKeysReleased = viewModel::handleKeysReleased,
+                density = density,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+            )
+
+            KeyboardOverlay()
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.KeyboardOverlay(
+    modifier: Modifier = Modifier,
+) {
+    var showOverlay by remember { mutableStateOf(true) } // Just for testing
+
+    if (showOverlay) {
+        Box(
             modifier = modifier
-        )
+                .matchParentSize()
+                .background(
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                )
+        ) {
+            Box(
+                modifier = Modifier
+                    .offset {
+                        IntOffset(
+                            x = 100,
+                            y = 200
+                        )
+                    }
+                    .size(40.dp)
+                    .background(
+                        color = Color.White,
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "A",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.Black
+                )
+            }
+        }
     }
 }
 
@@ -309,8 +377,27 @@ private fun KeyboardKey(
     }
 }
 
+@Composable
+private fun KeyBubble(
+    state: KeyBubbleState,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+//            .size(
+//                width = if (state.isLongPressed) BUBBLE_LONG_PRESS_WIDTH else BUBBLE_WIDTH,
+//                height = BUBBLE_HEIGHT
+//            )
+//            .clip(BubbleShape)
+            .background(MaterialTheme.colorScheme.surface)
+        // Add elevation/shadow
+    ) {
+        // Bubble content (enlarged character or alternatives)
+    }
+}
+
 private fun KeyboardState.isKeyActive(key: Key): Boolean {
-    return activeKeys.find { it.id == key.id } != null
+    return pressedKeysIds.contains(key.id)
 }
 
 private fun KeyboardState.getActiveModifierForKey(key: Key): KeyboardModifier? {

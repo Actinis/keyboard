@@ -79,7 +79,7 @@ data class KeyboardLayout(
             @SerialName("position")
             val position: Int,
             @SerialName("key")
-            val key: Key
+            val key: Key,
         )
     }
 

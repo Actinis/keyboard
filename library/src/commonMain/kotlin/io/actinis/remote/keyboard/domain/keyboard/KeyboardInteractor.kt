@@ -12,7 +12,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.async
 
 
 internal interface KeyboardInteractor {
@@ -73,7 +72,7 @@ internal class KeyboardInteractorImpl(
             removeInactiveKeys(activeKey = key)
 
             addTrackedKey(key)
-            keyboardStateInteractor.addActiveKey(key)
+            keyboardStateInteractor.addActiveKey(key.id)
         }
     }
 
@@ -87,15 +86,21 @@ internal class KeyboardInteractorImpl(
 
     private suspend fun removeInactiveKeys(activeKey: Key) {
         keyboardStateInteractor
-            .getActiveKeysExcept(exceptKey = activeKey)
-            .map { key ->
+            .getActiveKeysIdsExcept(activeKey.id)
+            .map { keyId ->
                 coroutineScope.async {
+                    val key = currentLayout.value?.findKey { it.id == keyId }
+                    if (key == null) {
+                        logger.w { "Failed to find key with id=$keyId in current layout while removing inactive keys" }
+                        return@async null
+                    }
                     handleKeyReleased(key)
-                    key
+                    keyId
                 }
             }
             .toSet()
             .awaitAll()
+            .filterNotNull()
             .let { keys -> keyboardStateInteractor.removeActiveKeys(keys) }
     }
 
@@ -110,8 +115,13 @@ internal class KeyboardInteractorImpl(
 
     private suspend fun handleTrackedKeysReleased() {
         touchTrackedKeys.toList().forEach { keyId ->
-            keyboardStateInteractor
-                .findActiveKey(keyId = keyId)
+            keyId
+                .takeIf {
+                    keyboardStateInteractor.isKeyActive(keyId = keyId)
+                }
+                ?.let {
+                    currentLayout.value?.findKey { it.id == keyId }
+                }
                 ?.let { key ->
                     handleKeyReleased(key)
                 }

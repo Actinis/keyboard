@@ -1,10 +1,9 @@
 package io.actinis.remote.keyboard.data.state.model
 
-import io.actinis.remote.keyboard.data.config.model.key.Key
 import io.actinis.remote.keyboard.data.config.model.modifier.KeyboardModifier
 
 data class KeyboardState(
-    val activeKeys: Set<Key> = emptySet(),
+    val pressedKeysIds: Set<String> = emptySet(),
     val currentLayoutId: String? = null,
     val inputType: InputType = InputType.TEXT,
     val isPassword: Boolean = false,
