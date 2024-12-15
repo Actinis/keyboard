@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
@@ -49,6 +48,7 @@ import org.jetbrains.compose.resources.vectorResource
 import org.koin.compose.getKoin
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.qualifier.named
+import kotlin.math.roundToInt
 
 private const val LOG_TAG = "KeyboardView"
 private val logger = Logger.withTag(LOG_TAG)
@@ -63,25 +63,6 @@ data class KeyboardColors(
     val background: Color,
     val activeBackground: Color,
 )
-
-data class KeyBubbleState(
-    val key: Key,
-    val keyPosition: Rect,
-    val isLongPressed: Boolean,
-)
-
-class KeyBubbleManager {
-    private val _activeBubbles = mutableStateOf<Set<KeyBubbleState>>(emptySet())
-    val activeBubbles: State<Set<KeyBubbleState>> = _activeBubbles
-
-    fun showBubble(state: KeyBubbleState) {
-
-    }
-
-    fun hideBubble(keyId: String) {
-
-    }
-}
 
 @Composable
 fun rememberKeyboardColors(
@@ -138,45 +119,67 @@ fun KeyboardView(
                     .fillMaxWidth()
             )
 
-            KeyboardOverlay()
+            KeyboardOverlay(
+                viewState = viewState,
+                keyboardState = keyboardState,
+                keyboardLayout = layout,
+            )
         }
     }
 }
 
 @Composable
 private fun BoxScope.KeyboardOverlay(
+    viewState: KeyboardViewState,
+    keyboardState: KeyboardState,
+    keyboardLayout: KeyboardLayout,
     modifier: Modifier = Modifier,
 ) {
-    var showOverlay by remember { mutableStateOf(true) } // Just for testing
+    val showOverlay = keyboardState.pressedKeysIds.isNotEmpty()
+
+    logger.d { "Show overlay: $showOverlay" }
 
     if (showOverlay) {
         Box(
             modifier = modifier
                 .matchParentSize()
-                .background(
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                )
         ) {
-            Box(
-                modifier = Modifier
-                    .offset {
-                        IntOffset(
-                            x = 100,
-                            y = 200
-                        )
-                    }
-                    .size(40.dp)
-                    .background(
-                        color = Color.White,
-                        shape = CircleShape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "A",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color.Black
-                )
+            keyboardState.pressedKeysIds.forEach { keyId ->
+                // TODO: Use Map instead of searching
+                val key = keyboardLayout.findKey { it.id == keyId }
+                if (key == null) {
+                    logger.e { "Can not find key with id $keyId in overlay" }
+                    return@forEach
+                }
+
+                // TODO: Use Map instead of searching
+                val keyBoundary = viewState.keyBoundaries.find { it.key.id == keyId }
+                if (keyBoundary == null) {
+                    logger.e { "Can not find boundary for key with id $keyId in overlay" }
+                    return@forEach
+                }
+
+                Box(
+                    modifier = Modifier
+                        .offset {
+                            IntOffset(
+                                x = keyBoundary.left.roundToInt(),
+                                y = keyBoundary.top.roundToInt() - 100, // FIXME: Calculate properly
+                            )
+                        }
+                        .size(40.dp)
+                        .background(
+                            color = Color.White,
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "A",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color.Black
+                    )
+                }
             }
         }
     }
@@ -374,25 +377,6 @@ private fun KeyboardKey(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun KeyBubble(
-    state: KeyBubbleState,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-//            .size(
-//                width = if (state.isLongPressed) BUBBLE_LONG_PRESS_WIDTH else BUBBLE_WIDTH,
-//                height = BUBBLE_HEIGHT
-//            )
-//            .clip(BubbleShape)
-            .background(MaterialTheme.colorScheme.surface)
-        // Add elevation/shadow
-    ) {
-        // Bubble content (enlarged character or alternatives)
     }
 }
 
