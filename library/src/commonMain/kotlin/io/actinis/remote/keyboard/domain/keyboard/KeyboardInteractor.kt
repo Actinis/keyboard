@@ -72,7 +72,7 @@ internal class KeyboardInteractorImpl(
             removeInactiveKeys(activeKey = key)
 
             addTrackedKey(key)
-            keyboardStateInteractor.addActiveKey(key.id)
+            keyboardStateInteractor.addPressedKey(key.id)
         }
     }
 
@@ -86,7 +86,7 @@ internal class KeyboardInteractorImpl(
 
     private suspend fun removeInactiveKeys(activeKey: Key) {
         keyboardStateInteractor
-            .getActiveKeysIdsExcept(activeKey.id)
+            .getPressedKeysIdsExcept(activeKey.id)
             .map { keyId ->
                 coroutineScope.async {
                     val key = currentLayout.value?.findKey { it.id == keyId }
@@ -101,7 +101,7 @@ internal class KeyboardInteractorImpl(
             .toSet()
             .awaitAll()
             .filterNotNull()
-            .let { keys -> keyboardStateInteractor.removeActiveKeys(keys) }
+            .let { keys -> keyboardStateInteractor.removePressedKeys(keys) }
     }
 
     override fun handleKeysReleased() {
@@ -109,7 +109,7 @@ internal class KeyboardInteractorImpl(
 
         coroutineScope.launch {
             handleTrackedKeysReleased()
-            keyboardStateInteractor.removeActiveKeys()
+            keyboardStateInteractor.removePressedKeys()
         }
     }
 
@@ -117,7 +117,7 @@ internal class KeyboardInteractorImpl(
         touchTrackedKeys.toList().forEach { keyId ->
             keyId
                 .takeIf {
-                    keyboardStateInteractor.isKeyActive(keyId = keyId)
+                    keyboardStateInteractor.isKeyPressed(keyId = keyId)
                 }
                 ?.let {
                     currentLayout.value?.findKey { it.id == keyId }
@@ -228,25 +228,29 @@ internal class KeyboardInteractorImpl(
     private fun startKeyTimingJobs(key: Key) {
         cancelKeyTimingJobs(key.id)
 
-        keyTimingJobs[key.id] = coroutineScope.launch(defaultDispatcher) {
-            // Handle long press
-            currentLayout.value?.behaviors?.longPress?.delay?.let { delay ->
-                launch {
-                    delay(delay)
-                    if (keyboardStateInteractor.isKeyActive(key.id)) {
-                        emitKeyInteractionEvent(KeyInteractionEvent.LongPress(key))
+        val requiresTimingJobs = currentLayout.value?.behaviors?.longPress != null || key.actions.repeat
+
+        if (requiresTimingJobs) {
+            keyTimingJobs[key.id] = coroutineScope.launch(defaultDispatcher) {
+                // Handle long press
+                currentLayout.value?.behaviors?.longPress?.delay?.let { delay ->
+                    launch {
+                        delay(delay)
+                        if (keyboardStateInteractor.isKeyPressed(key.id)) {
+                            emitKeyInteractionEvent(KeyInteractionEvent.LongPress(key))
+                        }
                     }
                 }
-            }
 
-            // Handle key repeat if enabled
-            if (key.actions.repeat) {
-                currentLayout.value?.behaviors?.keyRepeat?.let { repeat ->
-                    launch {
-                        delay(repeat.initialDelay)
-                        while (keyboardStateInteractor.isKeyActive(key.id)) {
-                            emitKeyInteractionEvent(KeyInteractionEvent.Repeat(key))
-                            delay(repeat.repeatInterval)
+                // Handle key repeat if enabled
+                if (key.actions.repeat) {
+                    currentLayout.value?.behaviors?.keyRepeat?.let { repeat ->
+                        launch {
+                            delay(repeat.initialDelay)
+                            while (keyboardStateInteractor.isKeyPressed(key.id)) {
+                                emitKeyInteractionEvent(KeyInteractionEvent.Repeat(key))
+                                delay(repeat.repeatInterval)
+                            }
                         }
                     }
                 }
@@ -297,8 +301,10 @@ internal class KeyboardInteractorImpl(
         }
     }
 
-    private suspend fun handleKeyLongPress(key: Key) {
+    private fun handleKeyLongPress(key: Key) {
         logger.d { "handleKeyLongPress: $key" }
+
+        keyboardStateInteractor.addLongPressedKey(key.id)
     }
 
     private suspend fun handleKeyRepeat(key: Key) {

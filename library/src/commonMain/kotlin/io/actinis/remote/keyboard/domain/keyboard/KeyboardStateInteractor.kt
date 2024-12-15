@@ -21,15 +21,16 @@ internal interface KeyboardStateInteractor {
     suspend fun initialize(inputType: InputType, isPassword: Boolean)
     suspend fun switchLayout(layoutId: String)
 
-    fun addActiveKey(keyId: String)
+    fun addPressedKey(keyId: String)
+    fun addLongPressedKey(keyId: String)
 
-    fun removeActiveKey(keyId: String)
-    fun removeActiveKeys(keysIds: Collection<String>)
-    fun removeActiveKeys()
+    fun removePressedKey(keyId: String)
+    fun removePressedKeys(keysIds: Collection<String>)
+    fun removePressedKeys()
 
-    fun getActiveKeysIdsExcept(exceptKeyId: String): Sequence<String>
+    fun getPressedKeysIdsExcept(exceptKeyId: String): Sequence<String>
 
-    fun isKeyActive(keyId: String): Boolean
+    fun isKeyPressed(keyId: String): Boolean
 
     fun toggleModifier(keyboardModifier: KeyboardModifier)
     fun addModifier(keyboardModifier: KeyboardModifier)
@@ -81,43 +82,62 @@ internal class KeyboardStateInteractorImpl(
         val layout = configurationRepository.getLayout(layoutId = layoutId)
         currentLayout.value = layout
         keyboardState.update {
-            it.copy(
-                currentLayoutId = layoutId,
-            )
+            it.copy(currentLayoutId = layoutId)
         }
     }
 
-    override fun addActiveKey(keyId: String) {
+    override fun addPressedKey(keyId: String) {
         if (!keyboardState.value.pressedKeysIds.contains(keyId)) {
             keyboardState.update {
+                it.copy(pressedKeysIds = it.pressedKeysIds + keyId)
+            }
+        }
+    }
+
+    override fun addLongPressedKey(keyId: String) {
+        if (!keyboardState.value.longPressedKeysIds.contains(keyId)) {
+            keyboardState.update {
+                it.copy(longPressedKeysIds = it.longPressedKeysIds + keyId)
+            }
+        }
+    }
+
+    override fun removePressedKey(keyId: String) {
+        if (keyboardState.value.pressedKeysIds.contains(keyId)) {
+            keyboardState.update {
                 it.copy(
-                    pressedKeysIds = it.pressedKeysIds + keyId,
+                    pressedKeysIds = it.pressedKeysIds - keyId,
+                    longPressedKeysIds = it.longPressedKeysIds + keyId
                 )
             }
         }
     }
 
-    override fun removeActiveKey(keyId: String) {
-        if (keyboardState.value.pressedKeysIds.contains(keyId)) {
-            keyboardState.update {
-                it.copy(pressedKeysIds = it.pressedKeysIds - keyId)
+    override fun removePressedKeys(keysIds: Collection<String>) {
+        keyboardState.update {
+            val keyIdsSet = keysIds.toSet()
+
+            it.copy(
+                pressedKeysIds = it.pressedKeysIds - keyIdsSet,
+                longPressedKeysIds = it.longPressedKeysIds - keyIdsSet,
+            )
+        }
+    }
+
+    override fun removePressedKeys() {
+        keyboardState.value.apply {
+            if (pressedKeysIds.isNotEmpty() || longPressedKeysIds.isNotEmpty()) {
+                keyboardState.update {
+                    it.copy(
+                        pressedKeysIds = emptySet(),
+                        longPressedKeysIds = emptySet(),
+                    )
+                }
             }
         }
     }
 
-    override fun removeActiveKeys(keysIds: Collection<String>) {
-        keyboardState.update {
-            it.copy(pressedKeysIds = it.pressedKeysIds - keysIds.toSet())
-        }
-    }
-
-    override fun removeActiveKeys() {
-        keyboardState.value.pressedKeysIds.forEach { key ->
-            removeActiveKey(key)
-        }
-    }
-
-    override fun getActiveKeysIdsExcept(exceptKeyId: String): Sequence<String> {
+    override fun getPressedKeysIdsExcept(exceptKeyId: String): Sequence<String> {
         return keyboardState.value.pressedKeysIds
             .asSequence()
             .filter { keyId ->
@@ -125,7 +145,7 @@ internal class KeyboardStateInteractorImpl(
             }
     }
 
-    override fun isKeyActive(keyId: String): Boolean {
+    override fun isKeyPressed(keyId: String): Boolean {
         return keyboardState.value.pressedKeysIds.contains(keyId)
     }
 
@@ -184,10 +204,10 @@ internal class KeyboardStateInteractorImpl(
 
         if (keyboardState.value.isShiftActive) {
             logger.d { "Adding shift to active keys" }
-            addActiveKey(key.id)
+            addPressedKey(key.id)
         } else {
             logger.d { "Removing shift from active keys" }
-            removeActiveKey(key.id)
+            removePressedKey(key.id)
         }
     }
 

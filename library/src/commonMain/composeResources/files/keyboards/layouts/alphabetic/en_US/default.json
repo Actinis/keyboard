@@ -28,7 +28,7 @@
               "output": "q"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "1",
                 "q",
@@ -46,7 +46,7 @@
               "output": "w"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "2",
                 "w",
@@ -64,7 +64,7 @@
               "output": "e"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "3",
                 "e",
@@ -90,7 +90,7 @@
               "output": "r"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "4",
                 "r",
@@ -108,7 +108,7 @@
               "output": "t"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "5",
                 "t",
@@ -128,7 +128,7 @@
               "output": "y"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "6",
                 "y",
@@ -148,7 +148,7 @@
               "output": "u"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "7",
                 "u",
@@ -175,7 +175,7 @@
               "output": "i"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "8",
                 "i",
@@ -201,7 +201,7 @@
               "output": "o"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "9",
                 "o",
@@ -228,7 +228,7 @@
               "output": "p"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "0",
                 "p"
@@ -250,7 +250,7 @@
               "output": "a"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "a",
                 "à",
@@ -277,7 +277,7 @@
               "output": "s"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "s",
                 "ß",
@@ -298,7 +298,7 @@
               "output": "d"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "d",
                 "ď",
@@ -326,7 +326,7 @@
               "output": "g"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "g",
                 "ğ",
@@ -344,7 +344,7 @@
               "output": "h"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "h",
                 "ħ"
@@ -371,7 +371,7 @@
               "output": "k"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "k",
                 "ķ"
@@ -388,7 +388,7 @@
               "output": "l"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "l",
                 "ł",
@@ -439,7 +439,7 @@
               "output": "z"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "z",
                 "ž",
@@ -468,7 +468,7 @@
               "output": "c"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "c",
                 "ç",
@@ -508,7 +508,7 @@
               "output": "n"
             },
             "longPress": {
-              "popup": false,
+              "popup": true,
               "values": [
                 "n",
                 "ń",

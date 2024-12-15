@@ -2,7 +2,7 @@ package io.actinis.remote.keyboard.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -15,12 +15,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -129,63 +129,6 @@ fun KeyboardView(
 }
 
 @Composable
-private fun BoxScope.KeyboardOverlay(
-    viewState: KeyboardViewState,
-    keyboardState: KeyboardState,
-    keyboardLayout: KeyboardLayout,
-    modifier: Modifier = Modifier,
-) {
-    val showOverlay = keyboardState.pressedKeysIds.isNotEmpty()
-
-    logger.d { "Show overlay: $showOverlay" }
-
-    if (showOverlay) {
-        Box(
-            modifier = modifier
-                .matchParentSize()
-        ) {
-            keyboardState.pressedKeysIds.forEach { keyId ->
-                // TODO: Use Map instead of searching
-                val key = keyboardLayout.findKey { it.id == keyId }
-                if (key == null) {
-                    logger.e { "Can not find key with id $keyId in overlay" }
-                    return@forEach
-                }
-
-                // TODO: Use Map instead of searching
-                val keyBoundary = viewState.keyBoundaries.find { it.key.id == keyId }
-                if (keyBoundary == null) {
-                    logger.e { "Can not find boundary for key with id $keyId in overlay" }
-                    return@forEach
-                }
-
-                Box(
-                    modifier = Modifier
-                        .offset {
-                            IntOffset(
-                                x = keyBoundary.left.roundToInt(),
-                                y = keyBoundary.top.roundToInt() - 100, // FIXME: Calculate properly
-                            )
-                        }
-                        .size(40.dp)
-                        .background(
-                            color = Color.White,
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "A",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.Black
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
 private fun KeyboardLayout(
     layout: KeyboardLayout,
     keyboardState: KeyboardState,
@@ -280,7 +223,6 @@ private fun KeyboardRow(
             KeyboardKeyContainer(
                 key = key,
                 keyboardState = keyboardState,
-                baseKeyDimensions = baseKeyDimensions,
                 onKeyBoundaryUpdate = onKeyBoundaryUpdate,
                 modifier = Modifier
                     .size(
@@ -296,7 +238,6 @@ private fun KeyboardRow(
 private fun KeyboardKeyContainer(
     key: Key,
     keyboardState: KeyboardState,
-    baseKeyDimensions: BaseKeyDimensions,
     onKeyBoundaryUpdate: (KeyBoundary) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -358,9 +299,10 @@ private fun KeyboardKey(
             }
 
             key.visual?.label != null -> {
+                // TODO: Calculate text size for all chars basing on settings
                 Text(
                     text = key.visual.label,
-                    modifier = Modifier.padding(vertical = 12.dp)
+                    modifier = Modifier.align(Alignment.Center),
                 )
             }
 
@@ -371,13 +313,180 @@ private fun KeyboardKey(
                         else -> key.actions.press.output ?: ""
                     }
                 }
+                // TODO: Calculate text size for all chars basing on settings
                 Text(
                     text = text,
-                    modifier = Modifier.padding(vertical = 12.dp)
+                    modifier = Modifier.align(Alignment.Center),
                 )
             }
         }
     }
+}
+
+@Composable
+private fun BoxScope.KeyboardOverlay(
+    viewState: KeyboardViewState,
+    keyboardState: KeyboardState,
+    keyboardLayout: KeyboardLayout,
+    modifier: Modifier = Modifier,
+) {
+    val hasPressedKeys = keyboardState.pressedKeysIds.isNotEmpty()
+    val hasLongPressedKeys = keyboardState.longPressedKeysIds.isNotEmpty()
+
+    logger.d { "Show overlay: $hasPressedKeys" }
+
+    if (hasPressedKeys) {
+        Box(
+            modifier = modifier
+                .matchParentSize()
+        ) {
+            keyboardState.pressedKeysIds.forEach { keyId ->
+                // TODO: Use Map instead of searching
+                val key = keyboardLayout.findKey { it.id == keyId }
+                if (key == null) {
+                    logger.e { "Can not find key with id $keyId in overlay" }
+                    return@forEach
+                }
+
+                // TODO: Use Map instead of searching
+                val keyBoundary = viewState.keyBoundaries.find { it.key.id == keyId }
+                if (keyBoundary == null) {
+                    logger.e { "Can not find boundary for key with id $keyId in overlay" }
+                    return@forEach
+                }
+
+                val popupOnLongPress = key.actions.longPress?.popup == true
+                val isLongPressed = keyboardState.longPressedKeysIds.contains(key.id)
+
+                when {
+                    isLongPressed && popupOnLongPress -> {
+                        key.actions.longPress?.let { longPressAction ->
+                            if (longPressAction.values.isNotEmpty()) {
+                                LongPressedKeyBubble(
+                                    keyboardState = keyboardState,
+                                    key = key,
+                                    values = longPressAction.values,
+                                    keyBoundary = keyBoundary,
+                                )
+                            } else {
+                                logger.w { "Empty values for long press for key $key" }
+                            }
+                        }
+                    }
+
+                    key.type == Key.Type.CHARACTER -> {
+                        PressedKeyBubble(
+                            keyboardState = keyboardState,
+                            key = key,
+                            keyBoundary = keyBoundary,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PressedKeyBubble(
+    keyboardState: KeyboardState,
+    key: Key,
+    keyBoundary: KeyBoundary,
+) {
+    KeyBubble(
+        keyboardState = keyboardState,
+        key = key,
+        keyBoundary = keyBoundary,
+    ) {
+        KeyBubbleText(
+            keyboardState = keyboardState,
+            keyText = key.actions.press.output.orEmpty()
+        )
+    }
+}
+
+@Composable
+private fun LongPressedKeyBubble(
+    keyboardState: KeyboardState,
+    key: Key,
+    values: Collection<String>,
+    keyBoundary: KeyBoundary,
+) {
+    KeyBubble(
+        keyboardState = keyboardState,
+        key = key,
+        keyBoundary = keyBoundary,
+    ) {
+        Column {
+            values.chunked(4).forEach { rowValues -> // TODO: Get number from settings
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    rowValues.forEach { value ->
+                        KeyBubbleText(
+                            keyboardState = keyboardState,
+                            keyText = value,
+                            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun KeyBubble(
+    keyboardState: KeyboardState,
+    key: Key,
+    keyBoundary: KeyBoundary,
+    modifier: Modifier = Modifier,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints)
+                layout(placeable.width, placeable.height) {
+                    placeable.place(
+                        x = keyBoundary.left.roundToInt(),
+                        y = keyBoundary.top.roundToInt() - placeable.height - 16.dp.roundToPx()
+                    )
+                }
+            }
+            .defaultMinSize(40.dp, 40.dp)
+            .wrapContentSize()
+            .background(
+                color = Color.LightGray,
+                shape = MaterialTheme.shapes.medium.copy(
+                    all = CornerSize(8.dp)
+                )
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        content()
+    }
+}
+
+@Composable
+private fun KeyBubbleText(
+    keyboardState: KeyboardState,
+    keyText: String,
+    modifier: Modifier = Modifier,
+) {
+    val text = remember(keyboardState.areLettersUppercase) {
+        when {
+            keyboardState.areLettersUppercase -> keyText.uppercase()
+            else -> keyText
+        }
+    }
+    Text(
+        text = text,
+        style = MaterialTheme.typography.titleLarge, // TODO: Calculate text size for all chars basing on settings
+        color = Color.Black,
+        modifier = modifier,
+    )
 }
 
 private fun KeyboardState.isKeyActive(key: Key): Boolean {
