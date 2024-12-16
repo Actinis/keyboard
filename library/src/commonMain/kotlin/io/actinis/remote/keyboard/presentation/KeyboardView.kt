@@ -449,9 +449,22 @@ private fun KeyBubble(
             .layout { measurable, constraints ->
                 val placeable = measurable.measure(constraints)
                 layout(placeable.width, placeable.height) {
+                    var left = (keyBoundary.centerX - placeable.width / 2).roundToInt()
+                    val right = left + placeable.width
+
+                    if (left < 0) {
+                        left = 16.dp.roundToPx()
+                    } else if (right > constraints.maxWidth) {
+                        left = constraints.maxWidth - placeable.width
+                    }
+
+                    val top = keyBoundary.top.roundToInt() - placeable.height - 16.dp.roundToPx()
+
+                    // TODO: Check if out of screen
+
                     placeable.place(
-                        x = keyBoundary.left.roundToInt(),
-                        y = keyBoundary.top.roundToInt() - placeable.height - 16.dp.roundToPx()
+                        x = left,
+                        y = top,
                     )
                 }
             }

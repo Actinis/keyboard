@@ -16,6 +16,8 @@ internal data class KeyBoundary(
     val right: Float,
     val bottom: Float,
 ) {
+    val centerX: Float
+        get() = right - (right - left) / 2f
 
     fun distanceTo(position: Offset): Float {
         val dx = when {
