@@ -130,7 +130,7 @@ fun MainApp() {
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
                         // Optional: Add background and elevation
-                        .background(Color.Red)
+//                        .background(Color.Red)
 //                        .shadow(elevation = 8.dp),
                 ) { keyboardEvent ->
                     logger.d { "keyboardEvent: $keyboardEvent" }

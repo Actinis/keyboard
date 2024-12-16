@@ -158,6 +158,7 @@ private fun KeyboardLayout(
     Column(
         modifier = modifier
             .padding(bottom = 16.dp)
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.9f))
             .onSizeChanged {
                 size = it
             }
@@ -272,7 +273,10 @@ private fun KeyboardKey(
 ) {
     val isKeyPressed = keyboardState.pressedKeyId == key.id
     val activeModifierForKey = keyboardState.getActiveModifierForKey(key)
-    val colors = rememberKeyboardColors()
+    val colors = rememberKeyboardColors(
+        background = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f),
+        activeBackground = MaterialTheme.colorScheme.primaryContainer
+    )
 
     val backgroundColor = remember(isKeyPressed, activeModifierForKey) {
         if (isKeyPressed || activeModifierForKey != null) colors.activeBackground else colors.background
@@ -292,7 +296,8 @@ private fun KeyboardKey(
             icon != null -> {
                 Icon(
                     imageVector = getKeyIcon(icon),
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
@@ -300,6 +305,8 @@ private fun KeyboardKey(
                 // TODO: Calculate text size for all chars basing on settings
                 Text(
                     text = key.visual.label,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.Center),
                 )
             }
@@ -314,6 +321,8 @@ private fun KeyboardKey(
                 // TODO: Calculate text size for all chars basing on settings
                 Text(
                     text = text,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.Center),
                 )
             }
@@ -452,9 +461,9 @@ private fun KeyBubble(
             }
             .defaultMinSize(48.dp, 48.dp)
             .background(
-                color = MaterialTheme.colorScheme.background,
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
                 shape = MaterialTheme.shapes.medium.copy(
-                    all = CornerSize(8.dp)
+                    all = CornerSize(8.dp),
                 )
             ),
         contentAlignment = Alignment.Center
@@ -478,8 +487,8 @@ private fun KeyBubbleText(
 
     Text(
         text = text,
-        style = MaterialTheme.typography.titleLarge, // TODO: Calculate text size for all chars basing on settings
-        color = Color.Black,
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onSurface,
         modifier = modifier,
     )
 }
