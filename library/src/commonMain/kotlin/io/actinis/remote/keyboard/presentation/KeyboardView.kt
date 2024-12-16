@@ -2,6 +2,7 @@ package io.actinis.remote.keyboard.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -38,6 +39,8 @@ import io.actinis.remote.keyboard.data.state.model.KeyboardState
 import io.actinis.remote.keyboard.di.name.DispatchersNames
 import io.actinis.remote.keyboard.presentation.dimension.BaseKeyDimensions
 import io.actinis.remote.keyboard.presentation.dimension.calculateBaseKeyDimensions
+import io.actinis.remote.keyboard.presentation.model.KeyboardOverlayBubble
+import io.actinis.remote.keyboard.presentation.model.KeyboardOverlayState
 import io.actinis.remote.keyboard.presentation.touch.KeyBoundary
 import io.actinis.remote.keyboard.presentation.touch.detectTouchGestures
 import io.actinis.remote.library.generated.resources.*
@@ -53,48 +56,6 @@ import kotlin.math.roundToInt
 private const val LOG_TAG = "KeyboardView"
 private val logger = Logger.withTag(LOG_TAG)
 
-internal data class KeyboardViewState(
-    val baseKeyDimensions: BaseKeyDimensions = BaseKeyDimensions(),
-    val keyboardOffset: Offset = Offset.Zero,
-    val keyBoundaries: Set<KeyBoundary> = emptySet(),
-)
-
-internal sealed interface KeyboardOverlayBubble {
-
-    data class PressedKey(
-        val text: String,
-    ) : KeyboardOverlayBubble
-
-    data class LongPressedKey(
-        val items: List<List<Item>>,
-        val selectedItemRow: Int = 0,
-        val selectedItemColumn: Int = 0,
-    ) : KeyboardOverlayBubble {
-
-        data class Item(
-            val id: String,
-            val text: String,
-        )
-    }
-}
-
-internal data class KeyboardOverlayState(
-    val isActive: Boolean = false,
-    val showBackground: Boolean = false,
-    val activeBubble: KeyboardOverlayBubble? = null,
-)
-
-data class KeyboardColors(
-    val background: Color,
-    val activeBackground: Color,
-)
-
-@Composable
-fun rememberKeyboardColors(
-    background: Color = Color.LightGray,
-    activeBackground: Color = Color.DarkGray,
-) = KeyboardColors(background, activeBackground)
-
 @Composable
 fun KeyboardView(
     viewModel: KeyboardViewModel = koinViewModel(),
@@ -109,6 +70,7 @@ fun KeyboardView(
 
     val currentLayout by viewModel.currentLayout.collectAsState()
     val keyboardState by viewModel.keyboardState.collectAsState()
+    val overlayState by viewModel.overlayState.collectAsState()
     var viewState by remember { mutableStateOf(KeyboardViewState()) }
 
     LaunchedEffect(inputType, isPassword) {
@@ -135,20 +97,24 @@ fun KeyboardView(
                 layout = layout,
                 keyboardState = keyboardState,
                 viewState = viewState,
+                overlayState = overlayState,
                 onViewStateChange = { viewState = it },
                 onHandleActiveKey = viewModel::handleActiveKey,
                 onHandleKeysReleased = viewModel::handleKeysReleased,
+                onLongPressMove = viewModel::handleMovementInLongPressMode,
                 density = density,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
             )
 
-            KeyboardOverlay(
-                viewState = viewState,
-                keyboardState = keyboardState,
-                keyboardLayout = layout,
-            )
+            if (overlayState.isActive) {
+                KeyboardOverlay(
+                    overlayState = overlayState,
+                    viewState = viewState,
+                    keyboardState = keyboardState,
+                )
+            }
         }
     }
 }
@@ -158,9 +124,11 @@ private fun KeyboardLayout(
     layout: KeyboardLayout,
     keyboardState: KeyboardState,
     viewState: KeyboardViewState,
+    overlayState: KeyboardOverlayState,
     onViewStateChange: (KeyboardViewState) -> Unit,
     onHandleActiveKey: (Key) -> Unit,
     onHandleKeysReleased: () -> Unit,
+    onLongPressMove: (deltaX: Float, deltaY: Float) -> Unit,
     density: Density,
     modifier: Modifier = Modifier,
 ) {
@@ -196,11 +164,16 @@ private fun KeyboardLayout(
             .onGloballyPositioned { coordinates ->
                 position = coordinates.positionInRoot()
             }
-            .pointerInput(Unit) {
+            .pointerInput(
+                viewState.keyBoundaries,
+                overlayState.activeBubble is KeyboardOverlayBubble.LongPressedKey
+            ) {
                 detectTouchGestures(
                     keyBoundaries = viewState.keyBoundaries,
                     onPress = onHandleActiveKey,
                     onRelease = onHandleKeysReleased,
+                    isLongPressOverlayActive = overlayState.activeBubble is KeyboardOverlayBubble.LongPressedKey,
+                    onLongPressMove = onLongPressMove,
                 )
             }
     ) {
@@ -350,123 +323,40 @@ private fun KeyboardKey(
 
 @Composable
 private fun BoxScope.KeyboardOverlay(
+    overlayState: KeyboardOverlayState,
     viewState: KeyboardViewState,
     keyboardState: KeyboardState,
-    keyboardLayout: KeyboardLayout,
     modifier: Modifier = Modifier,
 ) {
-    var overlayState by remember { mutableStateOf(KeyboardOverlayState()) }
-
-    // TODO: Move calculations to ViewModel
-    var isActive = keyboardState.pressedKeyId != null
-
-    if (!isActive) {
-        if (overlayState.isActive) {
-            overlayState = overlayState.copy(
-                isActive = false,
-                showBackground = false,
-                activeBubble = null,
-            )
-        }
-
-        return
-    }
-
-    val showBackground = keyboardState.longPressedKeyId != null
-
-    // We only show one bubble in time, so take first one
-    val pressedKeyId = keyboardState.pressedKeyId
-    val key = keyboardLayout.findKey { it.id == pressedKeyId }
-    if (key == null) {
-        logger.e { "Can not find key with id $pressedKeyId in overlay" }
-        return
-    }
-
-    val keyBoundary = viewState.keyBoundaries.find { it.key.id == pressedKeyId }
-    if (keyBoundary == null) {
-        logger.e { "Can not find boundary for key with id $pressedKeyId in overlay" }
-        return
-    }
-
-    val popupOnLongPress = key.actions.longPress?.popup == true
-    val isLongPressed = keyboardState.longPressedKeyId == pressedKeyId
-
-    val bubble = when {
-        isLongPressed && popupOnLongPress -> {
-            key.actions.longPress?.let { longPressAction ->
-                if (longPressAction.values.isNotEmpty()) {
-                    KeyboardOverlayBubble.LongPressedKey(
-                        items = longPressAction.values
-                            .chunked(4)
-                            .map { chunk ->
-                                chunk.map { value ->
-                                    KeyboardOverlayBubble.LongPressedKey.Item(
-                                        id = value, // FIXME: id = value only for character
-                                        text = value,
-                                    )
-                                }
-                            }
-                    )
-                } else {
-                    logger.w { "Empty values for long press for key $key" }
-                    null
-                }
-            }
-        }
-
-        key.type == Key.Type.CHARACTER -> {
-            KeyboardOverlayBubble.PressedKey(
-                text = key.actions.press.output.orEmpty(),
-            )
-        }
-
-        else -> {
-            logger.w {
-                "Unknown key state: key=$key, isLongPressed=$isLongPressed, popupOnLongPress=$popupOnLongPress"
-            }
-            null
-        }
-    }
-
-    if (bubble == null) {
-        isActive = false
-    }
-
-    if (!overlayState.isActive || overlayState.showBackground != showBackground || overlayState.activeBubble != bubble) {
-        overlayState = overlayState.copy(
-            isActive = isActive,
-            showBackground = showBackground,
-            activeBubble = bubble,
-        )
-    }
-
-    logger.d { "Overlay state: $overlayState" }
-
-    if (overlayState.isActive) {
-        Box(
-            modifier = modifier
-                .matchParentSize()
-        ) {
-
-            when (bubble) {
-                is KeyboardOverlayBubble.PressedKey -> {
+    Box(
+        modifier = modifier.matchParentSize()
+    ) {
+        when (val bubble = overlayState.activeBubble) {
+            is KeyboardOverlayBubble.PressedKey -> {
+                val pressedKeyId = keyboardState.pressedKeyId
+                val keyBoundary = viewState.keyBoundaries.find { it.key.id == pressedKeyId }
+                if (keyBoundary != null) {
                     PressedKeyBubble(
                         keyboardState = keyboardState,
                         keyBoundary = keyBoundary,
                         bubble = bubble,
                     )
                 }
+            }
 
-                is KeyboardOverlayBubble.LongPressedKey -> {
+            is KeyboardOverlayBubble.LongPressedKey -> {
+                val longPressedKeyId = keyboardState.longPressedKeyId
+                val keyBoundary = viewState.keyBoundaries.find { it.key.id == longPressedKeyId }
+                if (keyBoundary != null) {
                     LongPressedKeyBubble(
                         keyboardState = keyboardState,
                         keyBoundary = keyBoundary,
                         bubble = bubble,
                     )
                 }
-
-                null -> {}
             }
+
+            null -> {}
         }
     }
 }
@@ -497,18 +387,34 @@ private fun LongPressedKeyBubble(
         keyBoundary = keyBoundary,
     ) {
         Column {
-            bubble.items.forEach { row ->
+            bubble.items.forEachIndexed { rowIndex, row ->
                 Row(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
-                    row.forEach { value ->
-                        // TODO: Highlight selected
-                        KeyBubbleText(
-                            keyboardState = keyboardState,
-                            keyText = value.text,
+                    row.forEachIndexed { columnIndex, item ->
+                        val isSelected = rowIndex == bubble.selectedItemRow &&
+                                columnIndex == bubble.selectedItemColumn
+
+                        Box(
                             modifier = Modifier
-                                .padding(start = 16.dp, end = 16.dp)
-                        )
+                                .size(48.dp, 48.dp)
+                                .padding(2.dp)
+                                .background(
+                                    color = if (isSelected) {
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    } else {
+                                        Color.Transparent
+                                    },
+                                    shape = CircleShape,
+                                )
+                        ) {
+                            KeyBubbleText(
+                                keyboardState = keyboardState,
+                                keyText = item.text,
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                            )
+                        }
                     }
                 }
             }
@@ -569,6 +475,7 @@ private fun KeyBubbleText(
             else -> keyText
         }
     }
+
     Text(
         text = text,
         style = MaterialTheme.typography.titleLarge, // TODO: Calculate text size for all chars basing on settings
@@ -628,3 +535,20 @@ private fun getKeyIcon(keyIcon: KeyVisual.Icon): ImageVector {
         KeyVisual.Icon.LAYOUT_SWITCH_ACTIVE -> vectorResource(Res.drawable.ic_layout_switch_pressed)
     }
 }
+
+internal data class KeyboardViewState(
+    val baseKeyDimensions: BaseKeyDimensions = BaseKeyDimensions(),
+    val keyboardOffset: Offset = Offset.Zero,
+    val keyBoundaries: Set<KeyBoundary> = emptySet(),
+)
+
+data class KeyboardColors(
+    val background: Color,
+    val activeBackground: Color,
+)
+
+@Composable
+fun rememberKeyboardColors(
+    background: Color = Color.LightGray,
+    activeBackground: Color = Color.DarkGray,
+) = KeyboardColors(background, activeBackground)

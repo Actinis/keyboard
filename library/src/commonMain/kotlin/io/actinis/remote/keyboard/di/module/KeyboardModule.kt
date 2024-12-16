@@ -1,10 +1,7 @@
 package io.actinis.remote.keyboard.di.module
 
 import io.actinis.remote.keyboard.di.name.DispatchersNames
-import io.actinis.remote.keyboard.domain.keyboard.KeyboardInteractor
-import io.actinis.remote.keyboard.domain.keyboard.KeyboardInteractorImpl
-import io.actinis.remote.keyboard.domain.keyboard.KeyboardStateInteractor
-import io.actinis.remote.keyboard.domain.keyboard.KeyboardStateInteractorImpl
+import io.actinis.remote.keyboard.domain.keyboard.*
 import io.actinis.remote.keyboard.presentation.KeyboardViewModel
 import io.actinis.remote.keyboard.presentation.KeyboardViewModelImpl
 import org.koin.core.module.dsl.viewModel
@@ -26,9 +23,12 @@ internal val keyboardModule = module {
         )
     } bind KeyboardStateInteractor::class
 
+    single { KeyboardOverlayInteractorImpl() } bind KeyboardOverlayInteractor::class
+
     single {
         KeyboardInteractorImpl(
             keyboardStateInteractor = get(),
+            keyboardOverlayInteractor = get(),
             defaultDispatcher = get(named(DispatchersNames.DEFAULT)),
             ioDispatcher = get(named(DispatchersNames.IO)),
         )

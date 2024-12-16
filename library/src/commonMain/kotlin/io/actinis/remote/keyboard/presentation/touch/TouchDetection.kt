@@ -3,8 +3,12 @@ package io.actinis.remote.keyboard.presentation.touch
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerInputScope
+import co.touchlab.kermit.Logger
 import io.actinis.remote.keyboard.data.config.model.key.Key
 import kotlin.math.sqrt
+
+private const val LOG_TAG = "TouchDetection"
+private val logger = Logger.withTag(LOG_TAG)
 
 // TODO: Respect density
 private const val MAX_NEAREST_KEY_DISTANCE = 70f
@@ -54,28 +58,55 @@ internal suspend fun PointerInputScope.detectTouchGestures(
     keyBoundaries: Set<KeyBoundary>,
     onPress: (key: Key) -> Unit,
     onRelease: () -> Unit,
+    isLongPressOverlayActive: Boolean = false,
+    onLongPressMove: ((deltaX: Float, deltaY: Float) -> Unit),
 ) {
+    var initialPosition: Offset? = null
+
     awaitPointerEventScope {
         while (true) {
             val event = awaitPointerEvent()
+            val position = event.changes.first().position
 
             when (event.type) {
-                PointerEventType.Press, PointerEventType.Move -> {
-                    keyBoundaries
-                        .findKeyAtPosition(position = event.changes.first().position)
-                        ?.let(onPress)
+                PointerEventType.Press -> {
+                    initialPosition = position
+                    if (!isLongPressOverlayActive) {
+                        keyBoundaries
+                            .findKeyAtPosition(position)
+                            ?.let(onPress)
+                    }
+                }
+
+                PointerEventType.Move -> {
+                    if (initialPosition == null) {
+                        initialPosition = position
+                    }
+
+                    val localInitialPosition = initialPosition
+                    if (isLongPressOverlayActive && localInitialPosition != null) {
+                        val deltaX = position.x - localInitialPosition.x
+                        val deltaY = position.y - localInitialPosition.y
+                        onLongPressMove.invoke(deltaX, deltaY)
+                    } else {
+                        logger.d { "Proceeding with normal detection: isLongPressOverlayActive=$isLongPressOverlayActive, localInitialPosition=$localInitialPosition" }
+                        keyBoundaries
+                            .findKeyAtPosition(position)
+                            ?.let(onPress)
+                    }
                 }
 
                 PointerEventType.Release, PointerEventType.Exit, PointerEventType.Unknown -> {
+                    initialPosition = null
                     onRelease()
                 }
 
-                else -> { /* Handle other events if needed */
-                }
+                else -> {}
             }
         }
     }
 }
+
 
 private fun Set<KeyBoundary>.findKeyAtPosition(position: Offset): Key? {
     val exactMatch = firstOrNull { boundary ->

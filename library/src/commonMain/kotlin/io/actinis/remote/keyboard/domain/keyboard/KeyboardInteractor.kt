@@ -7,36 +7,41 @@ import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
 import io.actinis.remote.keyboard.data.event.model.KeyboardEvent
 import io.actinis.remote.keyboard.data.state.model.InputType
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
+import io.actinis.remote.keyboard.presentation.model.KeyboardOverlayBubble
+import io.actinis.remote.keyboard.presentation.model.KeyboardOverlayState
 import io.actinis.remote.keyboard.presentation.touch.KeyInteractionEvent
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 
 
 internal interface KeyboardInteractor {
     val keyboardState: StateFlow<KeyboardState>
     val currentLayout: StateFlow<KeyboardLayout?>
     val keyboardEvents: Flow<KeyboardEvent>
+    val overlayState: StateFlow<KeyboardOverlayState>
 
     fun initialize(inputType: InputType, isPassword: Boolean)
     fun handlePressedKey(key: Key)
     fun handleKeysReleased()
+
+    fun handleMovementInLongPressMode(deltaX: Float, deltaY: Float)
 }
 
 internal class KeyboardInteractorImpl(
     private val keyboardStateInteractor: KeyboardStateInteractor,
+    private val keyboardOverlayInteractor: KeyboardOverlayInteractor,
     private val defaultDispatcher: CoroutineDispatcher,
     private val ioDispatcher: CoroutineDispatcher,
 ) : KeyboardInteractor {
 
     private val logger = Logger.withTag(LOG_TAG)
 
-    override val keyboardState: StateFlow<KeyboardState>
-        get() = keyboardStateInteractor.keyboardState
-
-    override val currentLayout: StateFlow<KeyboardLayout?>
-        get() = keyboardStateInteractor.currentLayout
+    override val keyboardState: StateFlow<KeyboardState> = keyboardStateInteractor.keyboardState
+    override val currentLayout: StateFlow<KeyboardLayout?> = keyboardStateInteractor.currentLayout
+    override val overlayState: StateFlow<KeyboardOverlayState> = keyboardOverlayInteractor.overlayState
 
     override val keyboardEvents: MutableSharedFlow<KeyboardEvent> = MutableSharedFlow()
 
@@ -51,6 +56,15 @@ internal class KeyboardInteractorImpl(
     init {
         coroutineScope.launch(defaultDispatcher) {
             keyInteractionEvents.collect(::handleKeyInteractionEvent)
+        }
+
+        coroutineScope.launch(defaultDispatcher) {
+            combine(
+                keyboardState,
+                currentLayout,
+            ) { state, layout ->
+                keyboardOverlayInteractor.updateOverlayState(state, layout)
+            }.collect {}
         }
     }
 
@@ -107,13 +121,25 @@ internal class KeyboardInteractorImpl(
     override fun handleKeysReleased() {
         logger.d { "handleKeysReleased" }
 
+        val longPressedSelectedActionId = getLongPressedSelectedActionId()
+
         coroutineScope.launch {
-            handleTrackedKeysReleased()
+            handleTrackedKeysReleased(keyActionId = longPressedSelectedActionId)
             keyboardStateInteractor.removePressedKey()
         }
+
+        keyboardOverlayInteractor.reset()
     }
 
-    private suspend fun handleTrackedKeysReleased() {
+    // FIXME: It should return something like an universal Action instead
+    private fun getLongPressedSelectedActionId(): String? {
+        val overlayActiveBubble = overlayState.value.activeBubble as? KeyboardOverlayBubble.LongPressedKey
+            ?: return null
+
+        return overlayActiveBubble.items[overlayActiveBubble.selectedItemRow][overlayActiveBubble.selectedItemColumn].id
+    }
+
+    private suspend fun handleTrackedKeysReleased(keyActionId: String?) {
         touchTrackedKeys.toList().forEach { keyId ->
             keyId
                 .takeIf {
@@ -123,12 +149,15 @@ internal class KeyboardInteractorImpl(
                     currentLayout.value?.findKey { it.id == keyId }
                 }
                 ?.let { key ->
-                    handleKeyReleased(key)
+                    handleKeyReleased(
+                        key = key,
+                        actionId = keyActionId,
+                    )
                 }
         }
     }
 
-    private suspend fun handleKeyReleased(key: Key) {
+    private suspend fun handleKeyReleased(key: Key, actionId: String? = null) {
         if (touchTrackedKeys.remove(key.id)) {
             cancelKeyTimingJobs(key.id)
 
@@ -139,17 +168,27 @@ internal class KeyboardInteractorImpl(
             }
 
             if (!isDoubleTap) {
-                emitKeyInteractionEvent(KeyInteractionEvent.Up(key))
+                emitKeyInteractionEvent(
+                    KeyInteractionEvent.Up(
+                        key = key,
+                        actionId = actionId,
+                    )
+                )
             }
         }
     }
 
-    private suspend fun handleKeyPressAction(key: Key) {
-        logger.d { "handleKeyPressAction: key=${key.id}" }
+    private suspend fun handleKeyUpAction(key: Key, actionId: String? = null) {
+        logger.d { "handleKeyPressAction: key=${key.id}, actionId=$actionId" }
 
+        // FIXME: Instead of actionId, use some Action class
         when {
             key.actions.press.output != null -> {
-                handleKeyPressOutputAction(key = key, output = key.actions.press.output)
+                if (actionId != null) {
+                    handleKeyPressOutputAction(key = key, output = actionId) // FIXME: text instead of actionId
+                } else {
+                    handleKeyPressOutputAction(key = key, output = key.actions.press.output)
+                }
             }
 
             key.actions.press.command != null -> {
@@ -273,7 +312,7 @@ internal class KeyboardInteractorImpl(
 
         when (event) {
             is KeyInteractionEvent.Down -> handleKeyDown(key = key)
-            is KeyInteractionEvent.Up -> handleKeyUp(key = key)
+            is KeyInteractionEvent.Up -> handleKeyUp(key = key, actionId = event.actionId)
             is KeyInteractionEvent.DoubleTap -> handleKeyDoubleTap(key = key)
             is KeyInteractionEvent.LongPress -> handleKeyLongPress(key = key)
             is KeyInteractionEvent.Repeat -> handleKeyRepeat(key = key)
@@ -284,10 +323,13 @@ internal class KeyboardInteractorImpl(
         logger.d { "handleKeyDown: $key" }
     }
 
-    private suspend fun handleKeyUp(key: Key) {
+    private suspend fun handleKeyUp(key: Key, actionId: String?) {
         logger.d { "handleKeyUp: $key" }
 
-        handleKeyPressAction(key = key)
+        handleKeyUpAction(
+            key = key,
+            actionId = actionId,
+        )
     }
 
     private suspend fun handleKeyDoubleTap(key: Key) {
@@ -295,7 +337,7 @@ internal class KeyboardInteractorImpl(
 
         val doubleTapCommand = key.actions.doubleTap?.command
         if (doubleTapCommand == null) {
-            handleKeyPressAction(key = key)
+            handleKeyUpAction(key = key)
         } else {
             handleKeyCommandAction(key = key, command = doubleTapCommand)
         }
@@ -310,7 +352,11 @@ internal class KeyboardInteractorImpl(
     private suspend fun handleKeyRepeat(key: Key) {
         logger.d { "handleKeyRepeat: $key" }
 
-        handleKeyPressAction(key = key)
+        handleKeyUpAction(key = key)
+    }
+
+    override fun handleMovementInLongPressMode(deltaX: Float, deltaY: Float) {
+        keyboardOverlayInteractor.updateSelection(deltaX = deltaX, deltaY = deltaY)
     }
 
     private companion object {

@@ -6,9 +6,24 @@ sealed interface KeyInteractionEvent {
 
     val key: Key
 
-    data class Down(override val key: Key) : KeyInteractionEvent
-    data class Up(override val key: Key) : KeyInteractionEvent
-    data class DoubleTap(override val key: Key) : KeyInteractionEvent
-    data class LongPress(override val key: Key) : KeyInteractionEvent
-    data class Repeat(override val key: Key) : KeyInteractionEvent
+    data class Down(
+        override val key: Key,
+    ) : KeyInteractionEvent
+
+    data class Up(
+        override val key: Key,
+        val actionId: String? = null,
+    ) : KeyInteractionEvent
+
+    data class DoubleTap(
+        override val key: Key,
+    ) : KeyInteractionEvent
+
+    data class LongPress(
+        override val key: Key,
+    ) : KeyInteractionEvent
+
+    data class Repeat(
+        override val key: Key,
+    ) : KeyInteractionEvent
 }
