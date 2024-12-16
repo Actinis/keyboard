@@ -41,7 +41,7 @@ internal class KeyboardViewModelImpl(
     }
 
     override fun handleActiveKey(key: Key) {
-        keyboardInteractor.handleActiveKey(key)
+        keyboardInteractor.handlePressedKey(key)
     }
 
     override fun handleKeysReleased() {

@@ -59,6 +59,31 @@ internal data class KeyboardViewState(
     val keyBoundaries: Set<KeyBoundary> = emptySet(),
 )
 
+internal sealed interface KeyboardOverlayBubble {
+
+    data class PressedKey(
+        val text: String,
+    ) : KeyboardOverlayBubble
+
+    data class LongPressedKey(
+        val items: List<List<Item>>,
+        val selectedItemRow: Int = 0,
+        val selectedItemColumn: Int = 0,
+    ) : KeyboardOverlayBubble {
+
+        data class Item(
+            val id: String,
+            val text: String,
+        )
+    }
+}
+
+internal data class KeyboardOverlayState(
+    val isActive: Boolean = false,
+    val showBackground: Boolean = false,
+    val activeBubble: KeyboardOverlayBubble? = null,
+)
+
 data class KeyboardColors(
     val background: Color,
     val activeBackground: Color,
@@ -272,16 +297,16 @@ private fun KeyboardKey(
     keyboardState: KeyboardState,
     modifier: Modifier = Modifier,
 ) {
-    val isKeyActive = keyboardState.isKeyActive(key)
+    val isKeyPressed = keyboardState.pressedKeyId == key.id
     val activeModifierForKey = keyboardState.getActiveModifierForKey(key)
     val colors = rememberKeyboardColors()
 
-    val backgroundColor = remember(isKeyActive, activeModifierForKey) {
-        if (isKeyActive || activeModifierForKey != null) colors.activeBackground else colors.background
+    val backgroundColor = remember(isKeyPressed, activeModifierForKey) {
+        if (isKeyPressed || activeModifierForKey != null) colors.activeBackground else colors.background
     }
 
-    val icon = remember(isKeyActive, activeModifierForKey) {
-        key.getIcon(isActive = isKeyActive, activeModifierForKey = activeModifierForKey)
+    val icon = remember(isKeyPressed, activeModifierForKey) {
+        key.getIcon(isActive = isKeyPressed, activeModifierForKey = activeModifierForKey)
     }
 
     Box(
@@ -330,58 +355,116 @@ private fun BoxScope.KeyboardOverlay(
     keyboardLayout: KeyboardLayout,
     modifier: Modifier = Modifier,
 ) {
-    val hasPressedKeys = keyboardState.pressedKeysIds.isNotEmpty()
-    val hasLongPressedKeys = keyboardState.longPressedKeysIds.isNotEmpty()
+    var overlayState by remember { mutableStateOf(KeyboardOverlayState()) }
 
-    logger.d { "Show overlay: $hasPressedKeys" }
+    var isActive = keyboardState.pressedKeyId != null
 
-    if (hasPressedKeys) {
+    if (!isActive) {
+        if (overlayState.isActive) {
+            overlayState = overlayState.copy(
+                isActive = false,
+                showBackground = false,
+                activeBubble = null,
+            )
+        }
+
+        return
+    }
+
+    val showBackground = keyboardState.longPressedKeyId != null
+
+    // We only show one bubble in time, so take first one
+    val pressedKeyId = keyboardState.pressedKeyId
+    val key = keyboardLayout.findKey { it.id == pressedKeyId }
+    if (key == null) {
+        logger.e { "Can not find key with id $pressedKeyId in overlay" }
+        return
+    }
+
+    val keyBoundary = viewState.keyBoundaries.find { it.key.id == pressedKeyId }
+    if (keyBoundary == null) {
+        logger.e { "Can not find boundary for key with id $pressedKeyId in overlay" }
+        return
+    }
+
+    val popupOnLongPress = key.actions.longPress?.popup == true
+    val isLongPressed = keyboardState.longPressedKeyId == pressedKeyId
+
+    val bubble = when {
+        isLongPressed && popupOnLongPress -> {
+            key.actions.longPress?.let { longPressAction ->
+                if (longPressAction.values.isNotEmpty()) {
+                    KeyboardOverlayBubble.LongPressedKey(
+                        items = longPressAction.values
+                            .chunked(4)
+                            .map { chunk ->
+                                chunk.map { value ->
+                                    KeyboardOverlayBubble.LongPressedKey.Item(
+                                        id = value, // FIXME: id = value only for character
+                                        text = value,
+                                    )
+                                }
+                            }
+                    )
+                } else {
+                    logger.w { "Empty values for long press for key $key" }
+                    null
+                }
+            }
+        }
+
+        key.type == Key.Type.CHARACTER -> {
+            KeyboardOverlayBubble.PressedKey(
+                text = key.actions.press.output.orEmpty(),
+            )
+        }
+
+        else -> {
+            logger.w {
+                "Unknown key state: key=$key, isLongPressed=$isLongPressed, popupOnLongPress=$popupOnLongPress"
+            }
+            null
+        }
+    }
+
+    if (bubble == null) {
+        isActive = false
+    }
+
+    if (!overlayState.isActive || overlayState.showBackground != showBackground || overlayState.activeBubble != bubble) {
+        overlayState = overlayState.copy(
+            isActive = isActive,
+            showBackground = showBackground,
+            activeBubble = bubble,
+        )
+    }
+
+    logger.d { "Overlay state: $overlayState" }
+
+    if (overlayState.isActive) {
         Box(
             modifier = modifier
                 .matchParentSize()
         ) {
-            keyboardState.pressedKeysIds.forEach { keyId ->
-                // TODO: Use Map instead of searching
-                val key = keyboardLayout.findKey { it.id == keyId }
-                if (key == null) {
-                    logger.e { "Can not find key with id $keyId in overlay" }
-                    return@forEach
+
+            when (bubble) {
+                is KeyboardOverlayBubble.PressedKey -> {
+                    PressedKeyBubble(
+                        keyboardState = keyboardState,
+                        keyBoundary = keyBoundary,
+                        bubble = bubble,
+                    )
                 }
 
-                // TODO: Use Map instead of searching
-                val keyBoundary = viewState.keyBoundaries.find { it.key.id == keyId }
-                if (keyBoundary == null) {
-                    logger.e { "Can not find boundary for key with id $keyId in overlay" }
-                    return@forEach
+                is KeyboardOverlayBubble.LongPressedKey -> {
+                    LongPressedKeyBubble(
+                        keyboardState = keyboardState,
+                        keyBoundary = keyBoundary,
+                        bubble = bubble,
+                    )
                 }
 
-                val popupOnLongPress = key.actions.longPress?.popup == true
-                val isLongPressed = keyboardState.longPressedKeysIds.contains(key.id)
-
-                when {
-                    isLongPressed && popupOnLongPress -> {
-                        key.actions.longPress?.let { longPressAction ->
-                            if (longPressAction.values.isNotEmpty()) {
-                                LongPressedKeyBubble(
-                                    keyboardState = keyboardState,
-                                    key = key,
-                                    values = longPressAction.values,
-                                    keyBoundary = keyBoundary,
-                                )
-                            } else {
-                                logger.w { "Empty values for long press for key $key" }
-                            }
-                        }
-                    }
-
-                    key.type == Key.Type.CHARACTER -> {
-                        PressedKeyBubble(
-                            keyboardState = keyboardState,
-                            key = key,
-                            keyBoundary = keyBoundary,
-                        )
-                    }
-                }
+                null -> {}
             }
         }
     }
@@ -390,17 +473,15 @@ private fun BoxScope.KeyboardOverlay(
 @Composable
 private fun PressedKeyBubble(
     keyboardState: KeyboardState,
-    key: Key,
     keyBoundary: KeyBoundary,
+    bubble: KeyboardOverlayBubble.PressedKey,
 ) {
     KeyBubble(
-        keyboardState = keyboardState,
-        key = key,
         keyBoundary = keyBoundary,
     ) {
         KeyBubbleText(
             keyboardState = keyboardState,
-            keyText = key.actions.press.output.orEmpty()
+            keyText = bubble.text,
         )
     }
 }
@@ -408,24 +489,22 @@ private fun PressedKeyBubble(
 @Composable
 private fun LongPressedKeyBubble(
     keyboardState: KeyboardState,
-    key: Key,
-    values: Collection<String>,
     keyBoundary: KeyBoundary,
+    bubble: KeyboardOverlayBubble.LongPressedKey,
 ) {
     KeyBubble(
-        keyboardState = keyboardState,
-        key = key,
         keyBoundary = keyBoundary,
     ) {
         Column {
-            values.chunked(4).forEach { rowValues -> // TODO: Get number from settings
+            bubble.items.forEach { row ->
                 Row(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
-                    rowValues.forEach { value ->
+                    row.forEach { value ->
+                        // TODO: Highlight selected
                         KeyBubbleText(
                             keyboardState = keyboardState,
-                            keyText = value,
+                            keyText = value.text,
                             modifier = Modifier
                                 .padding(start = 16.dp, end = 16.dp)
                         )
@@ -438,8 +517,6 @@ private fun LongPressedKeyBubble(
 
 @Composable
 private fun KeyBubble(
-    keyboardState: KeyboardState,
-    key: Key,
     keyBoundary: KeyBoundary,
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit,
@@ -459,8 +536,6 @@ private fun KeyBubble(
                     }
 
                     val top = keyBoundary.top.roundToInt() - placeable.height - 16.dp.roundToPx()
-
-                    // TODO: Check if out of screen
 
                     placeable.place(
                         x = left,
@@ -499,10 +574,6 @@ private fun KeyBubbleText(
         color = Color.Black,
         modifier = modifier,
     )
-}
-
-private fun KeyboardState.isKeyActive(key: Key): Boolean {
-    return pressedKeysIds.contains(key.id)
 }
 
 private fun KeyboardState.getActiveModifierForKey(key: Key): KeyboardModifier? {

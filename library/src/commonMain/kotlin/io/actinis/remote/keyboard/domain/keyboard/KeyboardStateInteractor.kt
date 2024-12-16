@@ -1,7 +1,6 @@
 package io.actinis.remote.keyboard.domain.keyboard
 
 import co.touchlab.kermit.Logger
-import io.actinis.remote.keyboard.data.config.model.key.Key
 import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
 import io.actinis.remote.keyboard.data.config.model.modifier.KeyboardModifier
 import io.actinis.remote.keyboard.data.config.repository.ConfigurationRepository
@@ -21,14 +20,10 @@ internal interface KeyboardStateInteractor {
     suspend fun initialize(inputType: InputType, isPassword: Boolean)
     suspend fun switchLayout(layoutId: String)
 
-    fun addPressedKey(keyId: String)
-    fun addLongPressedKey(keyId: String)
+    fun setPressedKey(keyId: String)
+    fun setLongPressedKey(keyId: String)
 
-    fun removePressedKey(keyId: String)
-    fun removePressedKeys(keysIds: Collection<String>)
-    fun removePressedKeys()
-
-    fun getPressedKeysIdsExcept(exceptKeyId: String): Sequence<String>
+    fun removePressedKey()
 
     fun isKeyPressed(keyId: String): Boolean
 
@@ -86,67 +81,38 @@ internal class KeyboardStateInteractorImpl(
         }
     }
 
-    override fun addPressedKey(keyId: String) {
-        if (!keyboardState.value.pressedKeysIds.contains(keyId)) {
+    override fun setPressedKey(keyId: String) {
+        if (keyboardState.value.pressedKeyId != keyId) {
             keyboardState.update {
-                it.copy(pressedKeysIds = it.pressedKeysIds + keyId)
+                it.copy(pressedKeyId = keyId)
             }
         }
     }
 
-    override fun addLongPressedKey(keyId: String) {
-        if (!keyboardState.value.longPressedKeysIds.contains(keyId)) {
+    override fun setLongPressedKey(keyId: String) {
+        if (keyboardState.value.longPressedKeyId != keyId) {
             keyboardState.update {
-                it.copy(longPressedKeysIds = it.longPressedKeysIds + keyId)
+                it.copy(longPressedKeyId = keyId)
             }
         }
     }
 
-    override fun removePressedKey(keyId: String) {
-        if (keyboardState.value.pressedKeysIds.contains(keyId)) {
-            keyboardState.update {
-                it.copy(
-                    pressedKeysIds = it.pressedKeysIds - keyId,
-                    longPressedKeysIds = it.longPressedKeysIds + keyId
-                )
-            }
-        }
-    }
 
-    override fun removePressedKeys(keysIds: Collection<String>) {
-        keyboardState.update {
-            val keyIdsSet = keysIds.toSet()
-
-            it.copy(
-                pressedKeysIds = it.pressedKeysIds - keyIdsSet,
-                longPressedKeysIds = it.longPressedKeysIds - keyIdsSet,
-            )
-        }
-    }
-
-    override fun removePressedKeys() {
+    override fun removePressedKey() {
         keyboardState.value.apply {
-            if (pressedKeysIds.isNotEmpty() || longPressedKeysIds.isNotEmpty()) {
+            if (pressedKeyId != null || longPressedKeyId != null) {
                 keyboardState.update {
                     it.copy(
-                        pressedKeysIds = emptySet(),
-                        longPressedKeysIds = emptySet(),
+                        pressedKeyId = null,
+                        longPressedKeyId = null,
                     )
                 }
             }
         }
     }
 
-    override fun getPressedKeysIdsExcept(exceptKeyId: String): Sequence<String> {
-        return keyboardState.value.pressedKeysIds
-            .asSequence()
-            .filter { keyId ->
-                keyId != exceptKeyId
-            }
-    }
-
     override fun isKeyPressed(keyId: String): Boolean {
-        return keyboardState.value.pressedKeysIds.contains(keyId)
+        return keyboardState.value.pressedKeyId == keyId
     }
 
     override fun toggleModifier(keyboardModifier: KeyboardModifier) {
@@ -194,21 +160,6 @@ internal class KeyboardStateInteractorImpl(
         logger.d { "toggleShift" }
 
         toggleModifier(keyboardModifier = KeyboardModifier.SHIFT)
-
-        syncShiftState()
-    }
-
-    private fun syncShiftState() {
-        logger.d { "syncShiftState" }
-        val key = currentLayout.value?.findKey { it.id == Key.ID_SHIFT } ?: return
-
-        if (keyboardState.value.isShiftActive) {
-            logger.d { "Adding shift to active keys" }
-            addPressedKey(key.id)
-        } else {
-            logger.d { "Removing shift from active keys" }
-            removePressedKey(key.id)
-        }
     }
 
     override fun toggleCapsLock() {

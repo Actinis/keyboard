@@ -20,7 +20,7 @@ internal interface KeyboardInteractor {
     val keyboardEvents: Flow<KeyboardEvent>
 
     fun initialize(inputType: InputType, isPassword: Boolean)
-    fun handleActiveKey(key: Key)
+    fun handlePressedKey(key: Key)
     fun handleKeysReleased()
 }
 
@@ -65,14 +65,14 @@ internal class KeyboardInteractorImpl(
         }
     }
 
-    override fun handleActiveKey(key: Key) {
-        logger.d { "handleActiveKey: key=${key.id}" }
+    override fun handlePressedKey(key: Key) {
+        logger.d { "handlePressedKey: key=${key.id}" }
 
         coroutineScope.launch {
-            removeInactiveKeys(activeKey = key)
+            removeOldPressedKey(currentPressedKey = key)
 
             addTrackedKey(key)
-            keyboardStateInteractor.addPressedKey(key.id)
+            keyboardStateInteractor.setPressedKey(key.id)
         }
     }
 
@@ -84,24 +84,24 @@ internal class KeyboardInteractorImpl(
         }
     }
 
-    private suspend fun removeInactiveKeys(activeKey: Key) {
+    private suspend fun removeOldPressedKey(currentPressedKey: Key) {
         keyboardStateInteractor
-            .getPressedKeysIdsExcept(activeKey.id)
-            .map { keyId ->
-                coroutineScope.async {
-                    val key = currentLayout.value?.findKey { it.id == keyId }
-                    if (key == null) {
-                        logger.w { "Failed to find key with id=$keyId in current layout while removing inactive keys" }
-                        return@async null
-                    }
+            .keyboardState
+            .value
+            .pressedKeyId
+            ?.takeIf { it != currentPressedKey.id }
+            ?.let { pressedKeyId ->
+                logger.d { "Removing pressed key = $pressedKeyId" }
+
+                val key = currentLayout.value?.findKey { it.id == pressedKeyId }
+                if (key != null) {
                     handleKeyReleased(key)
-                    keyId
+                } else {
+                    logger.w { "Failed to find key with id=$pressedKeyId in current layout while removing inactive keys" }
                 }
+
+                keyboardStateInteractor.removePressedKey()
             }
-            .toSet()
-            .awaitAll()
-            .filterNotNull()
-            .let { keys -> keyboardStateInteractor.removePressedKeys(keys) }
     }
 
     override fun handleKeysReleased() {
@@ -109,7 +109,7 @@ internal class KeyboardInteractorImpl(
 
         coroutineScope.launch {
             handleTrackedKeysReleased()
-            keyboardStateInteractor.removePressedKeys()
+            keyboardStateInteractor.removePressedKey()
         }
     }
 
@@ -220,7 +220,7 @@ internal class KeyboardInteractorImpl(
 
 
     private suspend fun emitKeyboardEvent(event: KeyboardEvent) {
-        logger.d { "emitKeyboardEvent: event=$event" }
+//        logger.d { "emitKeyboardEvent: event=$event" }
 
         keyboardEvents.emit(event)
     }
@@ -304,7 +304,7 @@ internal class KeyboardInteractorImpl(
     private fun handleKeyLongPress(key: Key) {
         logger.d { "handleKeyLongPress: $key" }
 
-        keyboardStateInteractor.addLongPressedKey(key.id)
+        keyboardStateInteractor.setLongPressedKey(key.id)
     }
 
     private suspend fun handleKeyRepeat(key: Key) {
