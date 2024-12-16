@@ -357,6 +357,7 @@ private fun BoxScope.KeyboardOverlay(
 ) {
     var overlayState by remember { mutableStateOf(KeyboardOverlayState()) }
 
+    // TODO: Move calculations to ViewModel
     var isActive = keyboardState.pressedKeyId != null
 
     if (!isActive) {
