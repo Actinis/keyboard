@@ -420,14 +420,14 @@ private fun LongPressedKeyBubble(
         Column {
             values.chunked(4).forEach { rowValues -> // TODO: Get number from settings
                 Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     rowValues.forEach { value ->
                         KeyBubbleText(
                             keyboardState = keyboardState,
                             keyText = value,
-                            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 16.dp)
                         )
                     }
                 }
@@ -455,10 +455,9 @@ private fun KeyBubble(
                     )
                 }
             }
-            .defaultMinSize(40.dp, 40.dp)
-            .wrapContentSize()
+            .defaultMinSize(48.dp, 48.dp)
             .background(
-                color = Color.LightGray,
+                color = MaterialTheme.colorScheme.background,
                 shape = MaterialTheme.shapes.medium.copy(
                     all = CornerSize(8.dp)
                 )
