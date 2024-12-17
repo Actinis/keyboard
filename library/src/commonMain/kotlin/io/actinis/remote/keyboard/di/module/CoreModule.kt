@@ -25,7 +25,8 @@ internal val coreModule = module {
 
     factory {
         InitializeLibraryImpl(
-            configurationRepository = get(),
+            keyboardLayoutsRepository = get(),
+            preferencesInteractor = get(),
             defaultDispatcher = get(named(DispatchersNames.DEFAULT)),
         )
     } bind InitializeLibrary::class

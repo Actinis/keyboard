@@ -19,14 +19,19 @@ internal val keyboardModule = module {
 
     single {
         KeyboardStateInteractorImpl(
-            configurationRepository = get(),
+            keyboardLayoutsRepository = get(),
         )
     } bind KeyboardStateInteractor::class
 
-    single { KeyboardOverlayInteractorImpl() } bind KeyboardOverlayInteractor::class
+    single {
+        KeyboardOverlayInteractorImpl(
+            preferencesInteractor = get(),
+        )
+    } bind KeyboardOverlayInteractor::class
 
     single {
         KeyboardInteractorImpl(
+            preferencesInteractor = get(),
             keyboardStateInteractor = get(),
             keyboardOverlayInteractor = get(),
             defaultDispatcher = get(named(DispatchersNames.DEFAULT)),

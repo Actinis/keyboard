@@ -15,5 +15,14 @@ enum class LayoutType {
     NUMERIC,
 
     @SerialName("symbols")
-    SYMBOLS,
+    SYMBOLS;
+
+    override fun toString(): String {
+        return when (this) {
+            ALPHABETIC -> "alphabetic"
+            EMOJI -> "emoji"
+            NUMERIC -> "numeric"
+            SYMBOLS -> "symbols"
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package io.actinis.remote.keyboard.domain.initialization
 
-import io.actinis.remote.keyboard.data.config.repository.ConfigurationRepository
+import io.actinis.remote.keyboard.data.config.repository.KeyboardLayoutsRepository
+import io.actinis.remote.keyboard.domain.preferences.PreferencesInteractor
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -10,13 +11,15 @@ interface InitializeLibrary {
 }
 
 internal class InitializeLibraryImpl(
-    private val configurationRepository: ConfigurationRepository,
+    private val keyboardLayoutsRepository: KeyboardLayoutsRepository,
+    private val preferencesInteractor: PreferencesInteractor,
     private val defaultDispatcher: CoroutineDispatcher,
 ) : InitializeLibrary {
 
     override fun execute() {
         CoroutineScope(defaultDispatcher).launch {
-            configurationRepository.initialize()
+            keyboardLayoutsRepository.initialize()
+            preferencesInteractor.initialize()
         }
     }
 }

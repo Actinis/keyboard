@@ -11,18 +11,18 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-internal interface ConfigurationRepository {
+internal interface KeyboardLayoutsRepository {
     val globalConfig: GlobalConfig
 
     suspend fun initialize()
     suspend fun getLayout(layoutId: String): KeyboardLayout
 }
 
-internal class ConfigurationRepositoryImpl(
+internal class KeyboardLayoutsRepositoryImpl(
     private val json: Json,
     private val defaultDispatcher: CoroutineDispatcher,
     private val ioDispatcher: CoroutineDispatcher,
-) : ConfigurationRepository {
+) : KeyboardLayoutsRepository {
 
     private val logger = Logger.withTag(LOG_TAG)
 
@@ -61,12 +61,12 @@ internal class ConfigurationRepositoryImpl(
     private suspend fun loadLayout(layoutId: String): KeyboardLayout {
         logger.d { "loadLayout: layoutId=$layoutId" }
 
-        val (type, name, variant) = layoutId.split("/")
+        val (type, key, variant) = layoutId.split("/")
 
-        logger.d { "loadLayout: type=$type, name=$name, variant=$variant" }
+        logger.d { "loadLayout: type=$type, key=$key, variant=$variant" }
 
-        val layoutConfig = globalConfig.availableLayouts[name]
-            ?: throw IllegalArgumentException("Unknown layout id = $layoutId")
+        val layoutConfig = globalConfig.availableLayouts[key]
+            ?: throw IllegalArgumentException("Unknown layoutId = $layoutId")
 
         logger.d { "layout config: $layoutConfig" }
 

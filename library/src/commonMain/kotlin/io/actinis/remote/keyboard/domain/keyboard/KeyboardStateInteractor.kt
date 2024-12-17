@@ -3,7 +3,7 @@ package io.actinis.remote.keyboard.domain.keyboard
 import co.touchlab.kermit.Logger
 import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
 import io.actinis.remote.keyboard.data.config.model.modifier.KeyboardModifier
-import io.actinis.remote.keyboard.data.config.repository.ConfigurationRepository
+import io.actinis.remote.keyboard.data.config.repository.KeyboardLayoutsRepository
 import io.actinis.remote.keyboard.data.state.model.InputType
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +42,7 @@ internal interface KeyboardStateInteractor {
  * TODO: Cache Key id for active keys to speed up lookups
  */
 internal class KeyboardStateInteractorImpl(
-    private val configurationRepository: ConfigurationRepository,
+    private val keyboardLayoutsRepository: KeyboardLayoutsRepository,
 ) : KeyboardStateInteractor {
 
     private val logger = Logger.withTag(LOG_TAG)
@@ -72,7 +72,7 @@ internal class KeyboardStateInteractorImpl(
     }
 
     private fun getDefaultLayoutId(): String {
-        return configurationRepository.globalConfig.defaultLayout
+        return keyboardLayoutsRepository.globalConfig.defaultLayout
     }
 
     override suspend fun switchLayout(layoutId: String) {
@@ -80,7 +80,7 @@ internal class KeyboardStateInteractorImpl(
 
         // FIXME: Handle "alphabetic" - should switch to the last alphabetic layout
 
-        val layout = configurationRepository.getLayout(layoutId = layoutId)
+        val layout = keyboardLayoutsRepository.getLayout(layoutId = layoutId)
         currentLayout.value = layout
         keyboardState.update {
             it.copy(

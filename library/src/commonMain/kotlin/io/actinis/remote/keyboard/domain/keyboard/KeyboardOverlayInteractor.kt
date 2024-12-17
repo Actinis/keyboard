@@ -1,11 +1,13 @@
 package io.actinis.remote.keyboard.domain.keyboard
 
 import co.touchlab.kermit.Logger
+import io.actinis.remote.keyboard.data.config.model.action.Actions
 import io.actinis.remote.keyboard.data.config.model.key.Key
 import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
 import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayBubble
 import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayState
+import io.actinis.remote.keyboard.domain.preferences.PreferencesInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +23,9 @@ internal interface KeyboardOverlayInteractor {
     fun getCurrentLongPressItem(): KeyboardOverlayBubble.LongPressedKey.Item?
 }
 
-internal class KeyboardOverlayInteractorImpl : KeyboardOverlayInteractor {
+internal class KeyboardOverlayInteractorImpl(
+    private val preferencesInteractor: PreferencesInteractor,
+) : KeyboardOverlayInteractor {
     private val logger = Logger.withTag(LOG_TAG)
 
     private val _overlayState = MutableStateFlow(KeyboardOverlayState())
@@ -58,6 +62,7 @@ internal class KeyboardOverlayInteractorImpl : KeyboardOverlayInteractor {
         }
     }
 
+    // TODO: Refactor this method, it's too long and has many responsibilities
     override fun updateOverlayState(keyboardState: KeyboardState, keyboardLayout: KeyboardLayout?) {
         val isActive = keyboardState.pressedKeyId != null
         if (!isActive) {
@@ -73,6 +78,8 @@ internal class KeyboardOverlayInteractorImpl : KeyboardOverlayInteractor {
             return
         }
 
+//        val layouts =
+
         val showBackground = keyboardState.longPressedKeyId != null
         val popupOnLongPress = key.actions.longPress?.popup == true
         val isLongPressed = keyboardState.longPressedKeyId == pressedKeyId
@@ -81,14 +88,26 @@ internal class KeyboardOverlayInteractorImpl : KeyboardOverlayInteractor {
             isLongPressed && popupOnLongPress -> {
                 key.actions.longPress?.let { longPressAction ->
                     val hasValues = longPressAction.values.isNotEmpty()
-                    val command = longPressAction.command
+                    val commandType = longPressAction.command
 
-                    // TODO: if not char, fill values with corresponding data (e.g. layouts)
-                    val values = longPressAction.values
-
-                    if (command == null) {
+                    if (commandType == null) {
                         logger.w { "Key $key doesn't have long press command" }
                         return@let null
+                    }
+
+                    val values = if (hasValues) {
+                        longPressAction.values.map { PopupValue(id = it, text = it) }
+                    } else {
+                        when (commandType) {
+                            Actions.Action.CommandType.SHOW_LAYOUTS -> {
+                                logger.w { "Available layouts: ${preferencesInteractor.availableKeyboardLayouts.value}" }
+                                preferencesInteractor.availableKeyboardLayouts.value
+                                    .filter { it.isEnabled }
+                                    .map { PopupValue(id = it.id, text = it.name) }
+                            }
+
+                            else -> emptyList()
+                        }
                     }
 
                     if (values.isEmpty()) {
@@ -102,8 +121,8 @@ internal class KeyboardOverlayInteractorImpl : KeyboardOverlayInteractor {
                             .map { chunk ->
                                 chunk.map { value ->
                                     KeyboardOverlayBubble.LongPressedKey.Item(
-                                        id = value, // FIXME: id = value only for character
-                                        text = value,
+                                        id = value.id,
+                                        text = value.text,
                                     )
                                 }
                             },
@@ -249,6 +268,11 @@ internal class KeyboardOverlayInteractorImpl : KeyboardOverlayInteractor {
     private data class Selection(
         val row: Int,
         val column: Int,
+    )
+
+    private data class PopupValue(
+        val id: String,
+        val text: String,
     )
 
     private companion object {

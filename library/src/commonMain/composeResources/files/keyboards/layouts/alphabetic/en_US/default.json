@@ -754,6 +754,7 @@
               "command": "SWITCH_LAYOUT"
             },
             "longPress": {
+              "popup": true,
               "command": "SHOW_LAYOUTS"
             }
           },

@@ -1,0 +1,50 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "f2ef92d3b7ee5011788bd883493f7398",
+    "entities": [
+      {
+        "tableName": "enabled_keyboard_layouts",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `ordering` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ordering",
+            "columnName": "ordering",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_enabled_keyboard_layouts_ordering",
+            "unique": true,
+            "columnNames": [
+              "ordering"
+            ],
+            "orders": [
+              "ASC"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_enabled_keyboard_layouts_ordering` ON `${TABLE_NAME}` (`ordering` ASC)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f2ef92d3b7ee5011788bd883493f7398')"
+    ]
+  }
+}

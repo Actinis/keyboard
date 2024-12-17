@@ -10,6 +10,7 @@ import io.actinis.remote.keyboard.data.state.model.KeyboardState
 import io.actinis.remote.keyboard.domain.model.command.KeyboardCommand
 import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayBubble
 import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayState
+import io.actinis.remote.keyboard.domain.preferences.PreferencesInteractor
 import io.actinis.remote.keyboard.presentation.touch.KeyInteractionEvent
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +33,7 @@ internal interface KeyboardInteractor {
 }
 
 internal class KeyboardInteractorImpl(
+    private val preferencesInteractor: PreferencesInteractor,
     private val keyboardStateInteractor: KeyboardStateInteractor,
     private val keyboardOverlayInteractor: KeyboardOverlayInteractor,
     private val defaultDispatcher: CoroutineDispatcher,
@@ -241,8 +243,12 @@ internal class KeyboardInteractorImpl(
             KeyboardCommand.ToggleCapsLock -> keyboardStateInteractor.toggleCapsLock()
             KeyboardCommand.ToggleShift -> keyboardStateInteractor.toggleShift()
             KeyboardCommand.ShowCursorControls -> TODO()
-            KeyboardCommand.ShowLayouts -> TODO()
+            KeyboardCommand.ShowLayouts -> handleShowLayouts()
         }
+    }
+
+    private fun handleShowLayouts() {
+        // TODO
     }
 
     private suspend fun handlePotentialDoubleTap(key: Key): Boolean {

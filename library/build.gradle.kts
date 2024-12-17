@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.androidx.room)
 }
 
 group = "io.actinis.remote"
@@ -42,6 +43,9 @@ kotlin {
 
                 implementation(libs.settings)
                 implementation(libs.settings.coroutines)
+
+                implementation(libs.androidx.sqlite.bundled)
+                implementation(libs.androidx.room.runtime)
 
                 implementation(compose.runtime)
                 implementation(compose.foundation)
@@ -87,6 +91,19 @@ android {
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
+}
+
+dependencies {
+    debugImplementation(compose.uiTooling)
+
+    add("kspAndroid", libs.androidx.room.compiler)
+//    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+//    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspJvm", libs.androidx.room.compiler)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 mavenPublishing {
