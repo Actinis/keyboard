@@ -1,22 +1,44 @@
 {
   "version": "1.0",
-  "defaultLayout": "en_US",
+  "defaultLayout": "alphabetic/en_US/default",
   "availableLayouts": {
     "en_US": {
+      "type": "alphabetic",
       "name": "English (US)",
-      "variants": ["default", "email", "url"],
-      "requires": ["symbol/primary", "numeric/default"]
+      "variants": [
+        "default",
+        "email",
+        "url"
+      ],
+      "requires": [
+        "symbol/primary",
+        "numeric/default"
+      ]
     },
     "ru_RU": {
+      "type": "alphabetic",
       "name": "Русский",
-      "variants": ["default", "email"],
-      "requires": ["symbol/primary", "numeric/default"]
+      "variants": [
+        "default",
+        "email"
+      ],
+      "requires": [
+        "symbol/primary",
+        "numeric/default"
+      ]
+    },
+    "symbol": {
+      "type": "symbols",
+      "name": "Symbols"
     }
   },
   "contextRules": {
     "email": {
       "trigger": "email",
-      "extraKeys": ["@", "."]
+      "extraKeys": [
+        "@",
+        "."
+      ]
     }
   }
 }

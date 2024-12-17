@@ -67,8 +67,12 @@ internal class KeyboardStateInteractorImpl(
         }
 
         switchLayout(
-            layoutId = keyboardState.value.currentLayoutId ?: configurationRepository.globalConfig.defaultLayout
+            layoutId = keyboardState.value.currentLayoutId ?: getDefaultLayoutId()
         )
+    }
+
+    private fun getDefaultLayoutId(): String {
+        return configurationRepository.globalConfig.defaultLayout
     }
 
     override suspend fun switchLayout(layoutId: String) {

@@ -17,6 +17,8 @@ data class GlobalConfig(
 
     @Serializable
     data class LayoutConfig(
+        @SerialName("type")
+        val type: Type,
         @SerialName("name")
         val name: String,
         @SerialName("variants")
@@ -24,6 +26,22 @@ data class GlobalConfig(
         @SerialName("requires")
         val requires: List<String> = emptyList(),
     ) {
+
+        @Serializable
+        enum class Type {
+            @SerialName("alphabetic")
+            ALPHABETIC,
+
+            @SerialName("emoji")
+            EMOJI,
+
+            @SerialName("numeric")
+            NUMERIC,
+
+            @SerialName("symbols")
+            SYMBOLS,
+        }
+
         @Serializable
         enum class Variant {
             @SerialName("default")

@@ -61,7 +61,11 @@ internal class ConfigurationRepositoryImpl(
     private suspend fun loadLayout(layoutId: String): KeyboardLayout {
         logger.d { "loadLayout: layoutId=$layoutId" }
 
-        val layoutConfig = globalConfig.availableLayouts[layoutId]
+        val (type, name, variant) = layoutId.split("/")
+
+        logger.d { "loadLayout: type=$type, name=$name, variant=$variant" }
+
+        val layoutConfig = globalConfig.availableLayouts[name]
             ?: throw IllegalArgumentException("Unknown layout id = $layoutId")
 
         logger.d { "layout config: $layoutConfig" }
@@ -89,6 +93,6 @@ internal class ConfigurationRepositoryImpl(
 
         private const val GLOBAL_CONFIG_PATH = "files/keyboards/config/layouts.json"
 
-        private const val LAYOUT_DEFAULT_FILE_PATH_FORMAT = "files/keyboards/layouts/alphabetic/%s/default.json"
+        private const val LAYOUT_DEFAULT_FILE_PATH_FORMAT = "files/keyboards/layouts/%s.json"
     }
 }

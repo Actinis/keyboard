@@ -1,0 +1,849 @@
+{
+  "metadata": {
+    "id": "symbol.primary",
+    "name": "English (US)",
+    "version": "1.0",
+    "type": "alphabetic",
+    "inheritsFrom": null
+  },
+  "dimensions": {
+    "rowCount": 4,
+    "defaultKeyWidth": 1.0,
+    "defaultKeyHeight": 1.0,
+    "baseKeyWidthMultiplier": 0.09,
+    "baseKeyHeightToWidthMultiplier": 1.2,
+    "columnsSpacingMultiplier": 0.01,
+    "rowsSpacingToHeightMultiplier": 0.1
+  },
+  "rows": [
+    {
+      "id": "row1",
+      "keys": [
+        {
+          "key": "q",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "q"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "1",
+                "q",
+                "ç"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "q"
+          }
+        },
+        {
+          "key": "w",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "w"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "2",
+                "w",
+                "ŵ"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "w"
+          }
+        },
+        {
+          "key": "e",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "e"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "3",
+                "e",
+                "è",
+                "é",
+                "ê",
+                "ë",
+                "ē",
+                "ė",
+                "ę",
+                "ě",
+                "ẽ"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "e"
+          }
+        },
+        {
+          "key": "r",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "r"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "4",
+                "r",
+                "ř"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "r"
+          }
+        },
+        {
+          "key": "t",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "t"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "5",
+                "t",
+                "ț",
+                "ť",
+                "þ"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "t"
+          }
+        },
+        {
+          "key": "y",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "y"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "6",
+                "y",
+                "ÿ",
+                "ŷ",
+                "ý"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "y"
+          }
+        },
+        {
+          "key": "u",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "u"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "7",
+                "u",
+                "ū",
+                "ú",
+                "ù",
+                "ü",
+                "û",
+                "ų",
+                "ů",
+                "ű",
+                "ũ",
+                "ǔ"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "u"
+          }
+        },
+        {
+          "key": "i",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "i"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "8",
+                "i",
+                "ì",
+                "į",
+                "ī",
+                "í",
+                "ï",
+                "î",
+                "ı",
+                "ĩ",
+                "ǐ"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "i"
+          }
+        },
+        {
+          "key": "o",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "o"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "9",
+                "o",
+                "õ",
+                "ō",
+                "ø",
+                "œ",
+                "ó",
+                "ò",
+                "ö",
+                "ô",
+                "ő",
+                "ǒ"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "o"
+          }
+        },
+        {
+          "key": "p",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "p"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "0",
+                "p"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "p"
+          }
+        }
+      ]
+    },
+    {
+      "id": "row2",
+      "keys": [
+        {
+          "key": "a",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "a"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "a",
+                "à",
+                "á",
+                "â",
+                "ä",
+                "æ",
+                "ã",
+                "å",
+                "ā",
+                "ǎ",
+                "ă",
+                "ą"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "a"
+          }
+        },
+        {
+          "key": "s",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "s"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "s",
+                "ß",
+                "ś",
+                "š",
+                "ş",
+                "ș"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "s"
+          }
+        },
+        {
+          "key": "d",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "d"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "d",
+                "ď",
+                "ð"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "d"
+          }
+        },
+        {
+          "key": "f",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "f"
+              }
+            }
+          },
+          "visual": {
+            "label": "f"
+          }
+        },
+        {
+          "key": "g",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "g"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "g",
+                "ğ",
+                "ġ"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "g"
+          }
+        },
+        {
+          "key": "h",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "h"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "h",
+                "ħ"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "h"
+          }
+        },
+        {
+          "key": "j",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "j"
+              }
+            }
+          },
+          "visual": {
+            "label": "j"
+          }
+        },
+        {
+          "key": "k",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "k"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "k",
+                "ķ"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "k"
+          }
+        },
+        {
+          "key": "l",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "l"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "l",
+                "ł",
+                "ľ",
+                "ļ"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "l"
+          }
+        }
+      ]
+    },
+    {
+      "id": "row3",
+      "keys": [
+        {
+          "key": "shift",
+          "type": "modifier",
+          "width": 1.5,
+          "actions": {
+            "press": {
+              "command": "TOGGLE_SHIFT"
+            },
+            "doubleTap": {
+              "command": "CAPS_LOCK"
+            }
+          },
+          "visual": {
+            "icon": "shift",
+            "activeIcon": "shift_active",
+            "modifiers": {
+              "SHIFT": {
+                "icon": "shift",
+                "activeIcon": "shift_active"
+              },
+              "CAPS_LOCK": {
+                "icon": "caps_lock_active",
+                "activeIcon": "shift_active"
+              }
+            }
+          }
+        },
+        {
+          "key": "z",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "z"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "z",
+                "ž",
+                "ź",
+                "ż"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "z"
+          }
+        },
+        {
+          "key": "x",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "x"
+              }
+            }
+          },
+          "visual": {
+            "label": "x"
+          }
+        },
+        {
+          "key": "c",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "c"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "c",
+                "ç",
+                "ć",
+                "č",
+                "ċ"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "c"
+          }
+        },
+        {
+          "key": "v",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "v"
+              }
+            }
+          },
+          "visual": {
+            "label": "v"
+          }
+        },
+        {
+          "key": "b",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "b"
+              }
+            }
+          },
+          "visual": {
+            "label": "b"
+          }
+        },
+        {
+          "key": "n",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "n"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "n",
+                "ń",
+                "ñ",
+                "ň",
+                "ņ"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "n"
+          }
+        },
+        {
+          "key": "m",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "m"
+              }
+            }
+          },
+          "visual": {
+            "label": "m"
+          }
+        },
+        {
+          "key": "backspace",
+          "type": "system",
+          "width": 1.5,
+          "actions": {
+            "press": {
+              "command": "DELETE_BACKWARD"
+            },
+            "longPress": {
+              "command": "DELETE_WORD"
+            },
+            "repeat": true
+          },
+          "visual": {
+            "icon": "backspace",
+            "activeIcon": "backspace_active",
+            "label": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "row4",
+      "keys": [
+        {
+          "key": "symbols",
+          "type": "system",
+          "width": 1.5,
+          "actions": {
+            "press": {
+              "command": "SWITCH_LAYOUT",
+              "params": {
+                "layout": "symbols/default/primary"
+              }
+            }
+          },
+          "visual": {
+            "label": "123"
+          }
+        },
+        {
+          "key": "layout",
+          "type": "system",
+          "width": 1.5,
+          "actions": {
+            "press": {
+              "command": "SWITCH_LAYOUT"
+            },
+            "longPress": {
+              "command": "SHOW_LAYOUTS"
+            }
+          },
+          "visual": {
+            "icon": "layout_switch",
+            "activeIcon": "layout_switch_active"
+          }
+        },
+        {
+          "key": "space",
+          "type": "character",
+          "width": 5.5,
+          "actions": {
+            "press": {
+              "output": " "
+            },
+            "longPress": {
+              "command": "SHOW_CURSOR_CONTROLS"
+            }
+          },
+          "visual": {
+            "label": "space"
+          }
+        },
+        {
+          "key": "return",
+          "type": "system",
+          "width": 2.0,
+          "actions": {
+            "press": {
+              "command": "ACTION"
+            }
+          },
+          "visual": {
+            "label": "return",
+            "adaptiveLabels": {
+              "search": "search",
+              "send": "send",
+              "go": "go",
+              "done": "done"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "type": "email",
+      "insertAt": {
+        "row": 2,
+        "position": 9,
+        "key": {
+          "key": "@",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": ""
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "popups": {
+    "enabled": true,
+    "delay": 200,
+    "style": "ios"
+  },
+  "behaviors": {
+    "keyRepeat": {
+      "initialDelay": 500,
+      "repeatInterval": 50
+    },
+    "longPress": {
+      "delay": 300
+    },
+    "doubleTap": {
+      "maxDelay": 500
+    }
+  },
+  "visual": {
+    "fontSize": {
+      "primary": 1.0,
+      "secondary": 0.7
+    },
+    "popupScale": 1.5
+  }
+}
