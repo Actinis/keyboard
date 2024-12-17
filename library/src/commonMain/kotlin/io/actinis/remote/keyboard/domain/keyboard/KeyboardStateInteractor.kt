@@ -78,10 +78,17 @@ internal class KeyboardStateInteractorImpl(
     override suspend fun switchLayout(layoutId: String) {
         logger.d { "switchLayout: layoutId=$layoutId" }
 
+        // FIXME: Handle "alphabetic" - should switch to the last alphabetic layout
+
         val layout = configurationRepository.getLayout(layoutId = layoutId)
         currentLayout.value = layout
         keyboardState.update {
-            it.copy(currentLayoutId = layoutId)
+            it.copy(
+                pressedKeyId = null,
+                longPressedKeyId = null,
+                currentLayoutId = layoutId,
+                activeModifiers = emptySet(),
+            )
         }
     }
 

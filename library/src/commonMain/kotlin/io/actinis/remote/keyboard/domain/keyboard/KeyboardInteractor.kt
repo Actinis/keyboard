@@ -233,7 +233,11 @@ internal class KeyboardInteractorImpl(
                 handleKeyPressOutputAction(key = key, output = command.value)
             }
 
-            is KeyboardCommand.SwitchLayout -> keyboardStateInteractor.switchLayout(command.layoutId)
+            is KeyboardCommand.SwitchLayout -> {
+                keyboardOverlayInteractor.reset()
+                keyboardStateInteractor.switchLayout(command.layoutId)
+            }
+
             KeyboardCommand.ToggleCapsLock -> keyboardStateInteractor.toggleCapsLock()
             KeyboardCommand.ToggleShift -> keyboardStateInteractor.toggleShift()
             KeyboardCommand.ShowCursorControls -> TODO()

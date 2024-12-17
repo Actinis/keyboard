@@ -27,7 +27,7 @@
         "numeric/default"
       ]
     },
-    "symbol": {
+    "symbols": {
       "type": "symbols",
       "name": "Symbols"
     }

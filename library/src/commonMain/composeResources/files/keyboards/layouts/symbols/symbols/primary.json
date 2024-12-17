@@ -1,9 +1,9 @@
 {
   "metadata": {
     "id": "symbols/symbols/primary",
-    "name": "English (US)",
+    "name": "Symbols (Primary)",
     "version": "1.0",
-    "type": "symbol",
+    "type": "symbols",
     "inheritsFrom": null
   },
   "dimensions": {
@@ -20,290 +20,171 @@
       "id": "row1",
       "keys": [
         {
-          "key": "q",
+          "key": "1",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "q"
+                "value": "1"
               }
-            },
-            "longPress": {
-              "popup": true,
-              "values": [
-                "1",
-                "q",
-                "ç"
-              ],
-              "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "q"
+            "label": "1"
           }
         },
         {
-          "key": "w",
+          "key": "2",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "w"
+                "value": "2"
               }
-            },
-            "longPress": {
-              "popup": true,
-              "values": [
-                "2",
-                "w",
-                "ŵ"
-              ],
-              "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "w"
+            "label": "2"
           }
         },
         {
-          "key": "e",
+          "key": "3",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "e"
+                "value": "3"
               }
-            },
-            "longPress": {
-              "popup": true,
-              "values": [
-                "3",
-                "e",
-                "è",
-                "é",
-                "ê",
-                "ë",
-                "ē",
-                "ė",
-                "ę",
-                "ě",
-                "ẽ"
-              ],
-              "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "e"
+            "label": "3"
           }
         },
         {
-          "key": "r",
+          "key": "4",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "r"
+                "value": "4"
               }
-            },
-            "longPress": {
-              "popup": true,
-              "values": [
-                "4",
-                "r",
-                "ř"
-              ],
-              "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "r"
+            "label": "4"
           }
         },
         {
-          "key": "t",
+          "key": "5",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "t"
+                "value": "5"
               }
-            },
-            "longPress": {
-              "popup": true,
-              "values": [
-                "5",
-                "t",
-                "ț",
-                "ť",
-                "þ"
-              ],
-              "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "t"
+            "label": "5"
           }
         },
         {
-          "key": "y",
+          "key": "6",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "y"
+                "value": "6"
               }
-            },
-            "longPress": {
-              "popup": true,
-              "values": [
-                "6",
-                "y",
-                "ÿ",
-                "ŷ",
-                "ý"
-              ],
-              "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "y"
+            "label": "6"
           }
         },
         {
-          "key": "u",
+          "key": "7",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "u"
+                "value": "7"
               }
-            },
-            "longPress": {
-              "popup": true,
-              "values": [
-                "7",
-                "u",
-                "ū",
-                "ú",
-                "ù",
-                "ü",
-                "û",
-                "ų",
-                "ů",
-                "ű",
-                "ũ",
-                "ǔ"
-              ],
-              "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "u"
+            "label": "7"
           }
         },
         {
-          "key": "i",
+          "key": "8",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "i"
+                "value": "8"
               }
-            },
-            "longPress": {
-              "popup": true,
-              "values": [
-                "8",
-                "i",
-                "ì",
-                "į",
-                "ī",
-                "í",
-                "ï",
-                "î",
-                "ı",
-                "ĩ",
-                "ǐ"
-              ],
-              "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "i"
+            "label": "8"
           }
         },
         {
-          "key": "o",
+          "key": "9",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "o"
+                "value": "9"
               }
-            },
-            "longPress": {
-              "popup": true,
-              "values": [
-                "9",
-                "o",
-                "õ",
-                "ō",
-                "ø",
-                "œ",
-                "ó",
-                "ò",
-                "ö",
-                "ô",
-                "ő",
-                "ǒ"
-              ],
-              "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "o"
+            "label": "9"
           }
         },
         {
-          "key": "p",
+          "key": "0",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "p"
+                "value": "0"
               }
             },
             "longPress": {
               "popup": true,
               "values": [
                 "0",
-                "p"
+                "º"
               ],
               "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "p"
+            "label": "0"
           }
         }
       ]
@@ -312,221 +193,213 @@
       "id": "row2",
       "keys": [
         {
-          "key": "a",
+          "key": "-",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "a"
+                "value": "-"
               }
             },
             "longPress": {
               "popup": true,
               "values": [
-                "a",
-                "à",
-                "á",
-                "â",
-                "ä",
-                "æ",
-                "ã",
-                "å",
-                "ā",
-                "ǎ",
-                "ă",
-                "ą"
+                "-",
+                "–",
+                "—",
+                "•"
               ],
               "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "a"
+            "label": "-"
           }
         },
         {
-          "key": "s",
+          "key": "/",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "s"
+                "value": "/"
               }
             },
             "longPress": {
               "popup": true,
               "values": [
-                "s",
-                "ß",
-                "ś",
-                "š",
-                "ş",
-                "ș"
+                "/",
+                "\\"
               ],
               "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "s"
+            "label": "/"
           }
         },
         {
-          "key": "d",
+          "key": ":",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "d"
+                "value": ":"
+              }
+            }
+          },
+          "visual": {
+            "label": ":"
+          }
+        },
+        {
+          "key": ";",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": ";"
+              }
+            }
+          },
+          "visual": {
+            "label": ";"
+          }
+        },
+        {
+          "key": "(",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "("
+              }
+            }
+          },
+          "visual": {
+            "label": "("
+          }
+        },
+        {
+          "key": ")",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": ")"
+              }
+            }
+          },
+          "visual": {
+            "label": ")"
+          }
+        },
+        {
+          "key": "$",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "$"
               }
             },
             "longPress": {
               "popup": true,
               "values": [
-                "d",
-                "ď",
-                "ð"
+                "₽",
+                "¥",
+                "€",
+                "¢",
+                "£",
+                "₩"
               ],
               "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "d"
+            "label": "$"
           }
         },
         {
-          "key": "f",
+          "key": "&",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "f"
-              }
-            }
-          },
-          "visual": {
-            "label": "f"
-          }
-        },
-        {
-          "key": "g",
-          "type": "character",
-          "width": 1.0,
-          "actions": {
-            "press": {
-              "command": "OUTPUT_VALUE",
-              "params": {
-                "value": "g"
+                "value": "&"
               }
             },
             "longPress": {
               "popup": true,
               "values": [
-                "g",
-                "ğ",
-                "ġ"
+                "&",
+                "§"
               ],
               "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "g"
+            "label": "&"
           }
         },
         {
-          "key": "h",
+          "key": "@",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "h"
+                "value": "@"
+              }
+            }
+          },
+          "visual": {
+            "label": "@"
+          }
+        },
+        {
+          "key": "\"",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "\""
               }
             },
             "longPress": {
               "popup": true,
               "values": [
-                "h",
-                "ħ"
+                "\"",
+                "«",
+                "»",
+                "„",
+                "“",
+                "”"
               ],
               "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "h"
-          }
-        },
-        {
-          "key": "j",
-          "type": "character",
-          "width": 1.0,
-          "actions": {
-            "press": {
-              "command": "OUTPUT_VALUE",
-              "params": {
-                "value": "j"
-              }
-            }
-          },
-          "visual": {
-            "label": "j"
-          }
-        },
-        {
-          "key": "k",
-          "type": "character",
-          "width": 1.0,
-          "actions": {
-            "press": {
-              "command": "OUTPUT_VALUE",
-              "params": {
-                "value": "k"
-              }
-            },
-            "longPress": {
-              "popup": true,
-              "values": [
-                "k",
-                "ķ"
-              ],
-              "command": "OUTPUT_VALUE"
-            }
-          },
-          "visual": {
-            "label": "k"
-          }
-        },
-        {
-          "key": "l",
-          "type": "character",
-          "width": 1.0,
-          "actions": {
-            "press": {
-              "command": "OUTPUT_VALUE",
-              "params": {
-                "value": "l"
-              }
-            },
-            "longPress": {
-              "popup": true,
-              "values": [
-                "l",
-                "ł",
-                "ľ",
-                "ļ"
-              ],
-              "command": "OUTPUT_VALUE"
-            }
-          },
-          "visual": {
-            "label": "l"
+            "label": "\""
           }
         }
       ]
@@ -535,174 +408,133 @@
       "id": "row3",
       "keys": [
         {
-          "key": "shift",
-          "type": "modifier",
+          "key": "symbols_secondary",
+          "type": "system",
           "width": 1.5,
           "actions": {
             "press": {
-              "command": "TOGGLE_SHIFT"
-            },
-            "doubleTap": {
-              "command": "CAPS_LOCK"
+              "command": "SWITCH_LAYOUT",
+              "params": {
+                "layout": "symbols/symbols/secondary"
+              }
             }
           },
           "visual": {
-            "icon": "shift",
-            "activeIcon": "shift_active",
-            "modifiers": {
-              "SHIFT": {
-                "icon": "shift",
-                "activeIcon": "shift_active"
-              },
-              "CAPS_LOCK": {
-                "icon": "caps_lock_active",
-                "activeIcon": "shift_active"
-              }
-            }
+            "label": "#+="
           }
         },
         {
-          "key": "z",
+          "key": ".",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "z"
+                "value": "."
               }
             },
             "longPress": {
               "popup": true,
               "values": [
-                "z",
-                "ž",
-                "ź",
-                "ż"
+                ".",
+                "…"
               ],
               "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "z"
+            "label": "."
           }
         },
         {
-          "key": "x",
+          "key": ",",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "x"
+                "value": ","
               }
             }
           },
           "visual": {
-            "label": "x"
+            "label": ","
           }
         },
         {
-          "key": "c",
+          "key": "?",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "c"
+                "value": "?"
               }
             },
             "longPress": {
               "popup": true,
               "values": [
-                "c",
-                "ç",
-                "ć",
-                "č",
-                "ċ"
+                "?",
+                "¿"
               ],
               "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "c"
+            "label": "?"
           }
         },
         {
-          "key": "v",
+          "key": "!",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "v"
-              }
-            }
-          },
-          "visual": {
-            "label": "v"
-          }
-        },
-        {
-          "key": "b",
-          "type": "character",
-          "width": 1.0,
-          "actions": {
-            "press": {
-              "command": "OUTPUT_VALUE",
-              "params": {
-                "value": "b"
-              }
-            }
-          },
-          "visual": {
-            "label": "b"
-          }
-        },
-        {
-          "key": "n",
-          "type": "character",
-          "width": 1.0,
-          "actions": {
-            "press": {
-              "command": "OUTPUT_VALUE",
-              "params": {
-                "value": "n"
+                "value": "!"
               }
             },
             "longPress": {
               "popup": true,
               "values": [
-                "n",
-                "ń",
-                "ñ",
-                "ň",
-                "ņ"
+                "!",
+                "¡"
               ],
               "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "n"
+            "label": "!"
           }
         },
         {
-          "key": "m",
+          "key": "'",
           "type": "character",
           "width": 1.0,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
               "params": {
-                "value": "m"
+                "value": "'"
               }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "'",
+                "`",
+                "‘",
+                "’"
+              ],
+              "command": "OUTPUT_VALUE"
             }
           },
           "visual": {
-            "label": "m"
+            "label": "'"
           }
         },
         {
@@ -730,19 +562,19 @@
       "id": "row4",
       "keys": [
         {
-          "key": "symbols",
+          "key": "alphabetic",
           "type": "system",
           "width": 1.5,
           "actions": {
             "press": {
               "command": "SWITCH_LAYOUT",
               "params": {
-                "layout": "symbols/symbols/primary"
+                "layout": "alphabetic"
               }
             }
           },
           "visual": {
-            "label": "123"
+            "label": "ABC"
           }
         },
         {

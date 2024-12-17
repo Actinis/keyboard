@@ -730,7 +730,7 @@
       "id": "row4",
       "keys": [
         {
-          "key": "symbols",
+          "key": "symbols_primary",
           "type": "system",
           "width": 1.5,
           "actions": {
