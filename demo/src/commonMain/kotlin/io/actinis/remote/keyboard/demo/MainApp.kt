@@ -1,6 +1,5 @@
 package io.actinis.remote.keyboard.demo
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -11,7 +10,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
@@ -130,15 +128,13 @@ fun MainApp() {
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
-                        // Optional: Add background and elevation
-//                        .background(Color.Red)
-//                        .shadow(elevation = 8.dp),
                 ) { keyboardEvent ->
                     logger.d { "keyboardEvent: $keyboardEvent" }
 
                     when (keyboardEvent) {
                         KeyboardEvent.ActionClick -> {
                         }
+
                         KeyboardEvent.Backspace -> {
                             if (textFieldValue.text.isNotEmpty()) {
                                 textFieldValue = if (textFieldValue.selection.length > 0) {
@@ -165,6 +161,7 @@ fun MainApp() {
                                 }
                             }
                         }
+
                         is KeyboardEvent.TextInput -> {
                             val start = textFieldValue.selection.min
                             val end = textFieldValue.selection.max
