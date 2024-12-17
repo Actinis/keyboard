@@ -1,5 +1,7 @@
 package io.actinis.remote.keyboard.presentation
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -87,14 +89,23 @@ fun KeyboardView(
     }
 
     currentLayout?.let { layout ->
-        logger.w { "Current layout = $layout" }
+        var viewState by remember { mutableStateOf(KeyboardViewState()) }
 
-        key(layout.metadata.id) { // Do a full re-composition on layout change for now
-            var viewState by remember { mutableStateOf(KeyboardViewState()) }
+        LaunchedEffect(layout.metadata.id) {
+            viewState = viewState.copy(keyBoundaries = emptySet())
+        }
 
-            Box(modifier = modifier) {
+        AnimatedContent(
+            targetState = layout,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(150)) togetherWith
+                        fadeOut(animationSpec = tween(150))
+            },
+            modifier = modifier
+        ) { currentLayout ->
+            Box {
                 KeyboardLayout(
-                    layout = layout,
+                    layout = currentLayout,
                     keyboardState = keyboardState,
                     viewState = viewState,
                     overlayState = overlayState,
@@ -140,23 +151,18 @@ private fun KeyboardLayout(
         onViewStateChange(viewState.copy(keyBoundaries = emptySet()))
     }
 
-    LaunchedEffect(size) {
+    LaunchedEffect(layout.metadata.id, size, position) {
         if (size != IntSize.Zero) {
             val newDimensions = calculateBaseKeyDimensions(
                 keyboardLayout = layout,
                 containerSizeInPixels = size,
                 density = density,
             )
-            if (newDimensions != viewState.baseKeyDimensions) {
-                logger.d { "Base key dimensions = $newDimensions dp" }
-                onViewStateChange(viewState.copy(baseKeyDimensions = newDimensions))
-            }
-        }
-    }
-
-    LaunchedEffect(position) {
-        if (position != viewState.keyboardOffset) {
-            onViewStateChange(viewState.copy(keyboardOffset = position))
+            onViewStateChange(viewState.copy(
+                baseKeyDimensions = newDimensions,
+                keyboardOffset = position,
+                keyBoundaries = emptySet()
+            ))
         }
     }
 
@@ -170,6 +176,9 @@ private fun KeyboardLayout(
             .onGloballyPositioned { coordinates ->
                 position = coordinates.positionInRoot()
             }
+            .animateContentSize(
+                animationSpec = tween(300)
+            )
             .pointerInput(
                 viewState.keyBoundaries,
                 overlayState.activeBubble is KeyboardOverlayBubble.LongPressedKey
