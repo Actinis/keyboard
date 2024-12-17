@@ -737,7 +737,7 @@
             "press": {
               "command": "SWITCH_LAYOUT",
               "params": {
-                "layout": "symbols_primary"
+                "layout": "symbols/default/primary"
               }
             }
           },
