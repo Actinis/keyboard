@@ -1,4 +1,4 @@
-package io.actinis.remote.keyboard.presentation.model
+package io.actinis.remote.keyboard.domain.model.overlay
 
 sealed interface KeyboardOverlayBubble {
     data class PressedKey(
@@ -10,6 +10,8 @@ sealed interface KeyboardOverlayBubble {
         val selectedItemRow: Int = 0,
         val selectedItemColumn: Int = 0,
     ) : KeyboardOverlayBubble {
+
+        // TODO: Move this class somewhere out
         data class Item(
             val id: String,
             val text: String,

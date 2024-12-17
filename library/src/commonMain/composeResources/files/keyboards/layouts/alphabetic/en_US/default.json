@@ -25,7 +25,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "q"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "q"
+              }
             },
             "longPress": {
               "popup": true,
@@ -33,8 +36,12 @@
                 "1",
                 "q",
                 "ç"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "q"
           }
         },
         {
@@ -43,7 +50,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "w"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "w"
+              }
             },
             "longPress": {
               "popup": true,
@@ -51,8 +61,12 @@
                 "2",
                 "w",
                 "ŵ"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "w"
           }
         },
         {
@@ -61,7 +75,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "e"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "e"
+              }
             },
             "longPress": {
               "popup": true,
@@ -77,8 +94,12 @@
                 "ę",
                 "ě",
                 "ẽ"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "e"
           }
         },
         {
@@ -87,7 +108,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "r"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "r"
+              }
             },
             "longPress": {
               "popup": true,
@@ -95,8 +119,12 @@
                 "4",
                 "r",
                 "ř"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "r"
           }
         },
         {
@@ -105,7 +133,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "t"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "t"
+              }
             },
             "longPress": {
               "popup": true,
@@ -115,8 +146,12 @@
                 "ț",
                 "ť",
                 "þ"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "t"
           }
         },
         {
@@ -125,7 +160,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "y"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "y"
+              }
             },
             "longPress": {
               "popup": true,
@@ -135,8 +173,12 @@
                 "ÿ",
                 "ŷ",
                 "ý"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "y"
           }
         },
         {
@@ -145,7 +187,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "u"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "u"
+              }
             },
             "longPress": {
               "popup": true,
@@ -162,8 +207,12 @@
                 "ű",
                 "ũ",
                 "ǔ"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "u"
           }
         },
         {
@@ -172,7 +221,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "i"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "i"
+              }
             },
             "longPress": {
               "popup": true,
@@ -188,8 +240,12 @@
                 "ı",
                 "ĩ",
                 "ǐ"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "i"
           }
         },
         {
@@ -198,7 +254,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "o"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "o"
+              }
             },
             "longPress": {
               "popup": true,
@@ -215,8 +274,12 @@
                 "ô",
                 "ő",
                 "ǒ"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "o"
           }
         },
         {
@@ -225,15 +288,22 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "p"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "p"
+              }
             },
             "longPress": {
               "popup": true,
               "values": [
                 "0",
                 "p"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "p"
           }
         }
       ]
@@ -247,7 +317,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "a"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "a"
+              }
             },
             "longPress": {
               "popup": true,
@@ -264,8 +337,12 @@
                 "ǎ",
                 "ă",
                 "ą"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "a"
           }
         },
         {
@@ -274,7 +351,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "s"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "s"
+              }
             },
             "longPress": {
               "popup": true,
@@ -285,8 +365,12 @@
                 "š",
                 "ş",
                 "ș"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "s"
           }
         },
         {
@@ -295,7 +379,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "d"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "d"
+              }
             },
             "longPress": {
               "popup": true,
@@ -303,8 +390,12 @@
                 "d",
                 "ď",
                 "ð"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "d"
           }
         },
         {
@@ -313,8 +404,14 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "f"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "f"
+              }
             }
+          },
+          "visual": {
+            "label": "f"
           }
         },
         {
@@ -323,7 +420,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "g"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "g"
+              }
             },
             "longPress": {
               "popup": true,
@@ -331,8 +431,12 @@
                 "g",
                 "ğ",
                 "ġ"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "g"
           }
         },
         {
@@ -341,15 +445,22 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "h"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "h"
+              }
             },
             "longPress": {
               "popup": true,
               "values": [
                 "h",
                 "ħ"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "h"
           }
         },
         {
@@ -358,8 +469,14 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "j"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "j"
+              }
             }
+          },
+          "visual": {
+            "label": "j"
           }
         },
         {
@@ -368,15 +485,22 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "k"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "k"
+              }
             },
             "longPress": {
               "popup": true,
               "values": [
                 "k",
                 "ķ"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "k"
           }
         },
         {
@@ -385,7 +509,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "l"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "l"
+              }
             },
             "longPress": {
               "popup": true,
@@ -394,8 +521,12 @@
                 "ł",
                 "ľ",
                 "ļ"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "l"
           }
         }
       ]
@@ -436,7 +567,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "z"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "z"
+              }
             },
             "longPress": {
               "popup": true,
@@ -445,8 +579,12 @@
                 "ž",
                 "ź",
                 "ż"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "z"
           }
         },
         {
@@ -455,8 +593,14 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "x"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "x"
+              }
             }
+          },
+          "visual": {
+            "label": "x"
           }
         },
         {
@@ -465,7 +609,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "c"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "c"
+              }
             },
             "longPress": {
               "popup": true,
@@ -475,8 +622,12 @@
                 "ć",
                 "č",
                 "ċ"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "c"
           }
         },
         {
@@ -485,8 +636,14 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "v"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "v"
+              }
             }
+          },
+          "visual": {
+            "label": "v"
           }
         },
         {
@@ -495,8 +652,14 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "b"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "b"
+              }
             }
+          },
+          "visual": {
+            "label": "b"
           }
         },
         {
@@ -505,7 +668,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "n"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "n"
+              }
             },
             "longPress": {
               "popup": true,
@@ -515,8 +681,12 @@
                 "ñ",
                 "ň",
                 "ņ"
-              ]
+              ],
+              "command": "OUTPUT_VALUE"
             }
+          },
+          "visual": {
+            "label": "n"
           }
         },
         {
@@ -525,8 +695,14 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "m"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "m"
+              }
             }
+          },
+          "visual": {
+            "label": "m"
           }
         },
         {
@@ -561,7 +737,7 @@
             "press": {
               "command": "SWITCH_LAYOUT",
               "params": {
-                "layout": "symbols"
+                "layout": "symbols_primary"
               }
             }
           },
@@ -636,7 +812,10 @@
           "width": 1.0,
           "actions": {
             "press": {
-              "output": "@"
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": ""
+              }
             }
           }
         }

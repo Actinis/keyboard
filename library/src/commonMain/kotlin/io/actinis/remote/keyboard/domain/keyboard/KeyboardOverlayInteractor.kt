@@ -4,8 +4,8 @@ import co.touchlab.kermit.Logger
 import io.actinis.remote.keyboard.data.config.model.key.Key
 import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
-import io.actinis.remote.keyboard.presentation.model.KeyboardOverlayBubble
-import io.actinis.remote.keyboard.presentation.model.KeyboardOverlayState
+import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayBubble
+import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,12 +14,11 @@ import kotlin.math.abs
 internal interface KeyboardOverlayInteractor {
     val overlayState: StateFlow<KeyboardOverlayState>
 
-    // TODO: Move somewhere
-    val longPressSelectedItemId: String?
-
     fun updateSelection(deltaX: Float, deltaY: Float)
     fun updateOverlayState(keyboardState: KeyboardState, keyboardLayout: KeyboardLayout?)
     fun reset()
+
+    fun getCurrentLongPressItem(): KeyboardOverlayBubble.LongPressedKey.Item?
 }
 
 internal class KeyboardOverlayInteractorImpl : KeyboardOverlayInteractor {
@@ -29,10 +28,6 @@ internal class KeyboardOverlayInteractorImpl : KeyboardOverlayInteractor {
     override val overlayState: StateFlow<KeyboardOverlayState> = _overlayState.asStateFlow()
 
     private var lastLongPressPosition: Pair<Float, Float>? = null
-
-    private var _longPressSelectedItemId: String? = null
-    override val longPressSelectedItemId: String?
-        get() = _longPressSelectedItemId
 
     override fun updateSelection(deltaX: Float, deltaY: Float) {
         val currentState = _overlayState.value
@@ -53,8 +48,6 @@ internal class KeyboardOverlayInteractorImpl : KeyboardOverlayInteractor {
             logger.d {
                 "Long-press selected item changed: ${currentBubble.selectedItemRow}x${currentBubble.selectedItemColumn} -> ${newRow}x$newColumn"
             }
-
-            _longPressSelectedItemId = items[newRow][newColumn].id
 
             _overlayState.value = currentState.copy(
                 activeBubble = currentBubble.copy(
@@ -87,30 +80,47 @@ internal class KeyboardOverlayInteractorImpl : KeyboardOverlayInteractor {
         val bubble = when {
             isLongPressed && popupOnLongPress -> {
                 key.actions.longPress?.let { longPressAction ->
-                    if (longPressAction.values.isNotEmpty()) {
-                        KeyboardOverlayBubble.LongPressedKey(
-                            items = longPressAction.values
-                                .chunked(4)
-                                .map { chunk ->
-                                    chunk.map { value ->
-                                        KeyboardOverlayBubble.LongPressedKey.Item(
-                                            id = value, // FIXME: id = value only for character
-                                            text = value,
-                                        )
-                                    }
-                                }
-                        )
-                    } else {
-                        logger.w { "Empty values for long press for key $key" }
-                        null
+                    val hasValues = longPressAction.values.isNotEmpty()
+                    val command = longPressAction.command
+
+                    // TODO: if not char, fill values with corresponding data (e.g. layouts)
+                    val values = longPressAction.values
+
+                    if (command == null) {
+                        logger.w { "Key $key doesn't have long press command" }
+                        return@let null
                     }
+
+                    if (values.isEmpty()) {
+                        logger.w { "Key $key doesn't have long press values" }
+                        return@let null
+                    }
+
+                    KeyboardOverlayBubble.LongPressedKey(
+                        items = values
+                            .chunked(4)
+                            .map { chunk ->
+                                chunk.map { value ->
+                                    KeyboardOverlayBubble.LongPressedKey.Item(
+                                        id = value, // FIXME: id = value only for character
+                                        text = value,
+                                    )
+                                }
+                            },
+                    )
                 }
             }
 
             key.type == Key.Type.CHARACTER -> {
-                KeyboardOverlayBubble.PressedKey(
-                    text = key.actions.press.output.orEmpty(),
-                )
+                if (key.visual?.label != null) {
+                    KeyboardOverlayBubble.PressedKey(
+                        text = key.visual.label,
+                    )
+                } else {
+                    logger.e { "Key $key doesn't have visual label to display, visual=${key.visual}" }
+                    null
+                }
+
             }
 
             else -> {
@@ -202,8 +212,14 @@ internal class KeyboardOverlayInteractorImpl : KeyboardOverlayInteractor {
 
     override fun reset() {
         lastLongPressPosition = null
-        _longPressSelectedItemId = null
         _overlayState.value = KeyboardOverlayState()
+    }
+
+    override fun getCurrentLongPressItem(): KeyboardOverlayBubble.LongPressedKey.Item? {
+        val activeBubble = overlayState.value.activeBubble as? KeyboardOverlayBubble.LongPressedKey
+            ?: return null
+
+        return activeBubble.items[activeBubble.selectedItemRow][activeBubble.selectedItemColumn]
     }
 
     private sealed class Movement {

@@ -1,8 +1,9 @@
 package io.actinis.remote.keyboard.presentation.touch
 
 import io.actinis.remote.keyboard.data.config.model.key.Key
+import io.actinis.remote.keyboard.domain.model.command.KeyboardCommand
 
-sealed interface KeyInteractionEvent {
+internal sealed interface KeyInteractionEvent {
 
     val key: Key
 
@@ -12,7 +13,7 @@ sealed interface KeyInteractionEvent {
 
     data class Up(
         override val key: Key,
-        val actionId: String? = null,
+        val command: KeyboardCommand,
     ) : KeyInteractionEvent
 
     data class DoubleTap(

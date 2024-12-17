@@ -150,7 +150,8 @@ fun MainApp() {
                                     // If no selection, remove character before cursor
                                     val cursorPosition = textFieldValue.selection.start
                                     if (cursorPosition > 0) {
-                                        val newText = textFieldValue.text.removeRange(cursorPosition - 1, cursorPosition)
+                                        val newText =
+                                            textFieldValue.text.removeRange(cursorPosition - 1, cursorPosition)
                                         TextFieldValue(
                                             text = newText,
                                             selection = TextRange(cursorPosition - 1)
@@ -160,6 +161,10 @@ fun MainApp() {
                                     }
                                 }
                             }
+                        }
+
+                        KeyboardEvent.DeleteWord -> {
+                            // No-op for now
                         }
 
                         is KeyboardEvent.TextInput -> {

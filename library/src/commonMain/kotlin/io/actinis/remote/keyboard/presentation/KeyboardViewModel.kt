@@ -1,7 +1,6 @@
 package io.actinis.remote.keyboard.presentation
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import io.actinis.remote.keyboard.data.config.model.key.Key
 import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
@@ -9,13 +8,9 @@ import io.actinis.remote.keyboard.data.event.model.KeyboardEvent
 import io.actinis.remote.keyboard.data.state.model.InputType
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
 import io.actinis.remote.keyboard.domain.keyboard.KeyboardInteractor
-import io.actinis.remote.keyboard.domain.keyboard.KeyboardOverlayInteractor
-import io.actinis.remote.keyboard.presentation.model.KeyboardOverlayState
+import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 
 abstract class KeyboardViewModel : ViewModel() {
     abstract val keyboardEvents: Flow<KeyboardEvent>

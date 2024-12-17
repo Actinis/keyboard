@@ -6,59 +6,85 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Actions(
     @SerialName("press")
-    val press: PressAction,
+    val press: Action.PressAction,
     @SerialName("longPress")
-    val longPress: LongPressAction? = null,
+    val longPress: Action.LongPressAction? = null,
     @SerialName("doubleTap")
-    val doubleTap: DoubleTapAction? = null,
+    val doubleTap: Action.DoubleTapAction? = null,
     @SerialName("repeat")
     val repeat: Boolean = false,
 ) {
 
-    @Serializable
-    data class DoubleTapAction(
-        @SerialName("command")
-        val command: Command,
-    )
+    sealed interface Action {
 
-    @Serializable
-    data class LongPressAction(
-        @SerialName("popup")
-        val popup: Boolean = false,
-        @SerialName("values")
-        val values: List<String> = emptyList(),
-        @SerialName("command")
-        val command: String? = null,
-    )
+        val command: CommandType?
+        val params: Map<ParameterType, String?>
 
-    @Serializable
-    data class PressAction(
-        @SerialName("output")
-        val output: String? = null,
-        @SerialName("command")
-        val command: Command? = null,
-        @SerialName("params")
-        val params: Map<String, String> = emptyMap(),
-    )
+        @Serializable
+        data class DoubleTapAction(
+            @SerialName("command")
+            override val command: CommandType,
+            @SerialName("params")
+            override val params: Map<ParameterType, String?> = emptyMap(),
+        ) : Action
 
-    @Serializable
-    enum class Command {
-        @SerialName("DELETE_BACKWARD")
-        DELETE_BACKWARD,
+        @Serializable
+        data class LongPressAction(
+            @SerialName("popup")
+            val popup: Boolean = false,
+            @SerialName("values")
+            val values: List<String> = emptyList(),
+            @SerialName("command")
+            override val command: CommandType? = null,
+            @SerialName("params")
+            override val params: Map<ParameterType, String?> = emptyMap(),
+        ) : Action
 
-        @SerialName("ACTION")
-        ACTION,
+        @Serializable
+        data class PressAction(
+            @SerialName("command")
+            override val command: CommandType? = null,
+            @SerialName("params")
+            override val params: Map<ParameterType, String?> = emptyMap(),
+        ) : Action
 
-        @SerialName("SWITCH_LAYOUT")
-        SWITCH_LAYOUT,
+        @Serializable
+        enum class CommandType {
+            @SerialName("DELETE_BACKWARD")
+            DELETE_BACKWARD,
 
-        @SerialName("SHOW_LAYOUTS")
-        SHOW_LAYOUTS,
+            @SerialName("DELETE_WORD")
+            DELETE_WORD,
 
-        @SerialName("TOGGLE_SHIFT")
-        TOGGLE_SHIFT,
+            @SerialName("ACTION")
+            ACTION,
 
-        @SerialName("CAPS_LOCK")
-        CAPS_LOCK,
+            @SerialName("SWITCH_LAYOUT")
+            SWITCH_LAYOUT,
+
+            @SerialName("SHOW_LAYOUTS")
+            SHOW_LAYOUTS,
+
+            @SerialName("TOGGLE_SHIFT")
+            TOGGLE_SHIFT,
+
+            @SerialName("CAPS_LOCK")
+            CAPS_LOCK,
+
+            @SerialName("SHOW_CURSOR_CONTROLS")
+            SHOW_CURSOR_CONTROLS,
+
+            @SerialName("OUTPUT_VALUE")
+            OUTPUT_VALUE,
+        }
+
+        @Serializable
+        enum class ParameterType {
+            @SerialName("layout")
+            LAYOUT,
+
+            @SerialName("value")
+            VALUE,
+        }
     }
 }

@@ -14,8 +14,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
-import io.actinis.remote.keyboard.presentation.model.KeyboardOverlayBubble
-import io.actinis.remote.keyboard.presentation.model.KeyboardOverlayState
+import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayBubble
+import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayState
 import io.actinis.remote.keyboard.presentation.touch.KeyBoundary
 import kotlin.math.roundToInt
 

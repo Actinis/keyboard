@@ -7,5 +7,6 @@ sealed interface KeyboardEvent {
     ) : KeyboardEvent
 
     data object Backspace : KeyboardEvent
+    data object DeleteWord : KeyboardEvent
     data object ActionClick : KeyboardEvent
 }

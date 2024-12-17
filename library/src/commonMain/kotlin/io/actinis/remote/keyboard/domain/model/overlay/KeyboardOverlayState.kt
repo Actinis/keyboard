@@ -1,4 +1,4 @@
-package io.actinis.remote.keyboard.presentation.model
+package io.actinis.remote.keyboard.domain.model.overlay
 
 
 data class KeyboardOverlayState(

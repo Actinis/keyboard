@@ -34,10 +34,10 @@ import io.actinis.remote.keyboard.data.event.model.KeyboardEvent
 import io.actinis.remote.keyboard.data.state.model.InputType
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
 import io.actinis.remote.keyboard.di.name.DispatchersNames
+import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayBubble
+import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayState
 import io.actinis.remote.keyboard.presentation.dimension.BaseKeyDimensions
 import io.actinis.remote.keyboard.presentation.dimension.calculateBaseKeyDimensions
-import io.actinis.remote.keyboard.presentation.model.KeyboardOverlayBubble
-import io.actinis.remote.keyboard.presentation.model.KeyboardOverlayState
 import io.actinis.remote.keyboard.presentation.touch.KeyBoundary
 import io.actinis.remote.keyboard.presentation.touch.detectTouchGestures
 import io.actinis.remote.library.generated.resources.*
@@ -294,22 +294,16 @@ private fun KeyboardKey(
             }
 
             key.visual?.label != null -> {
-                // TODO: Calculate text size for all chars basing on settings
-                Text(
-                    text = key.visual.label,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.align(Alignment.Center),
-                )
-            }
-
-            else -> {
                 val text = remember(keyboardState.areLettersUppercase) {
                     when {
-                        keyboardState.areLettersUppercase -> key.actions.press.output?.uppercase() ?: ""
-                        else -> key.actions.press.output ?: ""
+                        keyboardState.areLettersUppercase && key.type == Key.Type.CHARACTER -> {
+                            key.visual.label.uppercase()
+                        }
+
+                        else -> key.visual.label
                     }
                 }
+
                 // TODO: Calculate text size for all chars basing on settings
                 Text(
                     text = text,
@@ -317,6 +311,10 @@ private fun KeyboardKey(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.Center),
                 )
+            }
+
+            else -> {
+                logger.e { "No visual to display for key $key: visual=${key.visual}" }
             }
         }
     }

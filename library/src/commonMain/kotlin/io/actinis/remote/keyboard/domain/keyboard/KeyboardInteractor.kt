@@ -7,8 +7,9 @@ import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
 import io.actinis.remote.keyboard.data.event.model.KeyboardEvent
 import io.actinis.remote.keyboard.data.state.model.InputType
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
-import io.actinis.remote.keyboard.presentation.model.KeyboardOverlayBubble
-import io.actinis.remote.keyboard.presentation.model.KeyboardOverlayState
+import io.actinis.remote.keyboard.domain.model.command.KeyboardCommand
+import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayBubble
+import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayState
 import io.actinis.remote.keyboard.presentation.touch.KeyInteractionEvent
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -121,25 +122,19 @@ internal class KeyboardInteractorImpl(
     override fun handleKeysReleased() {
         logger.d { "handleKeysReleased" }
 
-        val longPressedSelectedActionId = getLongPressedSelectedActionId()
+        val currentLongPressedItem = keyboardOverlayInteractor.getCurrentLongPressItem()
 
         coroutineScope.launch {
-            handleTrackedKeysReleased(keyActionId = longPressedSelectedActionId)
+            handleTrackedKeysReleased(currentLongPressedItem = currentLongPressedItem)
             keyboardStateInteractor.removePressedKey()
         }
 
         keyboardOverlayInteractor.reset()
     }
 
-    // FIXME: It should return something like an universal Action instead
-    private fun getLongPressedSelectedActionId(): String? {
-        val overlayActiveBubble = overlayState.value.activeBubble as? KeyboardOverlayBubble.LongPressedKey
-            ?: return null
-
-        return overlayActiveBubble.items[overlayActiveBubble.selectedItemRow][overlayActiveBubble.selectedItemColumn].id
-    }
-
-    private suspend fun handleTrackedKeysReleased(keyActionId: String?) {
+    private suspend fun handleTrackedKeysReleased(
+        currentLongPressedItem: KeyboardOverlayBubble.LongPressedKey.Item?,
+    ) {
         touchTrackedKeys.toList().forEach { keyId ->
             keyId
                 .takeIf {
@@ -151,13 +146,16 @@ internal class KeyboardInteractorImpl(
                 ?.let { key ->
                     handleKeyReleased(
                         key = key,
-                        actionId = keyActionId,
+                        currentLongPressedItem = currentLongPressedItem,
                     )
                 }
         }
     }
 
-    private suspend fun handleKeyReleased(key: Key, actionId: String? = null) {
+    private suspend fun handleKeyReleased(
+        key: Key,
+        currentLongPressedItem: KeyboardOverlayBubble.LongPressedKey.Item? = null,
+    ) {
         if (touchTrackedKeys.remove(key.id)) {
             cancelKeyTimingJobs(key.id)
 
@@ -168,37 +166,38 @@ internal class KeyboardInteractorImpl(
             }
 
             if (!isDoubleTap) {
+                val command = if (currentLongPressedItem != null) {
+                    createCommand(
+                        action = key.actions.longPress,
+                        currentLongPressedItem.id
+                    ) // TODO: Use text instead of ID
+                } else {
+                    createCommand(
+                        action = key.actions.press,
+                    )
+                }
+
+                if (command == null) {
+                    logger.e {
+                        "Failed to determine release command for $key: currentLongPressedItem=$currentLongPressedItem"
+                    }
+                    return
+                }
+
                 emitKeyInteractionEvent(
                     KeyInteractionEvent.Up(
                         key = key,
-                        actionId = actionId,
+                        command = command,
                     )
                 )
             }
         }
     }
 
-    private suspend fun handleKeyUpAction(key: Key, actionId: String? = null) {
-        logger.d { "handleKeyPressAction: key=${key.id}, actionId=$actionId" }
+    private suspend fun handleKeyUpAction(key: Key, command: KeyboardCommand) {
+        logger.d { "handleKeyPressAction: key=${key.id}, command=$command" }
 
-        // FIXME: Instead of actionId, use some Action class
-        when {
-            key.actions.press.output != null -> {
-                if (actionId != null) {
-                    handleKeyPressOutputAction(key = key, output = actionId) // FIXME: text instead of actionId
-                } else {
-                    handleKeyPressOutputAction(key = key, output = key.actions.press.output)
-                }
-            }
-
-            key.actions.press.command != null -> {
-                handleKeyCommandAction(key = key, command = key.actions.press.command)
-            }
-
-            else -> {
-                logger.d { "No key press action for key=${key}" }
-            }
-        }
+        handleKeyCommandAction(key = key, command = command)
     }
 
     private suspend fun handleKeyPressOutputAction(key: Key, output: String) {
@@ -220,20 +219,25 @@ internal class KeyboardInteractorImpl(
         keyboardStateInteractor.turnOffShift()
     }
 
-    private suspend fun handleKeyCommandAction(key: Key, command: Actions.Command) {
+    private suspend fun handleKeyCommandAction(
+        key: Key,
+        command: KeyboardCommand,
+    ) {
         logger.d { "handleKeyCommandAction: key=${key}, keyCommand=$command" }
 
         when (command) {
-            Actions.Command.DELETE_BACKWARD -> emitKeyboardEvent(KeyboardEvent.Backspace)
-            Actions.Command.ACTION -> emitKeyboardEvent(KeyboardEvent.ActionClick)
-            Actions.Command.SWITCH_LAYOUT -> {
-                val layoutId = key.actions.press.params["layout"] ?: return
-                keyboardStateInteractor.switchLayout(layoutId)
+            KeyboardCommand.Action -> emitKeyboardEvent(KeyboardEvent.ActionClick)
+            KeyboardCommand.DeleteBackward -> emitKeyboardEvent(KeyboardEvent.Backspace)
+            KeyboardCommand.DeleteWord -> emitKeyboardEvent(KeyboardEvent.DeleteWord)
+            is KeyboardCommand.OutputValue -> {
+                handleKeyPressOutputAction(key = key, output = command.value)
             }
 
-            Actions.Command.TOGGLE_SHIFT -> keyboardStateInteractor.toggleShift()
-            Actions.Command.CAPS_LOCK -> keyboardStateInteractor.toggleCapsLock()
-            Actions.Command.SHOW_LAYOUTS -> TODO()
+            is KeyboardCommand.SwitchLayout -> keyboardStateInteractor.switchLayout(command.layoutId)
+            KeyboardCommand.ToggleCapsLock -> keyboardStateInteractor.toggleCapsLock()
+            KeyboardCommand.ToggleShift -> keyboardStateInteractor.toggleShift()
+            KeyboardCommand.ShowCursorControls -> TODO()
+            KeyboardCommand.ShowLayouts -> TODO()
         }
     }
 
@@ -312,7 +316,7 @@ internal class KeyboardInteractorImpl(
 
         when (event) {
             is KeyInteractionEvent.Down -> handleKeyDown(key = key)
-            is KeyInteractionEvent.Up -> handleKeyUp(key = key, actionId = event.actionId)
+            is KeyInteractionEvent.Up -> handleKeyUp(key = key, command = event.command)
             is KeyInteractionEvent.DoubleTap -> handleKeyDoubleTap(key = key)
             is KeyInteractionEvent.LongPress -> handleKeyLongPress(key = key)
             is KeyInteractionEvent.Repeat -> handleKeyRepeat(key = key)
@@ -323,23 +327,69 @@ internal class KeyboardInteractorImpl(
         logger.d { "handleKeyDown: $key" }
     }
 
-    private suspend fun handleKeyUp(key: Key, actionId: String?) {
+    private suspend fun handleKeyUp(key: Key, command: KeyboardCommand) {
         logger.d { "handleKeyUp: $key" }
 
         handleKeyUpAction(
             key = key,
-            actionId = actionId,
+            command = command,
         )
     }
 
     private suspend fun handleKeyDoubleTap(key: Key) {
         logger.d { "handleKeyDoubleTap: $key" }
 
-        val doubleTapCommand = key.actions.doubleTap?.command
+        val doubleTapCommand = createCommand(key.actions.doubleTap)
         if (doubleTapCommand == null) {
-            handleKeyUpAction(key = key)
+            val tapCommand = createCommand(key.actions.press)
+            if (tapCommand == null) {
+                logger.e { "Failed to create both double tap and tap commands for $key" }
+                return
+            }
+            handleKeyUpAction(key = key, command = tapCommand)
         } else {
             handleKeyCommandAction(key = key, command = doubleTapCommand)
+        }
+    }
+
+    // TODO: Move somewhere
+    private fun createCommand(
+        action: Actions.Action?,
+        vararg commandArgs: Any,
+    ): KeyboardCommand? {
+        if (action == null) return null
+
+        return when (action.command) {
+            null -> null
+            Actions.Action.CommandType.DELETE_BACKWARD -> KeyboardCommand.DeleteBackward
+            Actions.Action.CommandType.DELETE_WORD -> KeyboardCommand.DeleteWord
+            Actions.Action.CommandType.ACTION -> KeyboardCommand.Action
+            Actions.Action.CommandType.SWITCH_LAYOUT -> {
+                val layoutId = action.params[Actions.Action.ParameterType.LAYOUT]
+                if (layoutId == null) {
+                    logger.e { "Tried to create SWITCH_LAYOUT command, but no layoutId in action: $action" }
+                    return null
+                }
+                KeyboardCommand.SwitchLayout(layoutId)
+            }
+
+            Actions.Action.CommandType.SHOW_LAYOUTS -> KeyboardCommand.ShowLayouts
+            Actions.Action.CommandType.TOGGLE_SHIFT -> KeyboardCommand.ToggleShift
+            Actions.Action.CommandType.CAPS_LOCK -> KeyboardCommand.ToggleCapsLock
+            Actions.Action.CommandType.SHOW_CURSOR_CONTROLS -> KeyboardCommand.ShowCursorControls
+            Actions.Action.CommandType.OUTPUT_VALUE -> {
+                var value = commandArgs.firstOrNull() as? String?
+                if (value == null) {
+                    value = action.params[Actions.Action.ParameterType.VALUE]
+
+                    if (value == null) {
+                        logger.e { "Tried to create OUTPUT_VALUE command, but no value given for action=$action" }
+                        return null
+                    }
+                }
+
+                KeyboardCommand.OutputValue(value)
+            }
         }
     }
 
@@ -352,7 +402,16 @@ internal class KeyboardInteractorImpl(
     private suspend fun handleKeyRepeat(key: Key) {
         logger.d { "handleKeyRepeat: $key" }
 
-        handleKeyUpAction(key = key)
+        val command = createCommand(action = key.actions.press)
+        if (command == null) {
+            logger.e { "Failed to determine repeat command for $key" }
+            return
+        }
+
+        handleKeyUpAction(
+            key = key,
+            command = command
+        )
     }
 
     override fun handleMovementInLongPressMode(deltaX: Float, deltaY: Float) {
