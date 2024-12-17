@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Logger
+import io.actinis.remote.keyboard.data.event.model.KeyboardEvent
 import io.actinis.remote.keyboard.data.state.model.InputType
 import io.actinis.remote.keyboard.presentation.KeyboardView
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -134,6 +135,55 @@ fun MainApp() {
 //                        .shadow(elevation = 8.dp),
                 ) { keyboardEvent ->
                     logger.d { "keyboardEvent: $keyboardEvent" }
+
+                    when (keyboardEvent) {
+                        KeyboardEvent.ActionClick -> {
+                        }
+                        KeyboardEvent.Backspace -> {
+                            if (textFieldValue.text.isNotEmpty()) {
+                                textFieldValue = if (textFieldValue.selection.length > 0) {
+                                    // If there's selected text, remove the selection
+                                    val start = textFieldValue.selection.min
+                                    val end = textFieldValue.selection.max
+                                    val newText = textFieldValue.text.removeRange(start, end)
+                                    TextFieldValue(
+                                        text = newText,
+                                        selection = TextRange(start)
+                                    )
+                                } else {
+                                    // If no selection, remove character before cursor
+                                    val cursorPosition = textFieldValue.selection.start
+                                    if (cursorPosition > 0) {
+                                        val newText = textFieldValue.text.removeRange(cursorPosition - 1, cursorPosition)
+                                        TextFieldValue(
+                                            text = newText,
+                                            selection = TextRange(cursorPosition - 1)
+                                        )
+                                    } else {
+                                        textFieldValue
+                                    }
+                                }
+                            }
+                        }
+                        is KeyboardEvent.TextInput -> {
+                            val start = textFieldValue.selection.min
+                            val end = textFieldValue.selection.max
+                            val newText = if (start != end) {
+                                // Replace selected text with input
+                                textFieldValue.text.replaceRange(start, end, keyboardEvent.text)
+                            } else {
+                                // Insert text at cursor position
+                                textFieldValue.text.substring(0, start) +
+                                        keyboardEvent.text +
+                                        textFieldValue.text.substring(start)
+                            }
+                            val newCursorPosition = start + keyboardEvent.text.length
+                            textFieldValue = TextFieldValue(
+                                text = newText,
+                                selection = TextRange(newCursorPosition)
+                            )
+                        }
+                    }
                 }
             }
         }
