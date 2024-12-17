@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "id": "symbol.primary",
+    "id": "symbol/symbol/primary",
     "name": "English (US)",
     "version": "1.0",
-    "type": "alphabetic",
+    "type": "symbol",
     "inheritsFrom": null
   },
   "dimensions": {
@@ -737,7 +737,7 @@
             "press": {
               "command": "SWITCH_LAYOUT",
               "params": {
-                "layout": "symbols/default/primary"
+                "layout": "symbol/default/primary"
               }
             }
           },

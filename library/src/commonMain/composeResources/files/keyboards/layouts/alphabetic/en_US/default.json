@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "id": "en_US.default",
+    "id": "alphabetic/en_US/default",
     "name": "English (US)",
     "version": "1.0",
     "type": "alphabetic",
@@ -737,7 +737,7 @@
             "press": {
               "command": "SWITCH_LAYOUT",
               "params": {
-                "layout": "symbols/default/primary"
+                "layout": "symbol/default/primary"
               }
             }
           },

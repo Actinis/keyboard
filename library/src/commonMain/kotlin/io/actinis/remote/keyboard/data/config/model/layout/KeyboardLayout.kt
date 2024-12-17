@@ -42,7 +42,7 @@ data class KeyboardLayout(
         @SerialName("version")
         val version: String,
         @SerialName("type")
-        val type: String,
+        val type: LayoutType,
         @SerialName("inheritsFrom")
         val inheritsFrom: String? = null,
     )
