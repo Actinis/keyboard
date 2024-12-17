@@ -180,11 +180,9 @@ private fun KeyboardLayout(
     ) {
         layout.rows.forEach { row ->
             KeyboardRow(
-                key = row.hashCode(),
                 keysRow = row,
                 keyboardState = keyboardState,
                 baseKeyDimensions = viewState.baseKeyDimensions,
-                keyboardOffset = viewState.keyboardOffset,
                 onKeyBoundaryUpdate = { boundary ->
                     val newBoundaries = (viewState.keyBoundaries
                         .filterNot { it.key.id == boundary.key.id } + (boundary - viewState.keyboardOffset))
@@ -206,11 +204,9 @@ private fun KeyboardLayout(
 
 @Composable
 private fun KeyboardRow(
-    key: Int,
     keysRow: KeysRow,
     keyboardState: KeyboardState,
     baseKeyDimensions: BaseKeyDimensions,
-    keyboardOffset: Offset,
     onKeyBoundaryUpdate: (KeyBoundary) -> Unit,
     modifier: Modifier = Modifier,
 ) {
