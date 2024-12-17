@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "id": "symbol/symbol/primary",
+    "id": "symbols/symbols/primary",
     "name": "English (US)",
     "version": "1.0",
     "type": "symbol",
@@ -737,7 +737,7 @@
             "press": {
               "command": "SWITCH_LAYOUT",
               "params": {
-                "layout": "symbol/default/primary"
+                "layout": "symbols/symbols/primary"
               }
             }
           },
