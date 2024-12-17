@@ -24,6 +24,16 @@ data class KeyboardLayout(
     @SerialName("visual")
     val visual: Visual,
 ) {
+    val keysById: Map<String, Key> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        rows
+            .map { row -> row.keys }
+            .flatten()
+            .associateBy { key -> key.id }
+    }
+
+    val keys: Set<Key> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        keysById.values.toSet()
+    }
 
     fun findKey(predicate: (key: Key) -> Boolean): Key? {
         rows.forEach { row ->
@@ -31,6 +41,10 @@ data class KeyboardLayout(
         }
 
         return null
+    }
+
+    override fun toString(): String {
+        return "KeyboardLayout(metadata=$metadata)"
     }
 
     @Serializable

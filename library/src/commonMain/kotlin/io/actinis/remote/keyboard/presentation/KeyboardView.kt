@@ -67,7 +67,6 @@ fun KeyboardView(
     val currentLayout by viewModel.currentLayout.collectAsState()
     val keyboardState by viewModel.keyboardState.collectAsState()
     val overlayState by viewModel.overlayState.collectAsState()
-    var viewState by remember { mutableStateOf(KeyboardViewState()) }
 
     LaunchedEffect(inputType, isPassword) {
         viewModel.initialize(
@@ -88,28 +87,34 @@ fun KeyboardView(
     }
 
     currentLayout?.let { layout ->
-        Box(modifier = modifier) {
-            KeyboardLayout(
-                layout = layout,
-                keyboardState = keyboardState,
-                viewState = viewState,
-                overlayState = overlayState,
-                onViewStateChange = { viewState = it },
-                onHandleActiveKey = viewModel::handleActiveKey,
-                onHandleKeysReleased = viewModel::handleKeysReleased,
-                onLongPressMove = viewModel::handleMovementInLongPressMode,
-                density = density,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-            )
+        logger.w { "Current layout = $layout" }
 
-            if (overlayState.isActive) {
-                KeyboardOverlay(
-                    overlayState = overlayState,
-                    viewState = viewState,
+        key(layout.metadata.id) { // Do a full re-composition on layout change for now
+            var viewState by remember { mutableStateOf(KeyboardViewState()) }
+
+            Box(modifier = modifier) {
+                KeyboardLayout(
+                    layout = layout,
                     keyboardState = keyboardState,
+                    viewState = viewState,
+                    overlayState = overlayState,
+                    onViewStateChange = { viewState = it },
+                    onHandleActiveKey = viewModel::handleActiveKey,
+                    onHandleKeysReleased = viewModel::handleKeysReleased,
+                    onLongPressMove = viewModel::handleMovementInLongPressMode,
+                    density = density,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
                 )
+
+                if (overlayState.isActive) {
+                    KeyboardOverlay(
+                        overlayState = overlayState,
+                        viewState = viewState,
+                        keyboardState = keyboardState,
+                    )
+                }
             }
         }
     }
@@ -128,8 +133,12 @@ private fun KeyboardLayout(
     density: Density,
     modifier: Modifier = Modifier,
 ) {
-    var size by remember { mutableStateOf(IntSize.Zero) }
-    var position by remember { mutableStateOf(Offset.Zero) }
+    var size by remember(layout) { mutableStateOf(IntSize.Zero) }
+    var position by remember(layout) { mutableStateOf(Offset.Zero) }
+
+    LaunchedEffect(layout) {
+        onViewStateChange(viewState.copy(keyBoundaries = emptySet()))
+    }
 
     LaunchedEffect(size) {
         if (size != IntSize.Zero) {
