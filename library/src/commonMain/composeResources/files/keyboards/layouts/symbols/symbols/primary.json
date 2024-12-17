@@ -426,7 +426,7 @@
         {
           "key": ".",
           "type": "character",
-          "width": 1.0,
+          "width": 1.45,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
@@ -450,7 +450,7 @@
         {
           "key": ",",
           "type": "character",
-          "width": 1.0,
+          "width": 1.45,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
@@ -466,7 +466,7 @@
         {
           "key": "?",
           "type": "character",
-          "width": 1.0,
+          "width": 1.45,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
@@ -490,7 +490,7 @@
         {
           "key": "!",
           "type": "character",
-          "width": 1.0,
+          "width": 1.45,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",
@@ -514,7 +514,7 @@
         {
           "key": "'",
           "type": "character",
-          "width": 1.0,
+          "width": 1.45,
           "actions": {
             "press": {
               "command": "OUTPUT_VALUE",

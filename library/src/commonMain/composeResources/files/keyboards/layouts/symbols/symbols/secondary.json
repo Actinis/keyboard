@@ -1,0 +1,640 @@
+{
+  "metadata": {
+    "id": "symbols/symbols/secondary",
+    "name": "Symbols (Secondary)",
+    "version": "1.0",
+    "type": "symbols",
+    "inheritsFrom": null
+  },
+  "dimensions": {
+    "rowCount": 4,
+    "defaultKeyWidth": 1.0,
+    "defaultKeyHeight": 1.0,
+    "baseKeyWidthMultiplier": 0.09,
+    "baseKeyHeightToWidthMultiplier": 1.2,
+    "columnsSpacingMultiplier": 0.01,
+    "rowsSpacingToHeightMultiplier": 0.1
+  },
+  "rows": [
+    {
+      "id": "row1",
+      "keys": [
+        {
+          "key": "[",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "["
+              }
+            }
+          },
+          "visual": {
+            "label": "["
+          }
+        },
+        {
+          "key": "]",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "]"
+              }
+            }
+          },
+          "visual": {
+            "label": "]"
+          }
+        },
+        {
+          "key": "{",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "{"
+              }
+            }
+          },
+          "visual": {
+            "label": "{"
+          }
+        },
+        {
+          "key": "}",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "}"
+              }
+            }
+          },
+          "visual": {
+            "label": "}"
+          }
+        },
+        {
+          "key": "#",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "#"
+              }
+            }
+          },
+          "visual": {
+            "label": "#"
+          }
+        },
+        {
+          "key": "%",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "%"
+              },
+              "longPress": {
+                "popup": true,
+                "values": [
+                  "%",
+                  "‰"
+                ],
+                "command": "OUTPUT_VALUE"
+              }
+            }
+          },
+          "visual": {
+            "label": "%"
+          }
+        },
+        {
+          "key": "^",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "^"
+              }
+            }
+          },
+          "visual": {
+            "label": "^"
+          }
+        },
+        {
+          "key": "*",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "*"
+              }
+            }
+          },
+          "visual": {
+            "label": "*"
+          }
+        },
+        {
+          "key": "+",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "+"
+              }
+            }
+          },
+          "visual": {
+            "label": "+"
+          }
+        },
+        {
+          "key": "=",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "="
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "=",
+                "≈",
+                "≠"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "="
+          }
+        }
+      ]
+    },
+    {
+      "id": "row2",
+      "keys": [
+        {
+          "key": "_",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "_"
+              }
+            }
+          },
+          "visual": {
+            "label": "_"
+          }
+        },
+        {
+          "key": "\\",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "\\"
+              }
+            }
+          },
+          "visual": {
+            "label": "\\"
+          }
+        },
+        {
+          "key": "|",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "|"
+              }
+            }
+          },
+          "visual": {
+            "label": "|"
+          }
+        },
+        {
+          "key": "~",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "~"
+              }
+            }
+          },
+          "visual": {
+            "label": "~"
+          }
+        },
+        {
+          "key": "<",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "<"
+              }
+            }
+          },
+          "visual": {
+            "label": "<"
+          }
+        },
+        {
+          "key": ">",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": ">"
+              }
+            }
+          },
+          "visual": {
+            "label": ">"
+          }
+        },
+        {
+          "key": "€",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "€"
+              }
+            }
+          },
+          "visual": {
+            "label": "€"
+          }
+        },
+        {
+          "key": "£",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "£"
+              }
+            }
+          },
+          "visual": {
+            "label": "£"
+          }
+        },
+        {
+          "key": "¥",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "¥"
+              }
+            }
+          },
+          "visual": {
+            "label": "¥"
+          }
+        },
+        {
+          "key": "•",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "•"
+              }
+            }
+          },
+          "visual": {
+            "label": "•"
+          }
+        }
+      ]
+    },
+    {
+      "id": "row3",
+      "keys": [
+        {
+          "key": "symbols_secondary",
+          "type": "system",
+          "width": 1.5,
+          "actions": {
+            "press": {
+              "command": "SWITCH_LAYOUT",
+              "params": {
+                "layout": "symbols/symbols/primary"
+              }
+            }
+          },
+          "visual": {
+            "label": "123"
+          }
+        },
+        {
+          "key": ".",
+          "type": "character",
+          "width": 1.45,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "."
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                ".",
+                "…"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "."
+          }
+        },
+        {
+          "key": ",",
+          "type": "character",
+          "width": 1.45,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": ","
+              }
+            }
+          },
+          "visual": {
+            "label": ","
+          }
+        },
+        {
+          "key": "?",
+          "type": "character",
+          "width": 1.45,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "?"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "?",
+                "¿"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "?"
+          }
+        },
+        {
+          "key": "!",
+          "type": "character",
+          "width": 1.45,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "!"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "!",
+                "¡"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "!"
+          }
+        },
+        {
+          "key": "'",
+          "type": "character",
+          "width": 1.45,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "'"
+              }
+            },
+            "longPress": {
+              "popup": true,
+              "values": [
+                "'",
+                "`",
+                "‘",
+                "’"
+              ],
+              "command": "OUTPUT_VALUE"
+            }
+          },
+          "visual": {
+            "label": "'"
+          }
+        },
+        {
+          "key": "backspace",
+          "type": "system",
+          "width": 1.5,
+          "actions": {
+            "press": {
+              "command": "DELETE_BACKWARD"
+            },
+            "longPress": {
+              "command": "DELETE_WORD"
+            },
+            "repeat": true
+          },
+          "visual": {
+            "icon": "backspace",
+            "activeIcon": "backspace_active",
+            "label": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "row4",
+      "keys": [
+        {
+          "key": "alphabetic",
+          "type": "system",
+          "width": 1.5,
+          "actions": {
+            "press": {
+              "command": "SWITCH_LAYOUT",
+              "params": {
+                "layout": "alphabetic"
+              }
+            }
+          },
+          "visual": {
+            "label": "ABC"
+          }
+        },
+        {
+          "key": "layout",
+          "type": "system",
+          "width": 1.5,
+          "actions": {
+            "press": {
+              "command": "SWITCH_LAYOUT"
+            },
+            "longPress": {
+              "command": "SHOW_LAYOUTS"
+            }
+          },
+          "visual": {
+            "icon": "layout_switch",
+            "activeIcon": "layout_switch_active"
+          }
+        },
+        {
+          "key": "space",
+          "type": "character",
+          "width": 5.5,
+          "actions": {
+            "press": {
+              "output": " "
+            },
+            "longPress": {
+              "command": "SHOW_CURSOR_CONTROLS"
+            }
+          },
+          "visual": {
+            "label": "space"
+          }
+        },
+        {
+          "key": "return",
+          "type": "system",
+          "width": 2.0,
+          "actions": {
+            "press": {
+              "command": "ACTION"
+            }
+          },
+          "visual": {
+            "label": "return",
+            "adaptiveLabels": {
+              "search": "search",
+              "send": "send",
+              "go": "go",
+              "done": "done"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "type": "email",
+      "insertAt": {
+        "row": 2,
+        "position": 9,
+        "key": {
+          "key": "@",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": ""
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "popups": {
+    "enabled": true,
+    "delay": 200,
+    "style": "ios"
+  },
+  "behaviors": {
+    "keyRepeat": {
+      "initialDelay": 500,
+      "repeatInterval": 50
+    },
+    "longPress": {
+      "delay": 300
+    },
+    "doubleTap": {
+      "maxDelay": 500
+    }
+  },
+  "visual": {
+    "fontSize": {
+      "primary": 1.0,
+      "secondary": 0.7
+    },
+    "popupScale": 1.5
+  }
+}
