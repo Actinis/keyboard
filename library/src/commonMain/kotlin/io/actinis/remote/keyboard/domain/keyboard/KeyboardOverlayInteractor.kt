@@ -79,8 +79,6 @@ internal class KeyboardOverlayInteractorImpl(
             return
         }
 
-//        val layouts =
-
         val showBackground = keyboardState.longPressedKeyId != null
         val popupOnLongPress = key.actions.longPress?.popup == true
         val isLongPressed = keyboardState.longPressedKeyId == pressedKeyId
@@ -88,92 +86,11 @@ internal class KeyboardOverlayInteractorImpl(
         val bubble = when {
             isLongPressed && popupOnLongPress -> {
                 key.actions.longPress?.let { longPressAction ->
-                    val hasValues = longPressAction.values.isNotEmpty()
-                    val commandType = longPressAction.command
-
-                    if (commandType == null) {
-                        logger.w { "Key $key doesn't have long press command" }
-                        return@let null
-                    }
-
-                    val itemsPerRow = when (commandType) {
-                        Actions.Action.CommandType.SHOW_LAYOUTS -> SHOW_LAYOUTS_ITEMS_PER_ROW
-                        else -> DEFAULT_ITEMS_PER_ROW
-                    }
-
-                    val values = if (hasValues) {
-                        longPressAction.values.map { PopupValue(id = it, text = it) }
-                    } else {
-                        when (commandType) {
-                            Actions.Action.CommandType.SHOW_LAYOUTS -> {
-                                logger.w { "Available layouts: ${preferencesInteractor.availableKeyboardLayouts.value}" }
-                                val currentLayoutId = keyboardStateInteractor.currentLayout.value?.metadata?.id
-
-                                preferencesInteractor.availableKeyboardLayouts.value
-                                    .asSequence()
-                                    .filter { it.isEnabled }
-                                    .map { PopupValue(id = it.id, text = it.name) }
-                                    .sortedBy { it.id == currentLayoutId } // Current layout should be last
-                                    .toList()
-
-                                // TODO: Uncomment when layouts management will be ready
-//                                    .let { values ->
-//                                        listOf(
-//                                            PopupValue(
-//                                                id = KeyboardOverlayBubble.LongPressedKey.Item.MANAGE_KEYBOARD_LAYOUTS_ID,
-//                                                text = "Manage" // FIXME: Replace with a string
-//                                            )
-//                                        ) + values
-//                                    }
-                            }
-
-                            else -> emptyList()
-                        }
-                    }
-
-                    if (values.isEmpty()) {
-                        logger.w { "Key $key doesn't have long press values" }
-                        return@let null
-                    }
-
-                    val items = values
-                        .chunked(itemsPerRow)
-                        .map { chunk ->
-                            chunk.map { value ->
-                                KeyboardOverlayBubble.LongPressedKey.Item(
-                                    id = value.id,
-                                    text = value.text,
-                                )
-                            }
-                        }
-
-                    val (selectedItemRow, selectedItemColumn) = when (commandType) {
-                        Actions.Action.CommandType.SHOW_LAYOUTS -> {
-                            items.count() - 1 to 0
-                        }
-
-                        else -> 0 to 0
-                    }
-
-                    KeyboardOverlayBubble.LongPressedKey(
-                        items = items,
-                        selectedItemRow = selectedItemRow,
-                        selectedItemColumn = selectedItemColumn,
-                    )
+                    createLongPressBubble(key = key, longPressAction = longPressAction)
                 }
             }
 
-            key.type == Key.Type.CHARACTER -> {
-                if (key.visual?.label != null) {
-                    KeyboardOverlayBubble.PressedKey(
-                        text = key.visual.label,
-                    )
-                } else {
-                    logger.e { "Key $key doesn't have visual label to display, visual=${key.visual}" }
-                    null
-                }
-
-            }
+            key.type == Key.Type.CHARACTER -> createCharacterBubble(key = key)
 
             else -> {
                 logger.w {
@@ -188,6 +105,92 @@ internal class KeyboardOverlayInteractorImpl(
             showBackground = showBackground,
             activeBubble = bubble,
         )
+    }
+
+    private fun createLongPressBubble(
+        key: Key,
+        longPressAction: Actions.Action.LongPressAction,
+    ): KeyboardOverlayBubble? {
+        val commandType = longPressAction.command
+
+        if (commandType == null) {
+            logger.w { "Key $key doesn't have long press command" }
+            return null
+        }
+
+        val itemsPerRow = when (commandType) {
+            Actions.Action.CommandType.SHOW_LAYOUTS -> SHOW_LAYOUTS_ITEMS_PER_ROW
+            else -> DEFAULT_ITEMS_PER_ROW
+        }
+
+        val values = getLongPressValues(longPressAction = longPressAction, commandType = commandType)
+
+        if (values.isEmpty()) {
+            logger.w { "Key $key doesn't have long press values" }
+            return null
+        }
+
+        val items = values
+            .chunked(itemsPerRow)
+            .map { chunk ->
+                chunk.map { value ->
+                    KeyboardOverlayBubble.LongPressedKey.Item(
+                        id = value.id,
+                        text = value.text,
+                    )
+                }
+            }
+
+        val (selectedItemRow, selectedItemColumn) = when (commandType) {
+            Actions.Action.CommandType.SHOW_LAYOUTS -> {
+                items.count() - 1 to 0
+            }
+
+            else -> 0 to 0
+        }
+
+        return KeyboardOverlayBubble.LongPressedKey(
+            items = items,
+            selectedItemRow = selectedItemRow,
+            selectedItemColumn = selectedItemColumn,
+        )
+    }
+
+    private fun getLongPressValues(
+        longPressAction: Actions.Action.LongPressAction,
+        commandType: Actions.Action.CommandType,
+    ): List<PopupValue> {
+        return if (longPressAction.values.isNotEmpty()) {
+            longPressAction.values.map { PopupValue(id = it, text = it) }
+        } else {
+            when (commandType) {
+                Actions.Action.CommandType.SHOW_LAYOUTS -> getShowLayoutsValues()
+                else -> emptyList()
+            }
+        }
+    }
+
+    private fun getShowLayoutsValues(): List<PopupValue> {
+        logger.w { "Available layouts: ${preferencesInteractor.availableKeyboardLayouts.value}" }
+        val currentLayoutId = keyboardStateInteractor.currentLayout.value?.metadata?.id
+
+        return preferencesInteractor.availableKeyboardLayouts.value
+            .asSequence()
+            .filter { it.isEnabled }
+            .map { PopupValue(id = it.id, text = it.name) }
+            .sortedBy { it.id == currentLayoutId } // Current layout should be last
+            .toList()
+    }
+
+    private fun createCharacterBubble(key: Key): KeyboardOverlayBubble? {
+        return if (key.visual?.label != null) {
+            KeyboardOverlayBubble.PressedKey(
+                text = key.visual.label,
+            )
+        } else {
+            logger.e { "Key $key doesn't have visual label to display, visual=${key.visual}" }
+            null
+        }
     }
 
     private fun calculateMovement(deltaX: Float, deltaY: Float): Movement {
