@@ -8,7 +8,6 @@ Built using **Compose Multiplatform**.
 
 The following features are planned for future development:
 
-- Sub-layouts (e.g., numeric, phone, etc.)
 - Layout variants (e.g., email, URL)
 - Autocomplete support
 - Theming support
