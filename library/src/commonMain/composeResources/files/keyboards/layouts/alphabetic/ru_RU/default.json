@@ -10,8 +10,8 @@
     "rowCount": 4,
     "defaultKeyWidth": 1.0,
     "defaultKeyHeight": 1.0,
-    "baseKeyWidthMultiplier": 0.09,
-    "baseKeyHeightToWidthMultiplier": 1.2,
+    "baseKeyWidthMultiplier": 0.08,
+    "baseKeyHeightToWidthMultiplier": 1.35,
     "columnsSpacingMultiplier": 0.01,
     "rowsSpacingToHeightMultiplier": 0.1
   },
@@ -668,7 +668,7 @@
         {
           "key": "symbols_primary",
           "type": "system",
-          "width": 1.5,
+          "width": 1.7,
           "actions": {
             "press": {
               "command": "SWITCH_LAYOUT",
@@ -684,7 +684,7 @@
         {
           "key": "layout",
           "type": "system",
-          "width": 1.5,
+          "width": 1.7,
           "actions": {
             "press": {
               "command": "SWITCH_LAYOUT",
@@ -705,7 +705,7 @@
         {
           "key": "space",
           "type": "character",
-          "width": 5.5,
+          "width": 6.2,
           "actions": {
             "press": {
               "output": " "
@@ -715,13 +715,13 @@
             }
           },
           "visual": {
-            "label": "space"
+            "label": "пробел"
           }
         },
         {
           "key": "return",
           "type": "system",
-          "width": 2.0,
+          "width": 2.3,
           "actions": {
             "press": {
               "command": "ACTION"
