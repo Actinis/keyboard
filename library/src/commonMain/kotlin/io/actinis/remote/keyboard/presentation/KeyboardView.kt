@@ -27,6 +27,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import co.touchlab.kermit.Logger
+import io.actinis.remote.keyboard.data.config.model.action.Actions
 import io.actinis.remote.keyboard.data.config.model.key.Key
 import io.actinis.remote.keyboard.data.config.model.key.KeysRow
 import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
@@ -84,6 +85,7 @@ fun KeyboardView(
 
     currentLayout?.let { layout ->
         var viewState by remember { mutableStateOf(KeyboardViewState()) }
+        val localInputState by remember(inputState::class, inputState.actionType) { mutableStateOf(inputState) }
 
         LaunchedEffect(layout.metadata.id) {
             viewState = viewState.copy(keyBoundaries = emptySet())
@@ -101,6 +103,7 @@ fun KeyboardView(
                 KeyboardLayout(
                     layout = currentLayout,
                     keyboardState = keyboardState,
+                    inputState = localInputState,
                     viewState = viewState,
                     overlayState = overlayState,
                     onViewStateChange = { viewState = it },
@@ -128,6 +131,7 @@ fun KeyboardView(
 @Composable
 private fun KeyboardLayout(
     layout: KeyboardLayout,
+    inputState: InputState,
     keyboardState: KeyboardState,
     viewState: KeyboardViewState,
     overlayState: KeyboardOverlayState,
@@ -192,6 +196,7 @@ private fun KeyboardLayout(
             KeyboardRow(
                 keysRow = row,
                 keyboardState = keyboardState,
+                inputState = inputState,
                 baseKeyDimensions = viewState.baseKeyDimensions,
                 onKeyBoundaryUpdate = { boundary ->
                     val newBoundaries = (viewState.keyBoundaries
@@ -216,6 +221,7 @@ private fun KeyboardLayout(
 private fun KeyboardRow(
     keysRow: KeysRow,
     keyboardState: KeyboardState,
+    inputState: InputState,
     baseKeyDimensions: BaseKeyDimensions,
     onKeyBoundaryUpdate: (KeyBoundary) -> Unit,
     modifier: Modifier = Modifier,
@@ -228,6 +234,7 @@ private fun KeyboardRow(
             KeyboardKeyContainer(
                 key = key,
                 keyboardState = keyboardState,
+                inputState = inputState,
                 onKeyBoundaryUpdate = onKeyBoundaryUpdate,
                 modifier = Modifier
                     .size(
@@ -243,6 +250,7 @@ private fun KeyboardRow(
 private fun KeyboardKeyContainer(
     key: Key,
     keyboardState: KeyboardState,
+    inputState: InputState,
     onKeyBoundaryUpdate: (KeyBoundary) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -266,6 +274,7 @@ private fun KeyboardKeyContainer(
         KeyboardKey(
             key = key,
             keyboardState = keyboardState,
+            inputState = inputState,
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -275,6 +284,7 @@ private fun KeyboardKeyContainer(
 private fun KeyboardKey(
     key: Key,
     keyboardState: KeyboardState,
+    inputState: InputState,
     modifier: Modifier = Modifier,
 ) {
     val isKeyPressed = keyboardState.pressedKeyId == key.id
@@ -292,6 +302,9 @@ private fun KeyboardKey(
         key.getIcon(isActive = isKeyPressed, activeModifierForKey = activeModifierForKey)
     }
 
+    val isCustomActionKeyLabel = key.actions.press.command == Actions.Action.CommandType.ACTION
+            && key.visual?.actionKeyLabels != null
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(6.dp))
@@ -304,6 +317,30 @@ private fun KeyboardKey(
                     imageVector = getKeyIcon(icon),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            isCustomActionKeyLabel -> {
+                val text = remember(key.actions.press.command, inputState.actionType) {
+                    val actionKeyLabels = key.visual?.actionKeyLabels
+
+                    when (inputState.actionType) {
+                        InputState.ActionType.GO -> actionKeyLabels?.go ?: key.visual?.label.orEmpty()
+                        InputState.ActionType.NEXT -> actionKeyLabels?.next ?: key.visual?.label.orEmpty()
+                        InputState.ActionType.PREVIOUS -> actionKeyLabels?.previous ?: key.visual?.label.orEmpty()
+                        InputState.ActionType.SEARCH -> actionKeyLabels?.search ?: key.visual?.label.orEmpty()
+                        InputState.ActionType.SEND -> actionKeyLabels?.send ?: key.visual?.label.orEmpty()
+                        InputState.ActionType.DONE -> actionKeyLabels?.done ?: key.visual?.label.orEmpty()
+                        InputState.ActionType.NONE -> key.visual?.label.orEmpty()
+                    }
+                }
+
+                // TODO: Calculate text size for all chars basing on settings
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.align(Alignment.Center),
                 )
             }
 

@@ -18,6 +18,7 @@ abstract class KeyboardViewModel : ViewModel() {
     abstract val keyboardEvents: Flow<KeyboardEvent>
 
     abstract val currentLayout: StateFlow<KeyboardLayout?>
+    abstract val inputState: StateFlow<InputState?>
     abstract val keyboardState: StateFlow<KeyboardState>
     abstract val overlayState: StateFlow<KeyboardOverlayState>
 
@@ -37,6 +38,7 @@ internal class KeyboardViewModelImpl(
 
     override val keyboardEvents: Flow<KeyboardEvent> = keyboardInteractor.keyboardEvents
     override val currentLayout: StateFlow<KeyboardLayout?> = keyboardInteractor.currentLayout
+    override val inputState: StateFlow<InputState?> = keyboardInteractor.inputState
     override val keyboardState: StateFlow<KeyboardState> = keyboardInteractor.keyboardState
     override val overlayState: StateFlow<KeyboardOverlayState> = keyboardInteractor.overlayState
 

@@ -52,6 +52,10 @@ data class KeyVisual(
         val go: String? = null,
         @SerialName("done")
         val done: String? = null,
+        @SerialName("next")
+        val next: String? = null,
+        @SerialName("previous")
+        val previous: String? = null,
     )
 
 }

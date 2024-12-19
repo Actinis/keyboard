@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.combine
 
 
 internal interface KeyboardInteractor {
+    val inputState: StateFlow<InputState?>
     val keyboardState: StateFlow<KeyboardState>
     val currentLayout: StateFlow<KeyboardLayout?>
     val keyboardEvents: Flow<KeyboardEvent>
@@ -43,6 +44,7 @@ internal class KeyboardInteractorImpl(
 
     private val logger = Logger.withTag(LOG_TAG)
 
+    override val inputState: StateFlow<InputState?> = keyboardStateInteractor.inputState
     override val keyboardState: StateFlow<KeyboardState> = keyboardStateInteractor.keyboardState
     override val currentLayout: StateFlow<KeyboardLayout?> = keyboardStateInteractor.currentLayout
     override val overlayState: StateFlow<KeyboardOverlayState> = keyboardOverlayInteractor.overlayState
