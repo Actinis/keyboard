@@ -130,17 +130,29 @@ internal class KeyboardOverlayInteractorImpl(
                         return@let null
                     }
 
+                    val items = values
+                        .chunked(itemsPerRow)
+                        .map { chunk ->
+                            chunk.map { value ->
+                                KeyboardOverlayBubble.LongPressedKey.Item(
+                                    id = value.id,
+                                    text = value.text,
+                                )
+                            }
+                        }
+
+                    val (selectedItemRow, selectedItemColumn) = when (commandType) {
+                        Actions.Action.CommandType.SHOW_LAYOUTS -> {
+                            items.count() - 1 to 0
+                        }
+
+                        else -> 0 to 0
+                    }
+
                     KeyboardOverlayBubble.LongPressedKey(
-                        items = values
-                            .chunked(itemsPerRow)
-                            .map { chunk ->
-                                chunk.map { value ->
-                                    KeyboardOverlayBubble.LongPressedKey.Item(
-                                        id = value.id,
-                                        text = value.text,
-                                    )
-                                }
-                            },
+                        items = items,
+                        selectedItemRow = selectedItemRow,
+                        selectedItemColumn = selectedItemColumn,
                     )
                 }
             }
