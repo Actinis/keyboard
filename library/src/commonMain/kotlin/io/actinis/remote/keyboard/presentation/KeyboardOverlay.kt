@@ -95,15 +95,14 @@ private fun LongPressedKeyBubble(
 
                         Box(
                             modifier = Modifier
-                                .size(48.dp, 48.dp)
-                                .padding(2.dp)
+                                .defaultMinSize(48.dp, 48.dp)
                                 .background(
                                     color = if (isSelected) {
                                         MaterialTheme.colorScheme.primaryContainer
                                     } else {
                                         Color.Transparent
                                     },
-                                    shape = CircleShape,
+                                    shape = MaterialTheme.shapes.medium,
                                 )
                         ) {
                             KeyBubbleText(
@@ -151,9 +150,7 @@ private fun KeyBubble(
             .defaultMinSize(48.dp, 48.dp)
             .background(
                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
-                shape = MaterialTheme.shapes.medium.copy(
-                    all = CornerSize(8.dp),
-                )
+                shape = MaterialTheme.shapes.medium,
             ),
         contentAlignment = Alignment.Center
     ) {
