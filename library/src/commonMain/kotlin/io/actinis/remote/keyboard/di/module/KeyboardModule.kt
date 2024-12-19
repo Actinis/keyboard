@@ -27,6 +27,7 @@ internal val keyboardModule = module {
     single {
         KeyboardOverlayInteractorImpl(
             preferencesInteractor = get(),
+            keyboardStateInteractor = get(),
         )
     } bind KeyboardOverlayInteractor::class
 

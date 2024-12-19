@@ -25,6 +25,7 @@ internal interface KeyboardOverlayInteractor {
 
 internal class KeyboardOverlayInteractorImpl(
     private val preferencesInteractor: PreferencesInteractor,
+    private val keyboardStateInteractor: KeyboardStateInteractor,
 ) : KeyboardOverlayInteractor {
     private val logger = Logger.withTag(LOG_TAG)
 
@@ -106,10 +107,15 @@ internal class KeyboardOverlayInteractorImpl(
                         when (commandType) {
                             Actions.Action.CommandType.SHOW_LAYOUTS -> {
                                 logger.w { "Available layouts: ${preferencesInteractor.availableKeyboardLayouts.value}" }
+                                val currentLayoutId = keyboardStateInteractor.currentLayout.value?.metadata?.id
 
                                 preferencesInteractor.availableKeyboardLayouts.value
+                                    .asSequence()
                                     .filter { it.isEnabled }
                                     .map { PopupValue(id = it.id, text = it.name) }
+                                    .sortedBy { it.id == currentLayoutId } // Current layout should be last
+                                    .toList()
+
                                 // TODO: Uncomment when layouts management will be ready
 //                                    .let { values ->
 //                                        listOf(
