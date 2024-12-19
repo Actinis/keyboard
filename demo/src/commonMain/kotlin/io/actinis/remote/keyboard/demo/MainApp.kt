@@ -174,6 +174,7 @@ fun MainApp() {
                             selectionEnd = textFieldValue.selection.end,
                             isMultiline = true,
                             actionType = InputState.ActionType.NONE,
+                            capitalizationMode = InputState.Text.CapitalizationMode.WORDS,
                         )
                     }
                 }

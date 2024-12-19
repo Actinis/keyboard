@@ -11,7 +11,7 @@ import io.actinis.remote.keyboard.domain.model.command.KeyboardCommand
 import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayBubble
 import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayState
 import io.actinis.remote.keyboard.domain.preferences.PreferencesInteractor
-import io.actinis.remote.keyboard.domain.text.TextInteractor
+import io.actinis.remote.keyboard.domain.text.TextModificationsInteractor
 import io.actinis.remote.keyboard.presentation.touch.KeyInteractionEvent
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -36,7 +36,7 @@ internal class KeyboardInteractorImpl(
     private val preferencesInteractor: PreferencesInteractor,
     private val keyboardStateInteractor: KeyboardStateInteractor,
     private val keyboardOverlayInteractor: KeyboardOverlayInteractor,
-    private val textInteractor: TextInteractor,
+    private val textModificationsInteractor: TextModificationsInteractor,
     private val defaultDispatcher: CoroutineDispatcher,
     private val ioDispatcher: CoroutineDispatcher,
 ) : KeyboardInteractor {
@@ -76,7 +76,7 @@ internal class KeyboardInteractorImpl(
     }
 
     private suspend fun listenForTextModifications() {
-        textInteractor
+        textModificationsInteractor
             .textModificationEvents
             .map { event ->
                 KeyboardEvent.TextChange(
@@ -225,10 +225,7 @@ internal class KeyboardInteractorImpl(
             else -> output
         }
 
-        textInteractor.insertText(text)
-
-        // Turn off shift (if active) after character input
-        keyboardStateInteractor.turnOffShift()
+        textModificationsInteractor.insertText(text)
     }
 
     private suspend fun handleKeyCommandAction(
@@ -239,8 +236,8 @@ internal class KeyboardInteractorImpl(
 
         when (command) {
             KeyboardCommand.Action -> handleAction()
-            KeyboardCommand.DeleteBackward -> textInteractor.deleteBackward()
-            KeyboardCommand.DeleteWord -> textInteractor.deleteWordBackward()
+            KeyboardCommand.DeleteBackward -> handleDeleteBackward()
+            KeyboardCommand.DeleteWord -> handleDeleteWordBackward()
             is KeyboardCommand.OutputValue -> {
                 handleKeyPressOutputAction(key = key, output = command.value)
             }
@@ -260,9 +257,17 @@ internal class KeyboardInteractorImpl(
     }
 
     private suspend fun handleAction() {
-        if (!textInteractor.insertNewLine()) {
+        if (!textModificationsInteractor.insertNewLine()) {
             emitKeyboardEvent(KeyboardEvent.ActionClick)
         }
+    }
+
+    private suspend fun handleDeleteBackward() {
+        textModificationsInteractor.deleteBackward()
+    }
+
+    private suspend fun handleDeleteWordBackward() {
+        textModificationsInteractor.deleteWordBackward()
     }
 
     private fun handleManageLayouts() {

@@ -39,7 +39,6 @@ internal interface KeyboardStateInteractor {
     fun toggleCapsLock()
 
     fun turnOffShift()
-
 }
 
 /**
@@ -62,6 +61,8 @@ internal class KeyboardStateInteractorImpl(
     override val isCapsLockActive: Boolean
         get() = keyboardState.value.isCapsLockActive
 
+    val isShiftOrCapsLockActive: Boolean
+        get() = isShiftActive || isCapsLockActive
 
     override suspend fun updateInputState(inputState: InputState) {
         logger.d { "updateInputState: inputState=$inputState" }
@@ -74,6 +75,7 @@ internal class KeyboardStateInteractorImpl(
         }
 
         this.inputState.value = inputState
+        updateShiftState(inputState)
     }
 
     private fun getLayoutIdForInputState(inputState: InputState): String {
@@ -243,6 +245,21 @@ internal class KeyboardStateInteractorImpl(
         // If shift is enabled (but not caps lock)
         if (isShiftActive && !isCapsLockActive) {
             toggleShiftInternal()
+        }
+    }
+
+    private fun updateShiftState(inputState: InputState) {
+        if (inputState !is InputState.Text) return
+
+        val shouldToggleShift = when (inputState.capitalizationMode) {
+            InputState.Text.CapitalizationMode.NONE -> false
+            InputState.Text.CapitalizationMode.ALL_CHARACTERS -> !isShiftOrCapsLockActive
+            InputState.Text.CapitalizationMode.WORDS -> TODO()
+            InputState.Text.CapitalizationMode.SENTENCES -> TODO()
+        }
+
+        if (shouldToggleShift) {
+            toggleShift()
         }
     }
 

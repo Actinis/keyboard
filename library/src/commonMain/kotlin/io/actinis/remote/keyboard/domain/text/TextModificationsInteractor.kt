@@ -9,7 +9,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
-internal interface TextInteractor {
+internal interface TextModificationsInteractor {
     val textModificationEvents: Flow<TextModificationEvent>
 
     suspend fun insertText(text: String)
@@ -19,10 +19,10 @@ internal interface TextInteractor {
     suspend fun deleteWordBackward()
 }
 
-internal class TextInteractorImpl(
+internal class TextModificationsInteractorImpl(
     private val keyboardStateInteractor: KeyboardStateInteractor,
     private val defaultDispatcher: CoroutineDispatcher,
-) : TextInteractor {
+) : TextModificationsInteractor {
     private val logger = Logger.withTag(LOG_TAG)
 
     private val _textModificationEvents = MutableSharedFlow<TextModificationEvent>(
