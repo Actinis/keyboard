@@ -3,9 +3,11 @@ package io.actinis.remote.keyboard.di.module
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import io.actinis.remote.keyboard.data.preferences.db.db.PreferencesDatabase
+import io.actinis.remote.keyboard.data.preferences.provider.SettingsProvider
 import io.actinis.remote.keyboard.data.preferences.repository.PreferencesRepository
 import io.actinis.remote.keyboard.data.preferences.repository.PreferencesRepositoryImpl
 import io.actinis.remote.keyboard.di.name.DispatchersNames
+import io.actinis.remote.keyboard.di.name.SettingsNames
 import io.actinis.remote.keyboard.domain.preferences.PreferencesInteractor
 import io.actinis.remote.keyboard.domain.preferences.PreferencesInteractorImpl
 import kotlinx.coroutines.CoroutineDispatcher
@@ -33,9 +35,15 @@ internal val preferencesModule = module {
         db.enabledKeyboardLayoutsDao()
     }
 
+    single(named(SettingsNames.KEYBOARD_LAYOUTS)) {
+        val settingsProvider: SettingsProvider = get()
+        settingsProvider.createSettings("keyboard_layouts")
+    }
+
     single {
         PreferencesRepositoryImpl(
             enabledKeyboardLayoutsDao = get(),
+            keyboardLayoutsSettings = get(named(SettingsNames.KEYBOARD_LAYOUTS)),
             ioDispatcher = get(named(DispatchersNames.IO)),
         )
     } bind PreferencesRepository::class

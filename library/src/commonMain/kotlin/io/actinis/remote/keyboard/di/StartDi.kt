@@ -9,6 +9,7 @@ fun KoinApplication.configureModules() {
         coreModule,
         coroutinesModule,
         platformDatabaseModule,
+        platformSettingsModule,
         configurationModule,
         preferencesModule,
         keyboardModule,

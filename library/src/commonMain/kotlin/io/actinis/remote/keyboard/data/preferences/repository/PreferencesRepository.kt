@@ -1,6 +1,9 @@
 package io.actinis.remote.keyboard.data.preferences.repository
 
 import co.touchlab.kermit.Logger
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.get
+import com.russhwolf.settings.set
 import io.actinis.remote.keyboard.data.preferences.db.dao.EnabledKeyboardLayoutsDao
 import io.actinis.remote.keyboard.data.preferences.db.model.EnabledKeyboardLayout
 import kotlinx.coroutines.CoroutineDispatcher
@@ -11,10 +14,14 @@ internal interface PreferencesRepository {
 
     suspend fun disableKeyboardLayouts(keyboardLayouts: List<EnabledKeyboardLayout>)
     suspend fun updateKeyboardLayouts(keyboardLayouts: List<EnabledKeyboardLayout>)
+
+    suspend fun getLastKeyboardLayoutId(): String?
+    suspend fun setLastKeyboardLayoutId(id: String?)
 }
 
 internal class PreferencesRepositoryImpl(
     private val enabledKeyboardLayoutsDao: EnabledKeyboardLayoutsDao,
+    private val keyboardLayoutsSettings: Settings,
     private val ioDispatcher: CoroutineDispatcher,
 ) : PreferencesRepository {
 
@@ -40,7 +47,21 @@ internal class PreferencesRepositoryImpl(
             }
     }
 
+    override suspend fun getLastKeyboardLayoutId(): String? {
+        return keyboardLayoutsSettings[KEY_LAST_KEYBOARD_LAYOUT_ID]
+    }
+
+    override suspend fun setLastKeyboardLayoutId(id: String?) {
+        if (id != null) {
+            keyboardLayoutsSettings[KEY_LAST_KEYBOARD_LAYOUT_ID] = id
+        } else {
+            keyboardLayoutsSettings.remove(KEY_LAST_KEYBOARD_LAYOUT_ID)
+        }
+    }
+
     private companion object {
         private const val LOG_TAG = "PreferencesRepository"
+
+        private const val KEY_LAST_KEYBOARD_LAYOUT_ID = "last_keyboard_layout_id"
     }
 }

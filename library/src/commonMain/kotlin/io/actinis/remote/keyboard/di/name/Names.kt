@@ -7,5 +7,5 @@ internal object DispatchersNames {
 }
 
 internal object SettingsNames {
-
+    const val KEYBOARD_LAYOUTS = "layouts"
 }

@@ -18,6 +18,9 @@ internal interface PreferencesInteractor {
 
     fun initialize()
     fun updateAvailableKeyboardLayouts(keyboardLayouts: List<AvailableKeyboardLayoutPreference>)
+
+    suspend fun getLastKeyboardLayoutId(): String?
+    suspend fun setLastKeyboardLayoutId(id: String?)
 }
 
 internal class PreferencesInteractorImpl(
@@ -159,6 +162,14 @@ internal class PreferencesInteractorImpl(
         logger.d { "${availableKeyboardLayouts.size} layouts available: $availableKeyboardLayouts" }
 
         _availableKeyboardLayouts.value = availableKeyboardLayouts
+    }
+
+    override suspend fun getLastKeyboardLayoutId(): String? {
+        return preferencesRepository.getLastKeyboardLayoutId()
+    }
+
+    override suspend fun setLastKeyboardLayoutId(id: String?) {
+        preferencesRepository.setLastKeyboardLayoutId(id = id)
     }
 
     private fun getFullLayoutId(layoutConfig: GlobalConfig.LayoutConfig, key: String): String {
