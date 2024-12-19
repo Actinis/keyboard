@@ -65,6 +65,9 @@ data class Actions(
             @SerialName("SHOW_LAYOUTS")
             SHOW_LAYOUTS,
 
+            @SerialName("MANAGE_LAYOUTS")
+            MANAGE_LAYOUTS,
+
             @SerialName("TOGGLE_SHIFT")
             TOGGLE_SHIFT,
 

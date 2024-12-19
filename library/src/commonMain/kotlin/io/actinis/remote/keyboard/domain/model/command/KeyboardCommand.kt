@@ -8,6 +8,7 @@ internal sealed interface KeyboardCommand {
     data object Action : KeyboardCommand
 
     data object ShowLayouts : KeyboardCommand
+    data object ManageLayouts : KeyboardCommand
 
     data class SwitchLayout(
         val layoutId: String,

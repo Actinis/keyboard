@@ -243,11 +243,14 @@ internal class KeyboardInteractorImpl(
             KeyboardCommand.ToggleCapsLock -> keyboardStateInteractor.toggleCapsLock()
             KeyboardCommand.ToggleShift -> keyboardStateInteractor.toggleShift()
             KeyboardCommand.ShowCursorControls -> TODO()
-            KeyboardCommand.ShowLayouts -> handleShowLayouts()
+            KeyboardCommand.ShowLayouts -> {}
+            KeyboardCommand.ManageLayouts -> handleManageLayouts()
+
         }
     }
 
-    private fun handleShowLayouts() {
+    private fun handleManageLayouts() {
+        logger.d { "handleManageLayouts" }
         // TODO
     }
 
@@ -384,6 +387,7 @@ internal class KeyboardInteractorImpl(
             }
 
             Actions.Action.CommandType.SHOW_LAYOUTS -> KeyboardCommand.ShowLayouts
+            Actions.Action.CommandType.MANAGE_LAYOUTS -> KeyboardCommand.ManageLayouts
             Actions.Action.CommandType.TOGGLE_SHIFT -> KeyboardCommand.ToggleShift
             Actions.Action.CommandType.CAPS_LOCK -> KeyboardCommand.ToggleCapsLock
             Actions.Action.CommandType.SHOW_CURSOR_CONTROLS -> KeyboardCommand.ShowCursorControls

@@ -95,15 +95,30 @@ internal class KeyboardOverlayInteractorImpl(
                         return@let null
                     }
 
+                    val itemsPerRow = when (commandType) {
+                        Actions.Action.CommandType.SHOW_LAYOUTS -> SHOW_LAYOUTS_ITEMS_PER_ROW
+                        else -> DEFAULT_ITEMS_PER_ROW
+                    }
+
                     val values = if (hasValues) {
                         longPressAction.values.map { PopupValue(id = it, text = it) }
                     } else {
                         when (commandType) {
                             Actions.Action.CommandType.SHOW_LAYOUTS -> {
                                 logger.w { "Available layouts: ${preferencesInteractor.availableKeyboardLayouts.value}" }
+
                                 preferencesInteractor.availableKeyboardLayouts.value
                                     .filter { it.isEnabled }
                                     .map { PopupValue(id = it.id, text = it.name) }
+                                // TODO: Uncomment when layouts management will be ready
+//                                    .let { values ->
+//                                        listOf(
+//                                            PopupValue(
+//                                                id = KeyboardOverlayBubble.LongPressedKey.Item.MANAGE_KEYBOARD_LAYOUTS_ID,
+//                                                text = "Manage" // FIXME: Replace with a string
+//                                            )
+//                                        ) + values
+//                                    }
                             }
 
                             else -> emptyList()
@@ -117,7 +132,7 @@ internal class KeyboardOverlayInteractorImpl(
 
                     KeyboardOverlayBubble.LongPressedKey(
                         items = values
-                            .chunked(4)
+                            .chunked(itemsPerRow)
                             .map { chunk ->
                                 chunk.map { value ->
                                     KeyboardOverlayBubble.LongPressedKey.Item(
@@ -280,5 +295,8 @@ internal class KeyboardOverlayInteractorImpl(
 
         // TODO: Should be density-dependent
         private const val LONG_PRESS_OVERLAY_MOVEMENT_THRESHOLD_PX = 30f
+
+        private const val DEFAULT_ITEMS_PER_ROW = 4
+        private const val SHOW_LAYOUTS_ITEMS_PER_ROW = 1
     }
 }

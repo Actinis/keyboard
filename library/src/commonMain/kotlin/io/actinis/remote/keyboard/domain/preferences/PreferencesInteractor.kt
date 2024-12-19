@@ -1,6 +1,7 @@
 package io.actinis.remote.keyboard.domain.preferences
 
 import co.touchlab.kermit.Logger
+import io.actinis.remote.keyboard.data.config.model.layout.GlobalConfig
 import io.actinis.remote.keyboard.data.config.model.layout.LayoutType
 import io.actinis.remote.keyboard.data.config.repository.KeyboardLayoutsRepository
 import io.actinis.remote.keyboard.data.preferences.db.model.EnabledKeyboardLayout
@@ -29,11 +30,11 @@ internal class PreferencesInteractorImpl(
 
     private val coroutineScope = CoroutineScope(defaultDispatcher + SupervisorJob())
 
-    private val enabledKeyboardLayouts: StateFlow<List<EnabledKeyboardLayout>> = preferencesRepository
+    private val enabledKeyboardLayouts: StateFlow<List<EnabledKeyboardLayout>?> = preferencesRepository
         .enabledKeyboardLayouts
-        .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+        .stateIn(coroutineScope, SharingStarted.Eagerly, null)
 
-    val _availableKeyboardLayouts = MutableStateFlow<List<AvailableKeyboardLayoutPreference>>(emptyList())
+    private val _availableKeyboardLayouts = MutableStateFlow<List<AvailableKeyboardLayoutPreference>>(emptyList())
     override val availableKeyboardLayouts = _availableKeyboardLayouts.asStateFlow()
 
     override fun initialize() {
@@ -42,19 +43,23 @@ internal class PreferencesInteractorImpl(
 
     private fun listenToEnabledKeyboardLayoutsChanges() {
         coroutineScope.launch {
-            enabledKeyboardLayouts.collect { enabledKeyboardLayouts ->
-                logger.d { "Enabled keyboard layouts list changed: $enabledKeyboardLayouts" }
+            enabledKeyboardLayouts
+                .filterNotNull()
+                .onEach { enabledKeyboardLayouts ->
+                    logger.d { "Enabled keyboard layouts list changed: $enabledKeyboardLayouts" }
 
-                if (enabledKeyboardLayouts.isEmpty()) {
-                    // Enable the default layout if none enabled
-                    enableDefaultLayout()
-                }
+                    if (enabledKeyboardLayouts.isEmpty()) {
+                        // Enable the default layout if none enabled
+                        enableDefaultLayout()
+                        return@onEach // Skip further processing until we get updated state
+                    }
 
-                if (availableKeyboardLayouts.value.isEmpty()) {
-                    // Initial update
-                    updateActuallyAvailableKeyboardLayouts()
+                    if (availableKeyboardLayouts.value.isEmpty()) {
+                        // Initial update
+                        updateActuallyAvailableKeyboardLayouts()
+                    }
                 }
-            }
+                .collect()
         }
     }
 
@@ -62,7 +67,7 @@ internal class PreferencesInteractorImpl(
         coroutineScope.launch {
             logger.d { "updateAvailableKeyboardLayouts: keyboardLayouts=$keyboardLayouts" }
 
-            val layoutsToDisable = enabledKeyboardLayouts.value.filter { enabledKeyboardLayout ->
+            val layoutsToDisable = enabledKeyboardLayouts.value.orEmpty().filter { enabledKeyboardLayout ->
                 keyboardLayouts.find { !it.isEnabled && it.id == enabledKeyboardLayout.id } != null
             }
 
@@ -93,17 +98,35 @@ internal class PreferencesInteractorImpl(
         }
     }
 
+    /**
+     * Enables the default layout
+     * Currently there is no layouts management, we always enable en_US, ru_RU and Emoji keyboards by default
+     * So for now it simply enables everything
+     */
     private suspend fun enableDefaultLayout() {
         logger.d { "enableDefaultLayout" }
 
-        val globalLayoutsConfig = keyboardLayoutsRepository.globalConfig
-        val defaultLayout = EnabledKeyboardLayout(
-            id = globalLayoutsConfig.defaultLayout,
-        )
+        // TODO: Uncomment when layout management is ready
+//        val globalLayoutsConfig = keyboardLayoutsRepository.globalConfig
+//        val defaultLayout = EnabledKeyboardLayout(
+//            id = globalLayoutsConfig.defaultLayout,
+//        )
+//
+//        logger.d { "Will enable default layout = $defaultLayout" }
+//        preferencesRepository.updateKeyboardLayouts(listOf(defaultLayout))
 
-        logger.d { "Will enable default layout = $defaultLayout" }
-
-        preferencesRepository.updateKeyboardLayouts(listOf(defaultLayout))
+        keyboardLayoutsRepository.globalConfig.availableLayouts
+            .filter { (_, layoutConfig) ->
+                layoutConfig.type in availableLayoutsTypes
+            }
+            .map { (key, layoutConfig) ->
+                EnabledKeyboardLayout(
+                    id = getFullLayoutId(layoutConfig = layoutConfig, key = key)
+                )
+            }
+            .let { enabledKeyboardLayouts ->
+                preferencesRepository.updateKeyboardLayouts(enabledKeyboardLayouts)
+            }
     }
 
     /**
@@ -114,19 +137,21 @@ internal class PreferencesInteractorImpl(
 
         val currentlyEnabledKeyboardLayouts = enabledKeyboardLayouts.value
 
+        logger.d { "${currentlyEnabledKeyboardLayouts?.size ?: 0} enabled keyboard layouts: $currentlyEnabledKeyboardLayouts" }
+
         val globalLayoutsConfig = keyboardLayoutsRepository.globalConfig
-        val availableKeyboardLayouts = globalLayoutsConfig.availableLayouts.mapNotNull { (key, layout) ->
-            if (layout.type !in availableLayoutsTypes) {
-                logger.d { "Ignoring layout of type ${layout.type}" }
+        val availableKeyboardLayouts = globalLayoutsConfig.availableLayouts.mapNotNull { (key, layoutConfig) ->
+            if (layoutConfig.type !in availableLayoutsTypes) {
+                logger.d { "Ignoring layout of type ${layoutConfig.type}" }
                 return@mapNotNull null
             }
 
-            val id = "${layout.type}/${key}/default"
-            val isEnabled = currentlyEnabledKeyboardLayouts.find { it.id == id } != null
+            val id = getFullLayoutId(layoutConfig = layoutConfig, key = key)
+            val isEnabled = currentlyEnabledKeyboardLayouts?.find { it.id == id } != null
 
             AvailableKeyboardLayoutPreference(
                 id = id,
-                name = layout.name,
+                name = layoutConfig.name,
                 isEnabled = isEnabled,
             )
         }
@@ -134,6 +159,10 @@ internal class PreferencesInteractorImpl(
         logger.d { "${availableKeyboardLayouts.size} layouts available: $availableKeyboardLayouts" }
 
         _availableKeyboardLayouts.value = availableKeyboardLayouts
+    }
+
+    private fun getFullLayoutId(layoutConfig: GlobalConfig.LayoutConfig, key: String): String {
+        return "${layoutConfig.type}/${key}/default"
     }
 
     private companion object {

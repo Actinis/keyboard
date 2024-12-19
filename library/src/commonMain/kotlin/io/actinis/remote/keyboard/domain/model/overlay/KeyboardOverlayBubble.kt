@@ -15,6 +15,11 @@ sealed interface KeyboardOverlayBubble {
         data class Item(
             val id: String,
             val text: String,
-        )
+        ) {
+
+            companion object {
+                const val MANAGE_KEYBOARD_LAYOUTS_ID = "manage_keyboard_layouts"
+            }
+        }
     }
 }
