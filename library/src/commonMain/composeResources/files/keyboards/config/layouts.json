@@ -38,6 +38,11 @@
       "defaultId": "numeric/numeric/default",
       "type": "numeric",
       "name": "Numeric"
+    },
+    "phone": {
+      "defaultId": "phone/phone/default",
+      "type": "phone",
+      "name": "Phone number"
     }
   },
   "contextRules": {

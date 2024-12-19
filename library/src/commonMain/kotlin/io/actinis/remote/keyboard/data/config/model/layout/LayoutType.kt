@@ -14,6 +14,9 @@ enum class LayoutType {
     @SerialName("numeric")
     NUMERIC,
 
+    @SerialName("phone")
+    PHONE,
+
     @SerialName("symbols")
     SYMBOLS;
 
@@ -22,6 +25,7 @@ enum class LayoutType {
             ALPHABETIC -> "alphabetic"
             EMOJI -> "emoji"
             NUMERIC -> "numeric"
+            PHONE -> "phone"
             SYMBOLS -> "symbols"
         }
     }

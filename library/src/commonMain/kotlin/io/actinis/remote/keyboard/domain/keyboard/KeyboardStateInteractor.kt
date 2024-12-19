@@ -91,7 +91,7 @@ internal class KeyboardStateInteractorImpl(
         return when (inputType) {
             InputType.TEXT, InputType.EMAIL, InputType.URL -> LayoutType.ALPHABETIC
             InputType.NUMERIC -> LayoutType.NUMERIC
-            InputType.PHONE -> TODO()
+            InputType.PHONE -> LayoutType.PHONE
         }
     }
 

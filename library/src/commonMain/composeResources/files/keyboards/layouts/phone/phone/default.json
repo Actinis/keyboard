@@ -1,0 +1,327 @@
+{
+  "metadata": {
+    "id": "phone/phone/default",
+    "name": "Phone number",
+    "version": "1.0",
+    "type": "phone",
+    "inheritsFrom": null
+  },
+  "dimensions": {
+    "rowCount": 4,
+    "defaultKeyWidth": 1.0,
+    "defaultKeyHeight": 1.0,
+    "baseKeyWidthMultiplier": 0.235,
+    "baseKeyHeightToWidthMultiplier": 0.5,
+    "columnsSpacingMultiplier": 0.01,
+    "rowsSpacingToHeightMultiplier": 0.1
+  },
+  "rows": [
+    {
+      "id": "row1",
+      "keys": [
+        {
+          "key": "1",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "1"
+              }
+            }
+          },
+          "visual": {
+            "label": "1"
+          }
+        },
+        {
+          "key": "2",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "2"
+              }
+            }
+          },
+          "visual": {
+            "label": "2"
+          }
+        },
+        {
+          "key": "3",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "3"
+              }
+            }
+          },
+          "visual": {
+            "label": "3"
+          }
+        },
+        {
+          "key": "-",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "-"
+              }
+            }
+          },
+          "visual": {
+            "label": "-"
+          }
+        }
+      ]
+    },
+    {
+      "id": "row2",
+      "keys": [
+        {
+          "key": "4",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "4"
+              }
+            }
+          },
+          "visual": {
+            "label": "4"
+          }
+        },
+        {
+          "key": "5",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "5"
+              }
+            }
+          },
+          "visual": {
+            "label": "5"
+          }
+        },
+        {
+          "key": "6",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "6"
+              }
+            }
+          },
+          "visual": {
+            "label": "6"
+          }
+        },
+        {
+          "key": "space",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": " "
+              }
+            }
+          },
+          "visual": {
+            "label": "_"
+          }
+        }
+      ]
+    },
+    {
+      "id": "row3",
+      "keys": [
+        {
+          "key": "7",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "7"
+              }
+            }
+          },
+          "visual": {
+            "label": "7"
+          }
+        },
+        {
+          "key": "8",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "8"
+              }
+            }
+          },
+          "visual": {
+            "label": "8"
+          }
+        },
+        {
+          "key": "9",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "9"
+              }
+            }
+          },
+          "visual": {
+            "label": "9"
+          }
+        },
+        {
+          "key": "backspace",
+          "type": "system",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "DELETE_BACKWARD"
+            },
+            "longPress": {
+              "command": "DELETE_WORD"
+            },
+            "repeat": true
+          },
+          "visual": {
+            "icon": "backspace",
+            "activeIcon": "backspace_active",
+            "label": null
+          }
+        }
+      ]
+    },
+    {
+      "id": "row4",
+      "keys": [
+        {
+          "key": "switch_to_symbols",
+          "type": "system",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "SWITCH_LAYOUT",
+              "params": {
+                "layout": "phone/phone/symbols"
+              }
+            }
+          },
+          "visual": {
+            "label": "*#"
+          }
+        },
+        {
+          "key": "0",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "0"
+              }
+            }
+          },
+          "visual": {
+            "label": "0"
+          }
+        },
+        {
+          "key": ".",
+          "type": "character",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": "."
+              }
+            }
+          },
+          "visual": {
+            "label": "."
+          }
+        },
+        {
+          "key": "return",
+          "type": "system",
+          "width": 1.0,
+          "actions": {
+            "press": {
+              "command": "ACTION"
+            }
+          },
+          "visual": {
+            "label": "return",
+            "adaptiveLabels": {
+              "search": "search",
+              "send": "send",
+              "go": "go",
+              "done": "done"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variants": [],
+  "popups": {
+    "enabled": true,
+    "delay": 200,
+    "style": "ios"
+  },
+  "behaviors": {
+    "keyRepeat": {
+      "initialDelay": 500,
+      "repeatInterval": 50
+    },
+    "longPress": {
+      "delay": 300
+    },
+    "doubleTap": {
+      "maxDelay": 500
+    }
+  },
+  "visual": {
+    "fontSize": {
+      "primary": 2.0,
+      "secondary": 0.7
+    },
+    "popupScale": 1.5
+  }
+}
