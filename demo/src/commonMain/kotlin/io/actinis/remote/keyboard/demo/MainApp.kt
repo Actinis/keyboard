@@ -17,7 +17,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import co.touchlab.kermit.Logger
 import io.actinis.remote.keyboard.data.event.model.KeyboardEvent
-import io.actinis.remote.keyboard.data.state.model.InputType
+import io.actinis.remote.keyboard.data.state.model.InputState
 import io.actinis.remote.keyboard.presentation.KeyboardView
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -57,9 +57,7 @@ fun MainApp() {
                     TextField(
                         value = textFieldValue,
                         onValueChange = { newValue ->
-                            // Update the state
                             textFieldValue = newValue
-                            // Trigger the callback with the new selection
                             onCursorOrSelectionChange(newValue.selection)
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -102,29 +100,86 @@ fun MainApp() {
             }
 
             if (showKeyboard) {
-                var isPassword = false
+                val inputState = when (currentKeyboardType) {
+                    KeyboardType.Number -> {
+                        InputState.Number(
+                            text = textFieldValue.text,
+                            selectionStart = textFieldValue.selection.start,
+                            selectionEnd = textFieldValue.selection.end,
+                            isMultiline = false,
+                            actionType = InputState.ActionType.DONE,
+                        )
+                    }
 
-                val keyboardInputType = when (currentKeyboardType) {
-                    KeyboardType.Number -> InputType.NUMERIC
-                    KeyboardType.Phone -> InputType.PHONE
-                    KeyboardType.Email -> InputType.EMAIL
-                    KeyboardType.Uri -> InputType.URL
+                    KeyboardType.Phone -> {
+                        InputState.Phone(
+                            text = textFieldValue.text,
+                            selectionStart = textFieldValue.selection.start,
+                            selectionEnd = textFieldValue.selection.end,
+                            isMultiline = false,
+                            actionType = InputState.ActionType.NEXT,
+                        )
+                    }
+
+                    KeyboardType.Email -> {
+                        InputState.Text(
+                            text = textFieldValue.text,
+                            selectionStart = textFieldValue.selection.start,
+                            selectionEnd = textFieldValue.selection.end,
+                            isMultiline = false,
+                            actionType = InputState.ActionType.SEND,
+                            variation = InputState.Text.Variation.EMAIL_ADDRESS,
+                        )
+                    }
+
+                    KeyboardType.Uri -> {
+                        InputState.Text(
+                            text = textFieldValue.text,
+                            selectionStart = textFieldValue.selection.start,
+                            selectionEnd = textFieldValue.selection.end,
+                            isMultiline = false,
+                            actionType = InputState.ActionType.GO,
+                            variation = InputState.Text.Variation.URI,
+                        )
+                    }
+
                     KeyboardType.Password -> {
-                        isPassword = true
-                        InputType.TEXT
+                        InputState.Text(
+                            text = textFieldValue.text,
+                            selectionStart = textFieldValue.selection.start,
+                            selectionEnd = textFieldValue.selection.end,
+                            isMultiline = false,
+                            actionType = InputState.ActionType.NONE,
+                            isPersonalizedLearningEnabled = false,
+                            variation = InputState.Text.Variation.PASSWORD,
+                        )
                     }
 
                     KeyboardType.NumberPassword -> {
-                        isPassword = true
-                        InputType.NUMERIC
+                        InputState.Number(
+                            text = textFieldValue.text,
+                            selectionStart = textFieldValue.selection.start,
+                            selectionEnd = textFieldValue.selection.end,
+                            isMultiline = false,
+                            actionType = InputState.ActionType.DONE,
+                            isPersonalizedLearningEnabled = false,
+                            variation = InputState.Number.Variation.PASSWORD,
+                        )
                     }
 
-                    else -> InputType.TEXT
+                    else -> {
+                        InputState.Text(
+                            text = textFieldValue.text,
+                            selectionStart = textFieldValue.selection.start,
+                            selectionEnd = textFieldValue.selection.end,
+                            isMultiline = true,
+                            actionType = InputState.ActionType.NONE,
+                        )
+                    }
                 }
 
                 KeyboardView(
-                    inputType = keyboardInputType,
-                    isPassword = isPassword,
+                    inputState = inputState,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
@@ -133,56 +188,16 @@ fun MainApp() {
 
                     when (keyboardEvent) {
                         KeyboardEvent.ActionClick -> {
+                            logger.i { "ActionClick!" }
                         }
 
-                        KeyboardEvent.Backspace -> {
-                            if (textFieldValue.text.isNotEmpty()) {
-                                textFieldValue = if (textFieldValue.selection.length > 0) {
-                                    // If there's selected text, remove the selection
-                                    val start = textFieldValue.selection.min
-                                    val end = textFieldValue.selection.max
-                                    val newText = textFieldValue.text.removeRange(start, end)
-                                    TextFieldValue(
-                                        text = newText,
-                                        selection = TextRange(start)
-                                    )
-                                } else {
-                                    // If no selection, remove character before cursor
-                                    val cursorPosition = textFieldValue.selection.start
-                                    if (cursorPosition > 0) {
-                                        val newText =
-                                            textFieldValue.text.removeRange(cursorPosition - 1, cursorPosition)
-                                        TextFieldValue(
-                                            text = newText,
-                                            selection = TextRange(cursorPosition - 1)
-                                        )
-                                    } else {
-                                        textFieldValue
-                                    }
-                                }
-                            }
-                        }
-
-                        KeyboardEvent.DeleteWord -> {
-                            // No-op for now
-                        }
-
-                        is KeyboardEvent.TextInput -> {
-                            val start = textFieldValue.selection.min
-                            val end = textFieldValue.selection.max
-                            val newText = if (start != end) {
-                                // Replace selected text with input
-                                textFieldValue.text.replaceRange(start, end, keyboardEvent.text)
-                            } else {
-                                // Insert text at cursor position
-                                textFieldValue.text.substring(0, start) +
-                                        keyboardEvent.text +
-                                        textFieldValue.text.substring(start)
-                            }
-                            val newCursorPosition = start + keyboardEvent.text.length
-                            textFieldValue = TextFieldValue(
-                                text = newText,
-                                selection = TextRange(newCursorPosition)
+                        is KeyboardEvent.TextChange -> {
+                            textFieldValue = textFieldValue.copy(
+                                text = keyboardEvent.text,
+                                selection = TextRange(
+                                    start = keyboardEvent.selectionStart,
+                                    end = keyboardEvent.selectionEnd,
+                                )
                             )
                         }
                     }

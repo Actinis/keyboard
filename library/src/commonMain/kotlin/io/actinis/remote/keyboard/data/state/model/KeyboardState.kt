@@ -6,8 +6,6 @@ data class KeyboardState(
     val pressedKeyId: String? = null,
     val longPressedKeyId: String? = null,
     val currentLayoutId: String? = null,
-    val inputType: InputType = InputType.TEXT,
-    val isPassword: Boolean = false,
     val activeModifiers: Set<KeyboardModifier> = emptySet(),
 ) {
     val isShiftActive

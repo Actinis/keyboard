@@ -6,7 +6,7 @@ import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
 import io.actinis.remote.keyboard.data.config.model.layout.LayoutType
 import io.actinis.remote.keyboard.data.config.model.modifier.KeyboardModifier
 import io.actinis.remote.keyboard.data.config.repository.KeyboardLayoutsRepository
-import io.actinis.remote.keyboard.data.state.model.InputType
+import io.actinis.remote.keyboard.data.state.model.InputState
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
 import io.actinis.remote.keyboard.domain.preferences.PreferencesInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,13 +14,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
 internal interface KeyboardStateInteractor {
+    val inputState: StateFlow<InputState?>
     val keyboardState: StateFlow<KeyboardState>
     val currentLayout: StateFlow<KeyboardLayout?>
 
     val isShiftActive: Boolean
     val isCapsLockActive: Boolean
 
-    suspend fun initialize(inputType: InputType, isPassword: Boolean)
+    suspend fun updateInputState(inputState: InputState)
     suspend fun switchLayout(layoutId: String)
 
     fun setPressedKey(keyId: String)
@@ -51,6 +52,7 @@ internal class KeyboardStateInteractorImpl(
 
     private val logger = Logger.withTag(LOG_TAG)
 
+    override val inputState: MutableStateFlow<InputState?> = MutableStateFlow(null)
     override val keyboardState: MutableStateFlow<KeyboardState> = MutableStateFlow(KeyboardState())
     override val currentLayout: MutableStateFlow<KeyboardLayout?> = MutableStateFlow(null)
 
@@ -60,21 +62,23 @@ internal class KeyboardStateInteractorImpl(
     override val isCapsLockActive: Boolean
         get() = keyboardState.value.isCapsLockActive
 
-    override suspend fun initialize(inputType: InputType, isPassword: Boolean) {
-        logger.d { "initialize: inputType=$inputType, isPassword=$isPassword" }
 
-        keyboardState.update {
-            it.copy(
-                inputType = inputType,
-                isPassword = isPassword,
-            )
+    override suspend fun updateInputState(inputState: InputState) {
+        logger.d { "updateInputState: inputState=$inputState" }
+
+        val currentInputState = this.inputState.value
+
+        if (currentInputState == null || inputState::class != currentInputState::class) {
+            logger.d { "Input state type changed: $currentInputState -> $inputState" }
+            switchLayout(getLayoutIdForInputState(inputState))
         }
 
-        switchLayout(getLayoutIdForInputType(inputType))
+        this.inputState.value = inputState
     }
 
-    private fun getLayoutIdForInputType(inputType: InputType): String {
-        val layoutType = getLayoutTypeForInputType(inputType = inputType)
+    private fun getLayoutIdForInputState(inputState: InputState): String {
+        val layoutType = getLayoutTypeForInputState(inputState)
+
         val currentLayoutValue = currentLayout.value
 
         if (currentLayoutValue?.metadata?.type == layoutType) {
@@ -87,11 +91,11 @@ internal class KeyboardStateInteractorImpl(
         }
     }
 
-    private fun getLayoutTypeForInputType(inputType: InputType): LayoutType {
-        return when (inputType) {
-            InputType.TEXT, InputType.EMAIL, InputType.URL -> LayoutType.ALPHABETIC
-            InputType.NUMERIC -> LayoutType.NUMERIC
-            InputType.PHONE -> LayoutType.PHONE
+    private fun getLayoutTypeForInputState(inputState: InputState): LayoutType {
+        return when (inputState) {
+            is InputState.Text -> LayoutType.ALPHABETIC
+            is InputState.Number -> LayoutType.NUMERIC
+            is InputState.Phone -> LayoutType.PHONE
         }
     }
 

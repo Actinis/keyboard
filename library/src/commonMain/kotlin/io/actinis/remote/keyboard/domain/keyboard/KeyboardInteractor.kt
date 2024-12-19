@@ -5,7 +5,7 @@ import io.actinis.remote.keyboard.data.config.model.action.Actions
 import io.actinis.remote.keyboard.data.config.model.key.Key
 import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
 import io.actinis.remote.keyboard.data.event.model.KeyboardEvent
-import io.actinis.remote.keyboard.data.state.model.InputType
+import io.actinis.remote.keyboard.data.state.model.InputState
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
 import io.actinis.remote.keyboard.domain.model.command.KeyboardCommand
 import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayBubble
@@ -25,7 +25,8 @@ internal interface KeyboardInteractor {
     val keyboardEvents: Flow<KeyboardEvent>
     val overlayState: StateFlow<KeyboardOverlayState>
 
-    fun initialize(inputType: InputType, isPassword: Boolean)
+    suspend fun updateInputState(inputState: InputState)
+
     fun handlePressedKey(key: Key)
     fun handleKeysReleased()
 
@@ -71,15 +72,8 @@ internal class KeyboardInteractorImpl(
         }
     }
 
-    override fun initialize(inputType: InputType, isPassword: Boolean) {
-        logger.d { "initialize: inputType=$inputType, isPassword=$isPassword" }
-
-        coroutineScope.launch {
-            keyboardStateInteractor.initialize(
-                inputType = inputType,
-                isPassword = isPassword,
-            )
-        }
+    override suspend fun updateInputState(inputState: InputState) {
+        keyboardStateInteractor.updateInputState(inputState)
     }
 
     override fun handlePressedKey(key: Key) {
@@ -172,7 +166,7 @@ internal class KeyboardInteractorImpl(
                     createCommand(
                         action = key.actions.longPress,
                         currentLongPressedItem.id
-                    ) // TODO: Use text instead of ID
+                    )
                 } else {
                     createCommand(
                         action = key.actions.press,
@@ -205,7 +199,7 @@ internal class KeyboardInteractorImpl(
     private suspend fun handleKeyPressOutputAction(key: Key, output: String) {
         logger.d { "handleKeyPressOutputAction: key=${key.id}" }
 
-        val text = when {
+        val outputText = when {
             keyboardStateInteractor.isShiftActive -> {
                 output.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
             }
@@ -215,10 +209,56 @@ internal class KeyboardInteractorImpl(
             else -> output
         }
 
-        emitKeyboardEvent(KeyboardEvent.TextInput(text))
+        updateInputText { _, currentText, currentSelectionStart, currentSelectionEnd ->
+            val text = buildString {
+                if (currentSelectionStart > 0) {
+                    append(currentText.substring(0, currentSelectionStart))
+                }
+
+                append(outputText)
+
+                append(currentText.substring(currentSelectionEnd))
+            }
+
+            val newCursorPosition = currentSelectionStart + outputText.length
+
+            KeyboardEvent.TextChange(
+                text = text,
+                selectionStart = newCursorPosition,
+                selectionEnd = newCursorPosition,
+            )
+        }
 
         // Turn off shift (if active) after character input
         keyboardStateInteractor.turnOffShift()
+    }
+
+    private suspend fun updateInputText(
+        block: suspend (
+            inputState: InputState,
+            currentText: String,
+            currentSelectionStart: Int,
+            currentSelectionEnd: Int,
+        ) -> KeyboardEvent.TextChange?,
+    ) {
+        val inputState = keyboardStateInteractor.inputState.value
+        if (inputState == null) {
+            logger.d { "No input state - will not output text" }
+            return
+        }
+
+        val currentText = inputState.text
+        val currentSelectionStart = inputState.selectionStart
+        val currentSelectionEnd = inputState.selectionEnd
+
+        block(
+            inputState,
+            currentText,
+            currentSelectionStart,
+            currentSelectionEnd
+        )?.let { keyboardEvent ->
+            emitKeyboardEvent(keyboardEvent)
+        }
     }
 
     private suspend fun handleKeyCommandAction(
@@ -229,8 +269,8 @@ internal class KeyboardInteractorImpl(
 
         when (command) {
             KeyboardCommand.Action -> emitKeyboardEvent(KeyboardEvent.ActionClick)
-            KeyboardCommand.DeleteBackward -> emitKeyboardEvent(KeyboardEvent.Backspace)
-            KeyboardCommand.DeleteWord -> emitKeyboardEvent(KeyboardEvent.DeleteWord)
+            KeyboardCommand.DeleteBackward -> handleDeleteBackward()
+            KeyboardCommand.DeleteWord -> TODO()
             is KeyboardCommand.OutputValue -> {
                 handleKeyPressOutputAction(key = key, output = command.value)
             }
@@ -242,10 +282,54 @@ internal class KeyboardInteractorImpl(
 
             KeyboardCommand.ToggleCapsLock -> keyboardStateInteractor.toggleCapsLock()
             KeyboardCommand.ToggleShift -> keyboardStateInteractor.toggleShift()
-            KeyboardCommand.ShowCursorControls -> TODO()
+            KeyboardCommand.ShowCursorControls -> {}
             KeyboardCommand.ShowLayouts -> {}
             KeyboardCommand.ManageLayouts -> handleManageLayouts()
 
+        }
+    }
+
+    private suspend fun handleDeleteBackward() {
+        updateInputText { _, currentText, currentSelectionStart, currentSelectionEnd ->
+            if (currentSelectionStart == 0 && currentSelectionEnd == 0 || currentText.isEmpty()) {
+                return@updateInputText null
+            }
+
+            val text = buildString {
+                if (currentSelectionStart != currentSelectionEnd) {
+                    // If there's a selection, we only need text before selection start and after selection end
+                    if (currentSelectionStart > 0) {
+                        append(currentText.substring(0, currentSelectionStart))
+                    }
+                    if (currentSelectionEnd < currentText.length) {
+                        append(currentText.substring(currentSelectionEnd))
+                    }
+                } else {
+                    // If no selection, we delete one character before cursor
+                    // Handle the case when cursor is at the start
+                    if (currentSelectionStart > 0) {
+                        append(currentText.substring(0, currentSelectionStart - 1))
+                    }
+                    if (currentSelectionStart < currentText.length) {
+                        append(currentText.substring(currentSelectionStart))
+                    }
+                }
+            }
+
+            // Calculate new cursor position:
+            // - If there was a selection: place cursor at selection start
+            // - If there was no selection: place cursor one character before current position
+            val newCursorPosition = if (currentSelectionStart != currentSelectionEnd) {
+                currentSelectionStart
+            } else {
+                (currentSelectionStart - 1).coerceAtLeast(0)
+            }
+
+            KeyboardEvent.TextChange(
+                text = text,
+                selectionStart = newCursorPosition,
+                selectionEnd = newCursorPosition
+            )
         }
     }
 

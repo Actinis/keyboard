@@ -33,7 +33,7 @@ import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
 import io.actinis.remote.keyboard.data.config.model.modifier.KeyboardModifier
 import io.actinis.remote.keyboard.data.config.model.visual.KeyVisual
 import io.actinis.remote.keyboard.data.event.model.KeyboardEvent
-import io.actinis.remote.keyboard.data.state.model.InputType
+import io.actinis.remote.keyboard.data.state.model.InputState
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
 import io.actinis.remote.keyboard.di.name.DispatchersNames
 import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayBubble
@@ -57,8 +57,7 @@ private val logger = Logger.withTag(LOG_TAG)
 @Composable
 fun KeyboardView(
     viewModel: KeyboardViewModel = koinViewModel(),
-    inputType: InputType,
-    isPassword: Boolean,
+    inputState: InputState,
     modifier: Modifier = Modifier,
     onEvent: (keyboardEvent: KeyboardEvent) -> Unit,
 ) {
@@ -70,12 +69,7 @@ fun KeyboardView(
     val keyboardState by viewModel.keyboardState.collectAsState()
     val overlayState by viewModel.overlayState.collectAsState()
 
-    LaunchedEffect(inputType, isPassword) {
-        viewModel.initialize(
-            inputType = inputType,
-            isPassword = isPassword,
-        )
-    }
+    viewModel.updateInputState(inputState)
 
     LaunchedEffect(Unit) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

@@ -708,7 +708,10 @@
           "width": 6.2,
           "actions": {
             "press": {
-              "output": " "
+              "command": "OUTPUT_VALUE",
+              "params": {
+                "value": " "
+              }
             },
             "longPress": {
               "command": "SHOW_CURSOR_CONTROLS"
