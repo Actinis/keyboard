@@ -380,13 +380,21 @@ internal class KeyboardInteractorImpl(
             Actions.Action.CommandType.SWITCH_LAYOUT -> {
                 val layoutId = action.params[Actions.Action.ParameterType.LAYOUT]
                 if (layoutId == null) {
-                    logger.e { "Tried to create SWITCH_LAYOUT command, but no layoutId in action: $action" }
+                    logger.e { "Tried to create SWITCH_LAYOUT command, but no layoutId in action (switch): $action" }
                     return null
                 }
                 KeyboardCommand.SwitchLayout(layoutId)
             }
 
-            Actions.Action.CommandType.SHOW_LAYOUTS -> KeyboardCommand.ShowLayouts
+            Actions.Action.CommandType.SHOW_LAYOUTS -> {
+                val layoutId = commandArgs.firstOrNull() as? String?
+                if (layoutId == null) {
+                    logger.e { "Tried to create SWITCH_LAYOUT command, but no layoutId in action (show): $action" }
+                    return null
+                }
+                KeyboardCommand.SwitchLayout(layoutId)
+            }
+
             Actions.Action.CommandType.MANAGE_LAYOUTS -> KeyboardCommand.ManageLayouts
             Actions.Action.CommandType.TOGGLE_SHIFT -> KeyboardCommand.ToggleShift
             Actions.Action.CommandType.CAPS_LOCK -> KeyboardCommand.ToggleCapsLock

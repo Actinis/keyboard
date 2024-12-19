@@ -687,7 +687,10 @@
           "width": 1.5,
           "actions": {
             "press": {
-              "command": "SWITCH_LAYOUT"
+              "command": "SWITCH_LAYOUT",
+              "params": {
+                "layout": "next"
+              }
             },
             "longPress": {
               "popup": true,

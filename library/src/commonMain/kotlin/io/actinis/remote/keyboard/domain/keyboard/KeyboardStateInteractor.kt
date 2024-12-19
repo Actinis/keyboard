@@ -1,11 +1,13 @@
 package io.actinis.remote.keyboard.domain.keyboard
 
 import co.touchlab.kermit.Logger
+import io.actinis.remote.keyboard.data.config.model.action.Actions
 import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
 import io.actinis.remote.keyboard.data.config.model.modifier.KeyboardModifier
 import io.actinis.remote.keyboard.data.config.repository.KeyboardLayoutsRepository
 import io.actinis.remote.keyboard.data.state.model.InputType
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
+import io.actinis.remote.keyboard.domain.preferences.PreferencesInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -43,6 +45,7 @@ internal interface KeyboardStateInteractor {
  */
 internal class KeyboardStateInteractorImpl(
     private val keyboardLayoutsRepository: KeyboardLayoutsRepository,
+    private val preferencesInteractor: PreferencesInteractor,
 ) : KeyboardStateInteractor {
 
     private val logger = Logger.withTag(LOG_TAG)
@@ -80,7 +83,23 @@ internal class KeyboardStateInteractorImpl(
 
         // FIXME: Handle "alphabetic" - should switch to the last alphabetic layout
 
-        val layout = keyboardLayoutsRepository.getLayout(layoutId = layoutId)
+        var realLayoutId = when (layoutId) {
+            Actions.Action.NEXT_LAYOUT_ID -> getNextLayoutId()
+
+            Actions.Action.ALPHABETIC_LAYOUT_ID -> {
+                // FIXME: Switch to last alphabetic
+                ""
+            }
+
+            else -> layoutId
+        }
+
+        if (realLayoutId == null) {
+            logger.w { "Can not determine real layout id for $layoutId, will switch to default" }
+            realLayoutId = getDefaultLayoutId()
+        }
+
+        val layout = keyboardLayoutsRepository.getLayout(layoutId = realLayoutId)
         currentLayout.value = layout
         keyboardState.update {
             it.copy(
@@ -89,6 +108,31 @@ internal class KeyboardStateInteractorImpl(
                 currentLayoutId = layoutId,
                 activeModifiers = emptySet(),
             )
+        }
+    }
+
+    private fun getNextLayoutId(): String? {
+        val enabledLayoutsIds = preferencesInteractor.availableKeyboardLayouts.value
+            .filter { it.isEnabled }
+            .map { it.id }
+
+        if (enabledLayoutsIds.isEmpty()) {
+            logger.w { "getNextLayoutId: no enabled layouts: ${preferencesInteractor.availableKeyboardLayouts.value}" }
+            return null
+        }
+
+        val currentLayoutId = currentLayout.value?.metadata?.id
+
+        return when {
+            currentLayoutId == null -> enabledLayoutsIds.first()
+
+            else -> {
+                when (val currentIndex = enabledLayoutsIds.indexOf(currentLayoutId)) {
+                    -1 -> enabledLayoutsIds.first()
+                    enabledLayoutsIds.lastIndex -> enabledLayoutsIds.first()
+                    else -> enabledLayoutsIds[currentIndex + 1]
+                }
+            }
         }
     }
 

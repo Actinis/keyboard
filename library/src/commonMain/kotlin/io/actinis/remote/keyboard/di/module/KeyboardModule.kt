@@ -20,6 +20,7 @@ internal val keyboardModule = module {
     single {
         KeyboardStateInteractorImpl(
             keyboardLayoutsRepository = get(),
+            preferencesInteractor = get(),
         )
     } bind KeyboardStateInteractor::class
 

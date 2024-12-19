@@ -89,5 +89,10 @@ data class Actions(
             @SerialName("value")
             VALUE,
         }
+
+        companion object {
+            const val NEXT_LAYOUT_ID = "next"
+            const val ALPHABETIC_LAYOUT_ID = "alphabetic"
+        }
     }
 }
