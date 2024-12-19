@@ -30,6 +30,10 @@
     "symbols": {
       "type": "symbols",
       "name": "Symbols"
+    },
+    "numeric": {
+      "type": "numeric",
+      "name": "Numeric"
     }
   },
   "contextRules": {
