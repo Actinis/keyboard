@@ -158,11 +158,13 @@ private fun KeyboardLayout(
                 containerSizeInPixels = size,
                 density = density,
             )
-            onViewStateChange(viewState.copy(
-                baseKeyDimensions = newDimensions,
-                keyboardOffset = position,
-                keyBoundaries = emptySet()
-            ))
+            onViewStateChange(
+                viewState.copy(
+                    baseKeyDimensions = newDimensions,
+                    keyboardOffset = position,
+                    keyBoundaries = emptySet()
+                )
+            )
         }
     }
 

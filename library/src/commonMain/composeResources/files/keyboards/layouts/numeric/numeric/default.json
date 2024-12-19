@@ -10,8 +10,8 @@
     "rowCount": 4,
     "defaultKeyWidth": 1.0,
     "defaultKeyHeight": 1.0,
-    "baseKeyWidthMultiplier": 0.25,
-    "baseKeyHeightToWidthMultiplier": 0.8,
+    "baseKeyWidthMultiplier": 0.235,
+    "baseKeyHeightToWidthMultiplier": 0.5,
     "columnsSpacingMultiplier": 0.01,
     "rowsSpacingToHeightMultiplier": 0.1
   },
@@ -208,7 +208,7 @@
         {
           "key": "backspace",
           "type": "system",
-          "width": 1.5,
+          "width": 1.0,
           "actions": {
             "press": {
               "command": "DELETE_BACKWARD"
@@ -280,7 +280,7 @@
         {
           "key": "return",
           "type": "system",
-          "width": 2.0,
+          "width": 1.0,
           "actions": {
             "press": {
               "command": "ACTION"
