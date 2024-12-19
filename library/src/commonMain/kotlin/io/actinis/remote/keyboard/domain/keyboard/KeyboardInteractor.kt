@@ -11,12 +11,10 @@ import io.actinis.remote.keyboard.domain.model.command.KeyboardCommand
 import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayBubble
 import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayState
 import io.actinis.remote.keyboard.domain.preferences.PreferencesInteractor
+import io.actinis.remote.keyboard.domain.text.TextInteractor
 import io.actinis.remote.keyboard.presentation.touch.KeyInteractionEvent
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.*
 
 
 internal interface KeyboardInteractor {
@@ -38,6 +36,7 @@ internal class KeyboardInteractorImpl(
     private val preferencesInteractor: PreferencesInteractor,
     private val keyboardStateInteractor: KeyboardStateInteractor,
     private val keyboardOverlayInteractor: KeyboardOverlayInteractor,
+    private val textInteractor: TextInteractor,
     private val defaultDispatcher: CoroutineDispatcher,
     private val ioDispatcher: CoroutineDispatcher,
 ) : KeyboardInteractor {
@@ -72,6 +71,21 @@ internal class KeyboardInteractorImpl(
                 keyboardOverlayInteractor.updateOverlayState(state, layout)
             }.collect {}
         }
+
+        coroutineScope.launch { listenForTextModifications() }
+    }
+
+    private suspend fun listenForTextModifications() {
+        textInteractor
+            .textModificationEvents
+            .map { event ->
+                KeyboardEvent.TextChange(
+                    text = event.text,
+                    selectionStart = event.selectionStart,
+                    selectionEnd = event.selectionEnd,
+                )
+            }
+            .collect(::emitKeyboardEvent)
     }
 
     override suspend fun updateInputState(inputState: InputState) {
@@ -211,38 +225,10 @@ internal class KeyboardInteractorImpl(
             else -> output
         }
 
-        insertText(text)
+        textInteractor.insertText(text)
 
         // Turn off shift (if active) after character input
         keyboardStateInteractor.turnOffShift()
-    }
-
-    private suspend fun updateInputText(
-        block: suspend (
-            inputState: InputState,
-            currentText: String,
-            currentSelectionStart: Int,
-            currentSelectionEnd: Int,
-        ) -> KeyboardEvent.TextChange?,
-    ) {
-        val inputState = keyboardStateInteractor.inputState.value
-        if (inputState == null) {
-            logger.d { "No input state - will not output text" }
-            return
-        }
-
-        val currentText = inputState.text
-        val currentSelectionStart = inputState.selectionStart
-        val currentSelectionEnd = inputState.selectionEnd
-
-        block(
-            inputState,
-            currentText,
-            currentSelectionStart,
-            currentSelectionEnd
-        )?.let { keyboardEvent ->
-            emitKeyboardEvent(keyboardEvent)
-        }
     }
 
     private suspend fun handleKeyCommandAction(
@@ -253,8 +239,8 @@ internal class KeyboardInteractorImpl(
 
         when (command) {
             KeyboardCommand.Action -> handleAction()
-            KeyboardCommand.DeleteBackward -> handleDeleteBackward()
-            KeyboardCommand.DeleteWord -> TODO()
+            KeyboardCommand.DeleteBackward -> textInteractor.deleteBackward()
+            KeyboardCommand.DeleteWord -> textInteractor.deleteWordBackward()
             is KeyboardCommand.OutputValue -> {
                 handleKeyPressOutputAction(key = key, output = command.value)
             }
@@ -274,79 +260,8 @@ internal class KeyboardInteractorImpl(
     }
 
     private suspend fun handleAction() {
-        // TODO: Move to some new class
-        if (keyboardStateInteractor.inputState.value?.isMultiline == true) {
-            insertText("\n")
-        } else {
+        if (!textInteractor.insertNewLine()) {
             emitKeyboardEvent(KeyboardEvent.ActionClick)
-        }
-    }
-
-    // TODO: Move to some new class
-    private suspend fun insertText(text: String) {
-        updateInputText { _, currentText, currentSelectionStart, currentSelectionEnd ->
-            val resultingText = buildString {
-                if (currentSelectionStart > 0) {
-                    append(currentText.substring(0, currentSelectionStart))
-                }
-
-                append(text)
-
-                append(currentText.substring(currentSelectionEnd))
-            }
-
-            val newCursorPosition = currentSelectionStart + text.length
-
-            KeyboardEvent.TextChange(
-                text = resultingText,
-                selectionStart = newCursorPosition,
-                selectionEnd = newCursorPosition,
-            )
-        }
-    }
-
-    // TODO: Move to some new class
-    private suspend fun handleDeleteBackward() {
-        updateInputText { _, currentText, currentSelectionStart, currentSelectionEnd ->
-            if (currentSelectionStart == 0 && currentSelectionEnd == 0 || currentText.isEmpty()) {
-                return@updateInputText null
-            }
-
-            val text = buildString {
-                if (currentSelectionStart != currentSelectionEnd) {
-                    // If there's a selection, we only need text before selection start and after selection end
-                    if (currentSelectionStart > 0) {
-                        append(currentText.substring(0, currentSelectionStart))
-                    }
-                    if (currentSelectionEnd < currentText.length) {
-                        append(currentText.substring(currentSelectionEnd))
-                    }
-                } else {
-                    // If no selection, we delete one character before cursor
-                    // Handle the case when cursor is at the start
-                    if (currentSelectionStart > 0) {
-                        append(currentText.substring(0, currentSelectionStart - 1))
-                    }
-                    if (currentSelectionStart < currentText.length) {
-                        append(currentText.substring(currentSelectionStart))
-                    }
-                }
-            }
-
-            // Calculate new cursor position:
-            // - If there was a selection: place cursor at selection start
-            // - If there was no selection: place cursor one character before current position
-            val newCursorPosition = if (currentSelectionStart != currentSelectionEnd) {
-                currentSelectionStart
-            } else {
-                (currentSelectionStart - 1).coerceAtLeast(0)
-            }
-
-            KeyboardEvent.TextChange(
-                text = text,
-                selectionStart = newCursorPosition,
-                selectionEnd = newCursorPosition
-            )
         }
     }
 
