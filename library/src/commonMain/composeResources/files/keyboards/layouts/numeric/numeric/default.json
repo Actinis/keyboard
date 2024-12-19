@@ -292,7 +292,9 @@
               "search": "search",
               "send": "send",
               "go": "go",
-              "done": "done"
+              "done": "done",
+              "next": "next",
+              "previous": "previous"
             }
           }
         }
