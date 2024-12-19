@@ -17,6 +17,8 @@ data class GlobalConfig(
 
     @Serializable
     data class LayoutConfig(
+        @SerialName("defaultId")
+        val defaultId: String,
         @SerialName("type")
         val type: LayoutType,
         @SerialName("name")

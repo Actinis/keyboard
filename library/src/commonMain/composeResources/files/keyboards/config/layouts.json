@@ -3,6 +3,7 @@
   "defaultLayout": "alphabetic/en_US/default",
   "availableLayouts": {
     "en_US": {
+      "defaultId": "alphabetic/en_US/default",
       "type": "alphabetic",
       "name": "English (US)",
       "variants": [
@@ -16,6 +17,7 @@
       ]
     },
     "ru_RU": {
+      "defaultId": "alphabetic/ru_RU/default",
       "type": "alphabetic",
       "name": "Русский",
       "variants": [
@@ -28,10 +30,12 @@
       ]
     },
     "symbols": {
+      "defaultId": "symbols/symbols/primary",
       "type": "symbols",
       "name": "Symbols"
     },
     "numeric": {
+      "defaultId": "numeric/numeric/default",
       "type": "numeric",
       "name": "Numeric"
     }

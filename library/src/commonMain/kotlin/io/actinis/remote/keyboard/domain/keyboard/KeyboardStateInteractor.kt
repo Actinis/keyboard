@@ -70,9 +70,41 @@ internal class KeyboardStateInteractorImpl(
             )
         }
 
-        switchLayout(
-            layoutId = keyboardState.value.currentLayoutId ?: Actions.Action.ALPHABETIC_LAYOUT_ID
-        )
+        switchLayout(getLayoutIdForInputType(inputType))
+    }
+
+    private fun getLayoutIdForInputType(inputType: InputType): String {
+        val layoutType = getLayoutTypeForInputType(inputType = inputType)
+        val currentLayoutValue = currentLayout.value
+
+        if (currentLayoutValue?.metadata?.type == layoutType) {
+            return currentLayoutValue.metadata.id
+        }
+
+        return when (layoutType) {
+            LayoutType.ALPHABETIC, LayoutType.SYMBOLS -> Actions.Action.ALPHABETIC_LAYOUT_ID
+            else -> findLayoutIdForType(layoutType) ?: Actions.Action.ALPHABETIC_LAYOUT_ID
+        }
+    }
+
+    private fun getLayoutTypeForInputType(inputType: InputType): LayoutType {
+        return when (inputType) {
+            InputType.TEXT, InputType.EMAIL, InputType.URL -> LayoutType.ALPHABETIC
+            InputType.NUMERIC -> LayoutType.NUMERIC
+            InputType.PHONE -> TODO()
+        }
+    }
+
+    private fun findLayoutIdForType(layoutType: LayoutType): String? {
+        val layoutConfig = keyboardLayoutsRepository.globalConfig.availableLayouts.values.find { layoutConfig ->
+            layoutConfig.type == layoutType
+        }
+
+        if (layoutConfig == null) {
+            logger.e { "Failed to find layout key for type=$layoutType" }
+        }
+
+        return layoutConfig?.defaultId
     }
 
     private fun getDefaultLayoutId(): String {
