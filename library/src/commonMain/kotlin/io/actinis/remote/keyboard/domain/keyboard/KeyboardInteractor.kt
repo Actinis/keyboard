@@ -199,7 +199,7 @@ internal class KeyboardInteractorImpl(
     private suspend fun handleKeyPressOutputAction(key: Key, output: String) {
         logger.d { "handleKeyPressOutputAction: key=${key.id}" }
 
-        val outputText = when {
+        val text = when {
             keyboardStateInteractor.isShiftActive -> {
                 output.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
             }
@@ -209,25 +209,7 @@ internal class KeyboardInteractorImpl(
             else -> output
         }
 
-        updateInputText { _, currentText, currentSelectionStart, currentSelectionEnd ->
-            val text = buildString {
-                if (currentSelectionStart > 0) {
-                    append(currentText.substring(0, currentSelectionStart))
-                }
-
-                append(outputText)
-
-                append(currentText.substring(currentSelectionEnd))
-            }
-
-            val newCursorPosition = currentSelectionStart + outputText.length
-
-            KeyboardEvent.TextChange(
-                text = text,
-                selectionStart = newCursorPosition,
-                selectionEnd = newCursorPosition,
-            )
-        }
+        insertText(text)
 
         // Turn off shift (if active) after character input
         keyboardStateInteractor.turnOffShift()
@@ -268,7 +250,7 @@ internal class KeyboardInteractorImpl(
         logger.d { "handleKeyCommandAction: key=${key}, keyCommand=$command" }
 
         when (command) {
-            KeyboardCommand.Action -> emitKeyboardEvent(KeyboardEvent.ActionClick)
+            KeyboardCommand.Action -> handleAction()
             KeyboardCommand.DeleteBackward -> handleDeleteBackward()
             KeyboardCommand.DeleteWord -> TODO()
             is KeyboardCommand.OutputValue -> {
@@ -289,6 +271,39 @@ internal class KeyboardInteractorImpl(
         }
     }
 
+    private suspend fun handleAction() {
+        // TODO: Move to some new class
+        if (keyboardStateInteractor.inputState.value?.isMultiline == true) {
+            insertText("\n")
+        } else {
+            emitKeyboardEvent(KeyboardEvent.ActionClick)
+        }
+    }
+
+    // TODO: Move to some new class
+    private suspend fun insertText(text: String) {
+        updateInputText { _, currentText, currentSelectionStart, currentSelectionEnd ->
+            val resultingText = buildString {
+                if (currentSelectionStart > 0) {
+                    append(currentText.substring(0, currentSelectionStart))
+                }
+
+                append(text)
+
+                append(currentText.substring(currentSelectionEnd))
+            }
+
+            val newCursorPosition = currentSelectionStart + text.length
+
+            KeyboardEvent.TextChange(
+                text = resultingText,
+                selectionStart = newCursorPosition,
+                selectionEnd = newCursorPosition,
+            )
+        }
+    }
+
+    // TODO: Move to some new class
     private suspend fun handleDeleteBackward() {
         updateInputText { _, currentText, currentSelectionStart, currentSelectionEnd ->
             if (currentSelectionStart == 0 && currentSelectionEnd == 0 || currentText.isEmpty()) {
