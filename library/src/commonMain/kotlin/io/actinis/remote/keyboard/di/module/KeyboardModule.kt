@@ -31,6 +31,7 @@ internal val keyboardModule = module {
             keyboardLayoutsRepository = get(),
             inputStateInteractor = get(),
             preferencesInteractor = get(),
+            textAnalyzer = get(),
         )
     } bind KeyboardStateInteractor::class
 

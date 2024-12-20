@@ -152,6 +152,7 @@ fun MainApp() {
                             actionType = InputState.ActionType.NONE,
                             isPersonalizedLearningEnabled = false,
                             variation = InputState.Text.Variation.PASSWORD,
+                            capitalizationMode = InputState.Text.CapitalizationMode.SENTENCES,
                         )
                     }
 

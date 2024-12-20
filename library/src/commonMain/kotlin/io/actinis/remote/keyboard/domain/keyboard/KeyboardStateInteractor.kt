@@ -10,6 +10,7 @@ import io.actinis.remote.keyboard.data.state.model.InputState
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
 import io.actinis.remote.keyboard.domain.input.InputStateInteractor
 import io.actinis.remote.keyboard.domain.preferences.PreferencesInteractor
+import io.actinis.remote.keyboard.domain.text.TextAnalyzer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -49,6 +50,7 @@ internal class KeyboardStateInteractorImpl(
     private val keyboardLayoutsRepository: KeyboardLayoutsRepository,
     private val inputStateInteractor: InputStateInteractor,
     private val preferencesInteractor: PreferencesInteractor,
+    private val textAnalyzer: TextAnalyzer,
 ) : KeyboardStateInteractor {
 
     private val logger = Logger.withTag(LOG_TAG)
@@ -138,6 +140,12 @@ internal class KeyboardStateInteractorImpl(
         if (layout.metadata.type in layoutTypesToSaveOnSwitch) {
             preferencesInteractor.setLastKeyboardLayoutId(id = realLayoutId)
         }
+
+        updateLanguage(layout)
+    }
+
+    private suspend fun updateLanguage(layout: KeyboardLayout) {
+        inputStateInteractor.updateLanguage(layout.metadata.language)
     }
 
     private suspend fun getRealLayoutId(layoutId: String): String {
@@ -250,14 +258,27 @@ internal class KeyboardStateInteractorImpl(
         }
     }
 
-    private fun updateShiftState(inputState: InputState) {
+    private suspend fun updateShiftState(inputState: InputState) {
         if (inputState !is InputState.Text) return
+
+        val language = inputStateInteractor.language.value ?: return
+
+        val isShiftActive = this.isShiftActive
+        val isCapsLockActive = this.isCapsLockActive
+        val isShiftOrCapsLockActive = isShiftActive || isCapsLockActive
 
         val shouldToggleShift = when (inputState.capitalizationMode) {
             InputState.Text.CapitalizationMode.NONE -> false
             InputState.Text.CapitalizationMode.ALL_CHARACTERS -> !isShiftOrCapsLockActive
-            InputState.Text.CapitalizationMode.WORDS -> TODO()
-            InputState.Text.CapitalizationMode.SENTENCES -> TODO()
+            InputState.Text.CapitalizationMode.WORDS -> {
+                val isNewWord = textAnalyzer.isNewWordPosition(inputState = inputState, language = language)
+                isNewWord && !isShiftOrCapsLockActive || !isNewWord && isShiftActive
+            }
+
+            InputState.Text.CapitalizationMode.SENTENCES -> {
+                val isNewSentence = textAnalyzer.isNewSentencePosition(inputState = inputState, language = language)
+                isNewSentence && !isShiftOrCapsLockActive || !isNewSentence && isShiftActive
+            }
         }
 
         if (shouldToggleShift) {
