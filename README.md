@@ -21,6 +21,7 @@ As such, the current codebase prioritizes rapid prototyping over production-leve
 - Perfect or polished architecture
 - Full adherence to SOLID principles or a clean architecture
 - Comprehensive documentation
+- RTL support
 - Unit or integration tests
 - Full portability (e.g., tablet support)
 
