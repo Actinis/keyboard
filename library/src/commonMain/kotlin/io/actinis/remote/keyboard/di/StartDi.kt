@@ -12,6 +12,7 @@ fun KoinApplication.configureModules() {
         platformSettingsModule,
         configurationModule,
         languagesModule,
+        platformSuggestionsModule,
         preferencesModule,
         keyboardModule,
     )

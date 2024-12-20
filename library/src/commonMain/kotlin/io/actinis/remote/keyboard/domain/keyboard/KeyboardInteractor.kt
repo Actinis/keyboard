@@ -7,11 +7,13 @@ import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
 import io.actinis.remote.keyboard.data.event.model.KeyboardEvent
 import io.actinis.remote.keyboard.data.state.model.InputState
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
+import io.actinis.remote.keyboard.domain.input.InputStateInteractor
 import io.actinis.remote.keyboard.domain.model.command.KeyboardCommand
 import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayBubble
 import io.actinis.remote.keyboard.domain.model.overlay.KeyboardOverlayState
 import io.actinis.remote.keyboard.domain.preferences.PreferencesInteractor
 import io.actinis.remote.keyboard.domain.text.TextModificationsInteractor
+import io.actinis.remote.keyboard.domain.text.suggestion.TextSuggestionsInteractor
 import io.actinis.remote.keyboard.presentation.touch.KeyInteractionEvent
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -35,15 +37,17 @@ internal interface KeyboardInteractor {
 internal class KeyboardInteractorImpl(
     private val preferencesInteractor: PreferencesInteractor,
     private val keyboardStateInteractor: KeyboardStateInteractor,
+    private val inputStateInteractor: InputStateInteractor,
     private val keyboardOverlayInteractor: KeyboardOverlayInteractor,
     private val textModificationsInteractor: TextModificationsInteractor,
+    private val textSuggestionsInteractor: TextSuggestionsInteractor,
     private val defaultDispatcher: CoroutineDispatcher,
     private val ioDispatcher: CoroutineDispatcher,
 ) : KeyboardInteractor {
 
     private val logger = Logger.withTag(LOG_TAG)
 
-    override val inputState: StateFlow<InputState?> = keyboardStateInteractor.inputState
+    override val inputState: StateFlow<InputState?> = inputStateInteractor.inputState
     override val keyboardState: StateFlow<KeyboardState> = keyboardStateInteractor.keyboardState
     override val currentLayout: StateFlow<KeyboardLayout?> = keyboardStateInteractor.currentLayout
     override val overlayState: StateFlow<KeyboardOverlayState> = keyboardOverlayInteractor.overlayState
@@ -73,6 +77,7 @@ internal class KeyboardInteractorImpl(
         }
 
         coroutineScope.launch { listenForTextModifications() }
+        coroutineScope.launch { listenForLanguageChanges() }
     }
 
     private suspend fun listenForTextModifications() {
@@ -88,8 +93,22 @@ internal class KeyboardInteractorImpl(
             .collect(::emitKeyboardEvent)
     }
 
+    private suspend fun listenForLanguageChanges() {
+        inputStateInteractor
+            .language
+            .collect { language ->
+                logger.d { "Language changed: $language" }
+
+                if (language != null) {
+                    textSuggestionsInteractor.updateCurrentLanguage(language)
+                }
+            }
+    }
+
     override suspend fun updateInputState(inputState: InputState) {
         keyboardStateInteractor.updateInputState(inputState)
+
+        textSuggestionsInteractor.updateCurrentText(inputState.text)
     }
 
     override fun handlePressedKey(key: Key) {

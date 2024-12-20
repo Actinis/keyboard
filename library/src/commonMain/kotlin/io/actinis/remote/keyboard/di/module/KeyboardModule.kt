@@ -53,8 +53,10 @@ internal val keyboardModule = module {
         KeyboardInteractorImpl(
             preferencesInteractor = get(),
             keyboardStateInteractor = get(),
+            inputStateInteractor = get(),
             keyboardOverlayInteractor = get(),
             textModificationsInteractor = get(),
+            textSuggestionsInteractor = get(),
             defaultDispatcher = get(named(DispatchersNames.DEFAULT)),
             ioDispatcher = get(named(DispatchersNames.IO)),
         )
