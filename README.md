@@ -1,5 +1,7 @@
 # Actinis Remote Keyboard
 
+![Maven Central Version](https://img.shields.io/maven-central/v/io.actinis.remote/keyboard)
+
 A custom keyboard view library designed for internal use within the [Actinis Remote](https://actinis.io) project.
 
 Built using **Compose Multiplatform**.
@@ -11,6 +13,7 @@ The following features are planned for future development:
 - Layout variants (e.g., email, URL)
 - Autocomplete support
 - Theming support
+- iOS and macOS support
 
 ## Important Note
 

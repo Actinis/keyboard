@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "io.actinis.remote"
-version = "1.0.0.0"
+version = libs.versions.library.get()
 
 kotlin {
     jvm()
@@ -134,15 +134,15 @@ mavenPublishing {
         }
         developers {
             developer {
-                id = "RankoR"
-                name = "Artem Smirnov"
-                url = "https://github.com/RankoR"
-            }
-            developer {
                 id = "Actinis"
                 name = "Actinis OÜ"
                 url = "https://github.com/Actinis"
             }
+        }
+        scm {
+            url = "https://github.com/Actinis/keyboard"
+            connection = "scm:git:git://github.com/Actinis/keyboard.git"
+            developerConnection = "scm:git:ssh://git@github.com/Actinis/keyboard.git"
         }
     }
 }
