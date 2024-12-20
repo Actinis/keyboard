@@ -4,6 +4,7 @@
     "name": "English (US)",
     "version": "1.0",
     "type": "alphabetic",
+    "language": "en_US",
     "inheritsFrom": null
   },
   "dimensions": {

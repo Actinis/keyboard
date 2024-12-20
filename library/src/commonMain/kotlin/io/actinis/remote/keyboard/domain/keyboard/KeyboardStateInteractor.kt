@@ -8,6 +8,7 @@ import io.actinis.remote.keyboard.data.config.model.modifier.KeyboardModifier
 import io.actinis.remote.keyboard.data.config.repository.KeyboardLayoutsRepository
 import io.actinis.remote.keyboard.data.state.model.InputState
 import io.actinis.remote.keyboard.data.state.model.KeyboardState
+import io.actinis.remote.keyboard.domain.input.InputStateInteractor
 import io.actinis.remote.keyboard.domain.preferences.PreferencesInteractor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,12 +47,13 @@ internal interface KeyboardStateInteractor {
  */
 internal class KeyboardStateInteractorImpl(
     private val keyboardLayoutsRepository: KeyboardLayoutsRepository,
+    private val inputStateInteractor: InputStateInteractor,
     private val preferencesInteractor: PreferencesInteractor,
 ) : KeyboardStateInteractor {
 
     private val logger = Logger.withTag(LOG_TAG)
 
-    override val inputState: MutableStateFlow<InputState?> = MutableStateFlow(null)
+    override val inputState = inputStateInteractor.inputState
     override val keyboardState: MutableStateFlow<KeyboardState> = MutableStateFlow(KeyboardState())
     override val currentLayout: MutableStateFlow<KeyboardLayout?> = MutableStateFlow(null)
 
@@ -74,7 +76,7 @@ internal class KeyboardStateInteractorImpl(
             switchLayout(getLayoutIdForInputState(inputState))
         }
 
-        this.inputState.value = inputState
+        inputStateInteractor.updateInputState(inputState)
         updateShiftState(inputState)
     }
 

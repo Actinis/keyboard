@@ -25,6 +25,8 @@ settings = "1.2.0"
 
 compose-plugin = "1.7.0"
 
+mockk = "1.13.14"
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 
@@ -53,6 +55,8 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 
 settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "settings" }
 settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "settings" }
+
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

@@ -23,6 +23,8 @@ data class GlobalConfig(
         val type: LayoutType,
         @SerialName("name")
         val name: String,
+        @SerialName("language")
+        val language: String? = null,
         @SerialName("variants")
         val variants: List<Variant> = emptyList(),
         @SerialName("requires")

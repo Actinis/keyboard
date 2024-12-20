@@ -1,6 +1,8 @@
 package io.actinis.remote.keyboard.di.module
 
 import io.actinis.remote.keyboard.di.name.DispatchersNames
+import io.actinis.remote.keyboard.domain.input.InputStateInteractor
+import io.actinis.remote.keyboard.domain.input.InputStateInteractorImpl
 import io.actinis.remote.keyboard.domain.keyboard.*
 import io.actinis.remote.keyboard.domain.text.TextModificationsInteractor
 import io.actinis.remote.keyboard.domain.text.TextModificationsInteractorImpl
@@ -20,8 +22,14 @@ internal val keyboardModule = module {
     } bind KeyboardViewModel::class
 
     single {
+        InputStateInteractorImpl(
+        )
+    } bind InputStateInteractor::class
+
+    single {
         KeyboardStateInteractorImpl(
             keyboardLayoutsRepository = get(),
+            inputStateInteractor = get(),
             preferencesInteractor = get(),
         )
     } bind KeyboardStateInteractor::class
@@ -35,7 +43,7 @@ internal val keyboardModule = module {
 
     single {
         TextModificationsInteractorImpl(
-            keyboardStateInteractor = get(),
+            inputStateInteractor = get(),
             defaultDispatcher = get(named(DispatchersNames.DEFAULT)),
         )
     } bind TextModificationsInteractor::class

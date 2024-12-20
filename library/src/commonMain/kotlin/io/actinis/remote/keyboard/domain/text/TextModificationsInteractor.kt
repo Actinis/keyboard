@@ -2,7 +2,7 @@ package io.actinis.remote.keyboard.domain.text
 
 import co.touchlab.kermit.Logger
 import io.actinis.remote.keyboard.data.state.model.InputState
-import io.actinis.remote.keyboard.domain.keyboard.KeyboardStateInteractor
+import io.actinis.remote.keyboard.domain.input.InputStateInteractor
 import io.actinis.remote.keyboard.domain.model.text.TextModificationEvent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.BufferOverflow
@@ -20,7 +20,7 @@ internal interface TextModificationsInteractor {
 }
 
 internal class TextModificationsInteractorImpl(
-    private val keyboardStateInteractor: KeyboardStateInteractor,
+    private val inputStateInteractor: InputStateInteractor,
     private val defaultDispatcher: CoroutineDispatcher,
 ) : TextModificationsInteractor {
     private val logger = Logger.withTag(LOG_TAG)
@@ -63,7 +63,7 @@ internal class TextModificationsInteractorImpl(
             currentSelectionEnd: Int,
         ) -> TextModificationEvent?,
     ) {
-        val inputState = keyboardStateInteractor.inputState.value
+        val inputState = inputStateInteractor.inputState.value
         if (inputState == null) {
             logger.d { "No input state - will not output text" }
             return
@@ -84,7 +84,7 @@ internal class TextModificationsInteractorImpl(
     }
 
     override suspend fun insertNewLine(): Boolean {
-        if (keyboardStateInteractor.inputState.value?.isMultiline == true) {
+        if (inputStateInteractor.inputState.value?.isMultiline == true) {
             insertText("\n")
             return true
         }

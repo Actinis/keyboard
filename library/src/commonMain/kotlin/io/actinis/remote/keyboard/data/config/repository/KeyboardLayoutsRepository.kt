@@ -1,15 +1,12 @@
-@file:OptIn(ExperimentalResourceApi::class)
-
 package io.actinis.remote.keyboard.data.config.repository
 
 import co.touchlab.kermit.Logger
 import io.actinis.remote.keyboard.data.config.model.layout.GlobalConfig
 import io.actinis.remote.keyboard.data.config.model.layout.KeyboardLayout
-import io.actinis.remote.library.generated.resources.Res
+import io.actinis.remote.keyboard.util.resources.loadJsonFromResources
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 
 internal interface KeyboardLayoutsRepository {
     val globalConfig: GlobalConfig
@@ -37,7 +34,12 @@ internal class KeyboardLayoutsRepositoryImpl(
         logger.i { "Initializing" }
 
         withContext(defaultDispatcher) {
-            _globalConfig = loadJsonFromResources(path = GLOBAL_CONFIG_PATH)
+            _globalConfig = loadJsonFromResources(
+                path = GLOBAL_CONFIG_PATH,
+                json = json,
+                ioDispatcher = ioDispatcher,
+                defaultDispatcher = defaultDispatcher,
+            )
 
             logger.i {
                 "Initialized, version=${globalConfig.version}, ${globalConfig.availableLayouts.size} layouts, " +
@@ -75,17 +77,12 @@ internal class KeyboardLayoutsRepositoryImpl(
             layoutId,
         )
 
-        return loadJsonFromResources<KeyboardLayout>(path = filePath)
-    }
-
-    private suspend inline fun <reified T> loadJsonFromResources(path: String): T {
-        val jsonString = withContext(ioDispatcher) {
-            Res.readBytes(path = path).decodeToString()
-        }
-
-        return withContext(defaultDispatcher) {
-            json.decodeFromString(jsonString)
-        }
+        return loadJsonFromResources<KeyboardLayout>(
+            path = filePath,
+            json = json,
+            ioDispatcher = ioDispatcher,
+            defaultDispatcher = defaultDispatcher,
+        )
     }
 
     private companion object {

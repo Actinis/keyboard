@@ -53,6 +53,8 @@ data class KeyboardLayout(
         val id: String,
         @SerialName("name")
         val name: String,
+        @SerialName("language")
+        val language: String? = null,
         @SerialName("version")
         val version: String,
         @SerialName("type")

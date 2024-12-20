@@ -6,6 +6,7 @@
       "defaultId": "alphabetic/en_US/default",
       "type": "alphabetic",
       "name": "English (US)",
+      "language": "en_US",
       "variants": [
         "default",
         "email",
@@ -20,6 +21,7 @@
       "defaultId": "alphabetic/ru_RU/default",
       "type": "alphabetic",
       "name": "Русский",
+      "language": "ru_RU",
       "variants": [
         "default",
         "email"
