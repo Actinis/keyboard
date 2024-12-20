@@ -202,6 +202,10 @@ fun MainApp() {
                                 )
                             )
                         }
+
+                        is KeyboardEvent.SizeChanged -> {
+                            logger.i { "Keyboard size changed: $keyboardEvent" }
+                        }
                     }
                 }
             }

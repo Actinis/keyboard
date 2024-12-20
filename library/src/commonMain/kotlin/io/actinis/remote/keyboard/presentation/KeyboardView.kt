@@ -55,6 +55,8 @@ import org.koin.core.qualifier.named
 private const val LOG_TAG = "KeyboardView"
 private val logger = Logger.withTag(LOG_TAG)
 
+private const val ANIMATION_DURATION_MS = 150
+
 @Composable
 fun KeyboardView(
     viewModel: KeyboardViewModel = koinViewModel(),
@@ -94,12 +96,22 @@ fun KeyboardView(
         AnimatedContent(
             targetState = layout,
             transitionSpec = {
-                fadeIn(animationSpec = tween(150)) togetherWith
-                        fadeOut(animationSpec = tween(150))
+                fadeIn(animationSpec = tween(ANIMATION_DURATION_MS)) togetherWith
+                        fadeOut(animationSpec = tween(ANIMATION_DURATION_MS))
             },
             modifier = modifier
         ) { currentLayout ->
-            Box {
+            Box(
+                modifier = Modifier
+                    .onSizeChanged { size ->
+                        onEvent(
+                            KeyboardEvent.SizeChanged(
+                                width = size.width,
+                                height = size.height,
+                            )
+                        )
+                    }
+            ) {
                 KeyboardLayout(
                     layout = currentLayout,
                     keyboardState = keyboardState,
