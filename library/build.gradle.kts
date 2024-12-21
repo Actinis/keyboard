@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.gradle.versions)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.androidx.room)
 }
