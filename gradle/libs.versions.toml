@@ -1,7 +1,7 @@
 [versions]
 agp = "8.5.2"
-kotlin = "2.0.21"
-ksp = "2.0.21-1.0.26"
+kotlin = "2.1.0"
+ksp = "2.1.0-1.0.29"
 gradle-versions = "0.51.0"
 
 android-minSdk = "31"
@@ -28,7 +28,7 @@ compose-plugin = "1.7.0"
 
 mockk = "1.13.14"
 
-library = "1.0.0-alpha01"
+library = "1.0.0-alpha02"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
