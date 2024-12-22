@@ -6,6 +6,7 @@ import io.actinis.remote.keyboard.data.preferences.db.db.PreferencesDatabase
 import io.actinis.remote.keyboard.data.preferences.provider.SettingsProvider
 import io.actinis.remote.keyboard.data.preferences.repository.PreferencesRepository
 import io.actinis.remote.keyboard.data.preferences.repository.PreferencesRepositoryImpl
+import io.actinis.remote.keyboard.di.name.DatabasesNames
 import io.actinis.remote.keyboard.di.name.DispatchersNames
 import io.actinis.remote.keyboard.di.name.SettingsNames
 import io.actinis.remote.keyboard.domain.preferences.PreferencesInteractor
@@ -18,7 +19,7 @@ import org.koin.dsl.module
 internal val preferencesModule = module {
 
     single {
-        val builder: RoomDatabase.Builder<PreferencesDatabase> = get()
+        val builder: RoomDatabase.Builder<PreferencesDatabase> = get((named(DatabasesNames.PREFERENCES)))
         val ioDispatcher: CoroutineDispatcher = get(named(DispatchersNames.IO))
 
         builder

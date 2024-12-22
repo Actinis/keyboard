@@ -9,3 +9,7 @@ internal object DispatchersNames {
 internal object SettingsNames {
     const val KEYBOARD_LAYOUTS = "layouts"
 }
+
+internal object DatabasesNames {
+    const val PREFERENCES = "preferences"
+}
