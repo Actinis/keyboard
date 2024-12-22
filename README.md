@@ -1,6 +1,6 @@
 # Actinis Remote Keyboard
 
-![Maven Central Version](https://img.shields.io/maven-central/v/io.actinis.remote/keyboard)
+[![Maven Central Version](https://img.shields.io/maven-central/v/io.actinis.remote/keyboard?style=flat)](https://search.maven.org/artifact/io.actinis.remote/keyboard)
 
 A custom keyboard view library designed for internal use within the [Actinis Remote](https://actinis.io) project.
 
