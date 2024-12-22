@@ -28,7 +28,7 @@ compose-plugin = "1.7.0"
 
 mockk = "1.13.14"
 
-library = "1.0.0-alpha02"
+library = "1.0.0-alpha03"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

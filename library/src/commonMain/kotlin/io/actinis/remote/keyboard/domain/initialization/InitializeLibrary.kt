@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-interface InitializeLibrary {
+internal interface InitializeLibrary {
     fun execute()
 }
 

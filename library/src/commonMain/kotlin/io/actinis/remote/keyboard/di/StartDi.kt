@@ -4,18 +4,20 @@ import io.actinis.remote.keyboard.di.module.*
 import org.koin.core.KoinApplication
 import org.koin.dsl.KoinAppDeclaration
 
+val keyboardModules = arrayOf(
+    coreModule,
+    coroutinesModule,
+    platformDatabaseModule,
+    platformSettingsModule,
+    configurationModule,
+    languagesModule,
+    platformSuggestionsModule,
+    preferencesModule,
+    keyboardModule,
+)
+
 fun KoinApplication.configureModules() {
-    modules(
-        coreModule,
-        coroutinesModule,
-        platformDatabaseModule,
-        platformSettingsModule,
-        configurationModule,
-        languagesModule,
-        platformSuggestionsModule,
-        preferencesModule,
-        keyboardModule,
-    )
+    modules(*keyboardModules)
 }
 
 fun koinConfiguration(): KoinAppDeclaration = {
