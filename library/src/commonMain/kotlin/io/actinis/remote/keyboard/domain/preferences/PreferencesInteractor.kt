@@ -181,7 +181,7 @@ internal class PreferencesInteractorImpl(
 
         private val availableLayoutsTypes = setOf(
             LayoutType.ALPHABETIC,
-            LayoutType.NUMERIC,
+            LayoutType.EMOJI,
         )
     }
 }
