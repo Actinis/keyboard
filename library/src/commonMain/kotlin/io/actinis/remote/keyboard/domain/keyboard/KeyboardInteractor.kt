@@ -166,7 +166,7 @@ internal class KeyboardInteractorImpl(
     private suspend fun handleTrackedKeysReleased(
         currentLongPressedItem: KeyboardOverlayBubble.LongPressedKey.Item?,
     ) {
-        touchTrackedKeys.toList().forEach { keyId ->
+        touchTrackedKeys.forEach { keyId ->
             keyId
                 .takeIf {
                     keyboardStateInteractor.isKeyPressed(keyId = keyId)
