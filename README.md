@@ -6,6 +6,8 @@ A custom keyboard view library designed for internal use within the [Actinis Rem
 
 Built using **Compose Multiplatform**.
 
+Supports Android, iOS and desktop (JVM).
+
 ## Features in Progress
 
 The following features are planned for future development:
@@ -13,7 +15,7 @@ The following features are planned for future development:
 - Layout variants (e.g., email, URL)
 - Autocomplete support
 - Theming support
-- iOS and macOS support
+- macOS support
 
 ## Important Note
 
