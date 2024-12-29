@@ -2,4 +2,4 @@
 
 set -ex
 
-./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
+./gradlew --no-daemon publishAndReleaseToMavenCentral --no-configuration-cache
