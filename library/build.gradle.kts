@@ -5,10 +5,10 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.vanniktech.mavenPublish)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.vanniktech.mavenPublish)
     alias(libs.plugins.gradle.versions)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.androidx.room)
@@ -26,9 +26,10 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_1_8)
         }
     }
-//    iosX64()
-//    iosArm64()
-//    iosSimulatorArm64()
+
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
         val commonMain by getting {
@@ -78,6 +79,14 @@ kotlin {
             }
         }
 
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
+
+        val iosMain by creating {
+            dependencies {
+            }
+        }
 
         val commonTest by getting {
             dependencies {
@@ -105,8 +114,8 @@ dependencies {
     debugImplementation(compose.uiTooling)
 
     add("kspAndroid", libs.androidx.room.compiler)
-//    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
-//    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
     add("kspJvm", libs.androidx.room.compiler)
 }
 

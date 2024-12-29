@@ -72,10 +72,7 @@ internal class KeyboardLayoutsRepositoryImpl(
 
         logger.d { "layout config: $layoutConfig" }
 
-        val filePath = String.format(
-            format = LAYOUT_DEFAULT_FILE_PATH_FORMAT,
-            layoutId,
-        )
+        val filePath = "files/keyboards/layouts/$layoutId.json"
 
         return loadJsonFromResources<KeyboardLayout>(
             path = filePath,

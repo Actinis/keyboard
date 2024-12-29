@@ -17,6 +17,7 @@ import io.actinis.remote.keyboard.domain.text.suggestion.TextSuggestionsInteract
 import io.actinis.remote.keyboard.presentation.touch.KeyInteractionEvent
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlin.time.TimeSource
 
 
 internal interface KeyboardInteractor {
@@ -295,7 +296,7 @@ internal class KeyboardInteractorImpl(
     }
 
     private suspend fun handlePotentialDoubleTap(key: Key): Boolean {
-        val now = System.nanoTime()
+        val now =  TimeSource.Monotonic.markNow().elapsedNow().inWholeNanoseconds
         val lastTap = lastKeyUpTimestamps[key.id]
 
         if (lastTap != null) {

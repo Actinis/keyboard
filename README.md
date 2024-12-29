@@ -59,6 +59,24 @@ val koinApp = startKoin {
 koinApp.initializeKeyboard()
 ```
 
+on iOS:
+
+```swift
+@main
+struct iOSApp: App {
+    init() {
+        // Add this
+        StartDiDarwinKt.startDi()
+    }
+    
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
+```
+
 ## License
 
 This project is licensed under the **Apache License 2.0**. You may use, modify, and distribute the code, provided you
