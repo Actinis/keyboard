@@ -58,7 +58,7 @@ internal actual class TextSuggestionsInteractorImpl(
         }
     }
 
-    override suspend fun updateCurrentLanguage(languageCode: String) {
+    actual override suspend fun updateCurrentLanguage(languageCode: String) {
         if (languageCode != lastLanguageCode) {
             closeSession()
             lastLanguageCode = languageCode
@@ -106,7 +106,7 @@ internal actual class TextSuggestionsInteractorImpl(
         spellCheckerSession = null
     }
 
-    override suspend fun updateCurrentText(text: String) {
+    actual override suspend fun updateCurrentText(text: String) {
         // No-op for now
 //        if (text.isEmpty()) return
 //

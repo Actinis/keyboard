@@ -18,4 +18,7 @@ internal abstract class BaseTextSuggestionsInteractor : TextSuggestionsInteracto
 }
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-internal expect class TextSuggestionsInteractorImpl : BaseTextSuggestionsInteractor
+internal expect class TextSuggestionsInteractorImpl : BaseTextSuggestionsInteractor {
+    override suspend fun updateCurrentLanguage(languageCode: String)
+    override suspend fun updateCurrentText(text: String)
+}
